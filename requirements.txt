@@ -1,0 +1,33 @@
+# ==============================================================================
+
+# VeriKernel: Python Environment Dependencies
+
+# ==============================================================================
+
+# LLM Inference (Nebius Token Factory / OpenAI-compatible endpoint)
+
+openai>=1.30.0
+
+
+# Search & Retrieval for Failure Signature Recovery
+
+tavily-python>=0.3.3
+
+
+# Web Dashboard & Telemetry API
+
+fastapi>=0.110.0
+
+uvicorn[standard]>=0.28.0
+
+pydantic>=2.6.0
+
+
+# Numerical Validation, Benchmarking & Invariant Verification
+
+numpy>=1.24.0
+
+
+# Environment Variable Configuration
+
+python-dotenv>=1.0.0
