@@ -2,6 +2,7 @@
 !reference_cavity_129.bin
 *.exe
 *.vscode
+.env
 
 # Prerequisites
 *.d
