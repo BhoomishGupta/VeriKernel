@@ -73,15 +73,24 @@ To prove that the referee deterministically isolates bugs without requiring live
 
 We conducted an empirical benchmark comparing standard **Ungated One-Shot LLM Synthesis** against **Referee-Gated Iterative Self-Correction** across 3 distinct HPC prompting prompts (10 trials each, N=30 total):
 
-| Metric | Ungated One-Shot (Baseline) | VeriKernel Closed-Loop (Gated) |
-| --- | --- | --- |
-| **Pass Rate (All 5 Gates)** | **10.0%** (3/30) | **93.3%** (28/30) |
-| **Stage 1 / 2 Fails (Linter / Syntax)** | 6 / 30 | 0 / 30 (after ≤2 retries) |
-| **Stage 3 Fails (Data Races / Drift)** | 14 / 30 | 0 / 30 (resolved via Red-Black) |
-| **Stage 4 Fails (Physics / Numerical)** | 7 / 30 | 2 / 30 (max retries exhausted) |
-| **Median Valid Speedup** | 1.00× (Baseline fallback) | 3.82×**over baseline** |
-| **Average Attempts to Pass** | N/A (1-attempt cap) | 2.1 attempts |
-| **Average Token Factory Cost** | ~$0.012 per run | ~$0.041 per verified kernel |
+**Model:** `nvidia/nemotron-3-super-120b-a12b` via Nebius Token Factory  
+**Workload:** 2D Navier-Stokes Lid-Driven Cavity (Re = 100, 29<sup>2</sup> steady-state & 13<sup>2</sup> pinned benchmark)
+
+| Evaluation Metric | Arm A: One-Shot Ungated (Standard LLM) | Arm B: Referee-Gated + Tavily Loop (VeriKernel) | Impact / Significance |
+| :--- | :--- | :--- | :--- |
+| **Verification Pass Rate** | **4/30 (13.3%)** | **28/30 (93.3%)** | **+80.0% absolute reliability gain** |
+| Local Compiler Failures (Stage 2) | 25/30 runs | 2/30 runs (only after 4 multi-turn retries) | Self-correction eliminates syntax & OpenMP loop bugs |
+| Physics / Invariant Drift (Stage 4) | 1/30 runs (stealth failure) | 0/30 runs ( \le 10^{-5}$, Ghia RMSE $\le 0.05$) | Stage 4 blocks bogus speedups with invalid physics |
+| **Failure Attribution: Genuine Bugs** | **25 / 26 (96.2%)** | **0 / 2 (0.0%)** | **0% unrecovered algorithmic bugs in Arm B** |
+| **Failure Attribution: Token Truncation**| 1 / 26 (3.8%) | 2 / 2 (100.0%) | 16k ceiling reached during attempt 4 refactoring |
+| **Mean Attempts to Pass** | 1.00 attempt (no recovery) | **2.10 attempts** | Rapid convergence in ~2 iterations |
+| **Median Verified Speedup** | N/A (13.3% baseline sample) | **13.66x over baseline** | Peak performance: **20.86x (437.5 GB/s)** |
+| **Mean Inference Cost per Run** | $0.0060 USD | **$0.0115 USD** | Only +$0.0055 USD per fully certified kernel |
+| **True Cost per Usable Kernel** | $0.0449 USD | **$0.0123 USD** | **VeriKernel is 3.6x cheaper per valid asset** |
+
+**Defect Attribution:** Of the 26 failed runs in Arm A, 96.2% (25 runs) were genuine algorithmic and syntax defects where the model voluntarily stopped generating tokens (e.g., Run 11 used 2,062 tokens, Run 21 used 1,472 tokens against the 16,384 ceiling). The model was not token-starved; it simply generated invalid OpenMP loop predicates (i + 1 < n) and undeclared loop variables. In contrast, Arm B had 0.0% genuine code defects—its only 2 unverified runs occurred when multi-turn refactoring reached the 16,384 token ceiling on Attempt 4.
+
+**The Case for Stage 4 Physics Gating:** In Arm A Run 14, the model generated code that compiled cleanly and achieved a median throughput of 234.54 GB/s (11.18× speedup). Without VeriKernel, this kernel would have passed standard performance benchmarks. VeriKernel's Stage 4 caught a 99.0% relative $L_2$ error and Ghia RMSE of 0.3884, halting an unphysical kernel from reaching production.
 
 ## Model Inference & Load-Bearing Tavily Integration
 

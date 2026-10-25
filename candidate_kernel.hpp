@@ -2,7 +2,6 @@
 
 #include <cstddef>
 #include <cmath>
-#include <immintrin.h>
 #include <omp.h>
 
 namespace baseline {
@@ -16,28 +15,28 @@ inline void gauss_seidel_poisson_sweep(
     const double h, const std::size_t sweeps = 1) {
     const double h2 = h * h;
     for (std::size_t sweep = 0; sweep < sweeps; ++sweep) {
-        // Red phase: (i+j) % 2 == 0
+        // Update red points: (i + j) % 2 == 0
         #pragma omp parallel for
         for (std::size_t i = 1; i < n - 1; ++i) {
-            std::size_t j_start = 2 - (i % 2);
+            std::size_t j_start = (i % 2 == 0) ? 2 : 1;
             for (std::size_t j = j_start; j < n - 1; j += 2) {
-                const std::size_t c = idx(i, j, n);
-                psi[c] = 0.25 * (
+                psi[idx(i, j, n)] = 0.25 * (
                     psi[idx(i + 1, j, n)] + psi[idx(i - 1, j, n)] +
                     psi[idx(i, j + 1, n)] + psi[idx(i, j - 1, n)] +
-                    h2 * omega[idx(i, j, n)]);
+                    h2 * omega[idx(i, j, n)]
+                );
             }
         }
-        // Black phase: (i+j) % 2 == 1
+        // Update black points: (i + j) % 2 == 1
         #pragma omp parallel for
         for (std::size_t i = 1; i < n - 1; ++i) {
-            std::size_t j_start = 1 + (i % 2);
+            std::size_t j_start = (i % 2 == 0) ? 1 : 2;
             for (std::size_t j = j_start; j < n - 1; j += 2) {
-                const std::size_t c = idx(i, j, n);
-                psi[c] = 0.25 * (
+                psi[idx(i, j, n)] = 0.25 * (
                     psi[idx(i + 1, j, n)] + psi[idx(i - 1, j, n)] +
                     psi[idx(i, j + 1, n)] + psi[idx(i, j - 1, n)] +
-                    h2 * omega[idx(i, j, n)]);
+                    h2 * omega[idx(i, j, n)]
+                );
             }
         }
     }

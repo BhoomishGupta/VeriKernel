@@ -164,3 +164,13 @@ async def get_queue_status():
         "waiting": waiting_queue_count,
         "estimated_wait_seconds": waiting_queue_count * ESTIMATED_RUN_SECONDS,
     }
+
+
+@app.get("/api/benchmark-study")
+async def get_benchmark_study():
+    results_path = pathlib.Path("cache/empirical_study_results.json")
+    if not results_path.exists():
+        raise HTTPException(status_code=404, detail="Benchmark study results not found")
+    with open(results_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data

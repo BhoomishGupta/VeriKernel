@@ -32,7 +32,7 @@ RUNS_DIR = REPO_ROOT / "cache" / "agent_runs"
 
 MODEL_ID = "nvidia/nemotron-3-super-120b-a12b"
 MAX_ATTEMPTS = 4
-MAX_TOKENS = 16384  # Expanded to allow deep reasoning + full C++ emission without cutoff
+MAX_TOKENS = 16384  # Allows reasoning trace + complete C++ emission
 PRICE_PER_M_INPUT = 0.30
 PRICE_PER_M_OUTPUT = 0.90
 
@@ -96,7 +96,12 @@ def run_referee(kernel_path: pathlib.Path) -> tuple[bool, list[dict[str, Any]]]:
         all_passed = all(stage.get("ok", False) for stage in telemetry)
         return all_passed, telemetry
     except Exception as exc:
-        return False, [{"stage": "Referee Execution", "ok": False, "status_tag": "PARSE_ERROR", "detail": f"{exc} | stdout: {proc.stdout[:300]}"}]
+        return False, [{
+            "stage": "Referee Execution",
+            "ok": False,
+            "status_tag": "PARSE_ERROR",
+            "detail": f"{exc} | stdout: {proc.stdout[:300]}",
+        }]
 
 
 def compute_cost(prompt_tokens: int, completion_tokens: int) -> float:
@@ -109,9 +114,9 @@ def generate_certificate(telemetry: list[dict[str, Any]], total_cost: float, tot
     kernel_code = CANDIDATE_PATH.read_text(encoding="utf-8")
     sha256_hash = hashlib.sha256(kernel_code.encode("utf-8")).hexdigest()
 
-    det = next((s for s in telemetry if s.get("stage") == "Stage 3 (Multi-Thread Determinism)"), {})
-    phys = next((s for s in telemetry if s.get("stage") == "Stage 4 (Physics & Math Oracle)"), {})
-    bench = next((s for s in telemetry if s.get("stage") == "Stage 5 (Memory Bandwidth Benchmark)"), {})
+    det = next((s for s in telemetry if "Stage 3" in s.get("stage", "")), {})
+    phys = next((s for s in telemetry if "Stage 4" in s.get("stage", "")), {})
+    bench = next((s for s in telemetry if "Stage 5" in s.get("stage", "")), {})
 
     cert_text = f"""# VeriKernel Official Verification Certificate
 **Issued by:** VeriKernel 5-Stage Physics-Aware Referee  
@@ -133,9 +138,9 @@ def generate_certificate(telemetry: list[dict[str, Any]], total_cost: float, tot
 ---
 
 ### Economic & Compute Telemetry
-* **Total Tokens Consumed:** {total_tokens:,} tokens
-* **Total Nebius Inference Cost:** ${total_cost:.5f} USD
-* **Artifact:** `candidate_kernel.hpp` is mathematically verified against Navier-Stokes ground truth.
+- **Total Tokens Consumed:** {total_tokens:,} tokens
+- **Total Nebius Inference Cost:** ${total_cost:.5f} USD
+- **Artifact:** `candidate_kernel.hpp` is mathematically verified against Navier-Stokes ground truth.
 """
     CERT_PATH.write_text(cert_text, encoding="utf-8")
     print(f"\n[Certificate] Generated official certification at: {CERT_PATH}")
@@ -223,7 +228,7 @@ def run_agent_optimization():
         print(">>> [Referee] Evaluating candidate kernel through 5-stage pipeline...")
         all_passed, telemetry = run_referee(CANDIDATE_PATH)
 
-        # Print stage summaries
+        # Print stage summaries cleanly
         for s in telemetry:
             tag = "[PASS]" if s.get("ok") else "[FAIL]"
             print(f"    {tag} {s.get('stage')}: {s.get('status_tag')} - {s.get('detail')}")
@@ -275,11 +280,29 @@ def run_agent_optimization():
         messages.append({"role": "assistant", "content": raw_response})
         messages.append({"role": "user", "content": retry_prompt})
 
-    # Save complete run history
+    # Packaging run telemetry
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    run_telemetry = {
+        "timestamp": timestamp,
+        "model": MODEL_ID,
+        "total_prompt_tokens": total_prompt_tokens,
+        "total_completion_tokens": total_completion_tokens,
+        "total_tokens": total_prompt_tokens + total_completion_tokens,
+        "total_cost_usd": total_cost,
+        "attempts_count": len(attempts_history),
+        "verified": any(a.get("passed", False) for a in attempts_history),
+        "attempts": attempts_history,
+    }
+
+    # 1. Archive into cache/agent_runs/
+    run_archive_file = RUNS_DIR / f"run_{timestamp}.json"
+    run_archive_file.write_text(json.dumps(run_telemetry, indent=2), encoding="utf-8")
+    print(f"\n[Archive] Telemetry saved to: {run_archive_file}")
+
+    # 2. Update cache/latest_agent_run.json
     run_log = REPO_ROOT / "cache" / "latest_agent_run.json"
-    run_log.parent.mkdir(parents=True, exist_ok=True)
     run_log.write_text(json.dumps(attempts_history, indent=2), encoding="utf-8")
-    print(f"[Trace] Full run history saved to: {run_log}")
+    print(f"[Trace] Latest run pointer saved to: {run_log}")
 
 
 if __name__ == "__main__":

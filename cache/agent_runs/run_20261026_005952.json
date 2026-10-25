@@ -1,0 +1,53 @@
+{
+  "timestamp": "20261026_005952",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "total_prompt_tokens": 1421,
+  "total_completion_tokens": 9902,
+  "total_tokens": 11323,
+  "total_cost_usd": 0.009338099999999998,
+  "attempts_count": 1,
+  "verified": true,
+  "attempts": [
+    {
+      "attempt": 1,
+      "cost_usd": 0.009338099999999998,
+      "tokens": {
+        "prompt": 1421,
+        "completion": 9902
+      },
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Containerized build passed with gcc:13"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 385.54 GB/s (Median latency: 3.25 ms)"
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

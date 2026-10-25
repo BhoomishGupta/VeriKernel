@@ -1,33 +1,10 @@
 [
   {
     "attempt": 1,
-    "cost_usd": 0.005073,
+    "cost_usd": 0.009338099999999998,
     "tokens": {
       "prompt": 1421,
-      "completion": 5163
-    },
-    "telemetry": [
-      {
-        "stage": "Stage 1",
-        "ok": true,
-        "status_tag": "LINT_PASS",
-        "detail": "Static linter checks passed"
-      },
-      {
-        "stage": "Stage 2",
-        "ok": false,
-        "status_tag": "COMPILE_FAIL",
-        "detail": "Containerized build failed:\nIn file included from harness_cavity.cpp:17:\n/workspace/candidate_kernel.hpp: In function 'void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)':\n/workspace/candidate_kernel.hpp:21:39: error: invalid controlling predicate\n   21 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/workspace/candidate_kernel.hpp:33:39: error: invalid controlling predicate\n   33 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/workspace/candidate_kernel.hpp: In function 'void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)':\n/workspace/candidate_kernel.hpp:62:39: error: invalid controlling predicate\n   62 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/workspace/candidate_kernel.hpp:60:35: error: invalid controlling predicate\n   60 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
-      }
-    ],
-    "passed": false
-  },
-  {
-    "attempt": 2,
-    "cost_usd": 0.0024414,
-    "tokens": {
-      "prompt": 3356,
-      "completion": 1594
+      "completion": 9902
     },
     "telemetry": [
       {
@@ -58,7 +35,7 @@
         "stage": "Stage 5",
         "ok": true,
         "status_tag": "BENCH_PASS",
-        "detail": "Throughput: 244.69 GB/s (Median latency: 5.12 ms)"
+        "detail": "Throughput: 385.54 GB/s (Median latency: 3.25 ms)"
       }
     ],
     "passed": true
