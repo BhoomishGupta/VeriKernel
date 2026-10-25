@@ -1,0 +1,130 @@
+[
+  {
+    "attempt": 1,
+    "cost_usd": 0.0077811,
+    "tokens": {
+      "prompt": 1361,
+      "completion": 8192
+    },
+    "telemetry": [
+      {
+        "stage": "Stage 1",
+        "ok": true,
+        "status_tag": "LINT_PASS",
+        "detail": "Static linter checks passed"
+      },
+      {
+        "stage": "Stage 2",
+        "ok": false,
+        "status_tag": "COMPILE_FAIL",
+        "detail": "Containerized build failed:\nharness_cavity.cpp: In function '{anonymous}::PhaseAResult {anonymous}::solve_cavity_converge(int)':\nharness_cavity.cpp:184:9: error: 'baseline' has not been declared\n  184 |         baseline::gauss_seidel_poisson_sweep(psi.data(), omega.data(), kN, h, kPoissonSweepsPerStep);\n      |         ^~~~~~~~\nharness_cavity.cpp:187:9: error: 'baseline' has not been declared\n  187 |         baseline::vorticity_transport_step(\n      |         ^~~~~~~~\nharness_cavity.cpp: In function 'std::vector<double> {anonymous}::solve_cavity_fixed_steps(int, std::size_t, std::size_t)':\nharness_cavity.cpp:239:9: error: 'baseline' has not been declared\n  239 |         baseline::gauss_seidel_poisson_sweep(psi.data(), omega.data(), n, h, 5);\n      |         ^~~~~~~~\nharness_cavity.cpp:240:9: error: 'baseline' has not been declared\n  240 |         baseline::vorticity_transport_step(omega_next.data(), omega.data(), psi.data(), n, h, kDt, kRe);\n      |         ^~~~~~~~\nharness_cavity.cpp: In function '{anonymous}::BandwidthMetrics {anonymous}::run_phase_b_bandwidth(int, std::size_t, std::size_t)':\nharness_cavity.cpp:297:5: error: 'baseline' has not been declared\n  297 |     baseline::gauss_seidel_poisson_sweep(psi.data(), omega.data(), n, h, 5);\n      |     ^~~~~~~~\nharness_cavity.cpp:305:9: error: 'baseline' has not been declared\n  305 |         baseline::gauss_seidel_poisson_sweep(psi.data(), omega.data(), n, h, sweeps);\n      |         ^~~~~~~~\n"
+      }
+    ],
+    "passed": false
+  },
+  {
+    "attempt": 2,
+    "cost_usd": 0.0036885000000000004,
+    "tokens": {
+      "prompt": 2431,
+      "completion": 3288
+    },
+    "telemetry": [
+      {
+        "stage": "Stage 1",
+        "ok": true,
+        "status_tag": "LINT_PASS",
+        "detail": "Static linter checks passed"
+      },
+      {
+        "stage": "Stage 2",
+        "ok": false,
+        "status_tag": "COMPILE_FAIL",
+        "detail": "Containerized build failed:\nIn file included from harness_cavity.cpp:17:\n/workspace/candidate_kernel.hpp: In function 'void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)':\n/workspace/candidate_kernel.hpp:48:35: error: invalid controlling predicate\n   48 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n/workspace/candidate_kernel.hpp:49:39: error: invalid controlling predicate\n   49 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n"
+      }
+    ],
+    "passed": false
+  },
+  {
+    "attempt": 3,
+    "cost_usd": 0.0024366,
+    "tokens": {
+      "prompt": 4015,
+      "completion": 1369
+    },
+    "telemetry": [
+      {
+        "stage": "Stage 1",
+        "ok": true,
+        "status_tag": "LINT_PASS",
+        "detail": "Static linter checks passed"
+      },
+      {
+        "stage": "Stage 2",
+        "ok": true,
+        "status_tag": "COMPILE_PASS",
+        "detail": "Containerized build passed with gcc:13"
+      },
+      {
+        "stage": "Stage 3",
+        "ok": false,
+        "status_tag": "RACE_NON_DETERMINISTIC",
+        "detail": "Determinism violation: max_thread_delta=7.45e-04, max_repeat_delta=5.52e-04"
+      },
+      {
+        "stage": "Stage 4",
+        "ok": false,
+        "status_tag": "PHYSICS_FAIL",
+        "detail": "Failed: relative_l2=2.74e-05 (req <= 1e-5), Ghia U RMSE=0.0020 (req <= 0.05), steps=13551"
+      },
+      {
+        "stage": "Stage 5",
+        "ok": true,
+        "status_tag": "BENCH_PASS",
+        "detail": "Throughput: 61.22 GB/s (Median latency: 20.47 ms)"
+      }
+    ],
+    "passed": false
+  },
+  {
+    "attempt": 4,
+    "cost_usd": 0.006437400000000001,
+    "tokens": {
+      "prompt": 5555,
+      "completion": 5301
+    },
+    "telemetry": [
+      {
+        "stage": "Stage 1",
+        "ok": true,
+        "status_tag": "LINT_PASS",
+        "detail": "Static linter checks passed"
+      },
+      {
+        "stage": "Stage 2",
+        "ok": true,
+        "status_tag": "COMPILE_PASS",
+        "detail": "Containerized build passed with gcc:13"
+      },
+      {
+        "stage": "Stage 3",
+        "ok": true,
+        "status_tag": "DETERMINISM_PASS",
+        "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+      },
+      {
+        "stage": "Stage 4",
+        "ok": true,
+        "status_tag": "PHYSICS_PASS",
+        "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+      },
+      {
+        "stage": "Stage 5",
+        "ok": true,
+        "status_tag": "BENCH_PASS",
+        "detail": "Throughput: 417.41 GB/s (Median latency: 3.00 ms)"
+      }
+    ],
+    "passed": true
+  }
+]
