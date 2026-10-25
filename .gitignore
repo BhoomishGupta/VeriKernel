@@ -2,8 +2,13 @@
 !reference_cavity_129.bin
 *.exe
 *.vscode
-.env
+*.env
+.venv
 
+__pycache__/
+*.pyc
+.venv/
+env/
 # Prerequisites
 *.d
 
