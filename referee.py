@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""VeriKernel 5-stage referee for cavity harness and candidate kernel verification."""
+"""
+VeriKernel: Physics-Aware AI Code Optimization Referee
+Dual-Workload Verification Pipeline:
+  - cavity : 2D Incompressible Navier-Stokes (Ghia RMSE + L2 Reference)
+  - wave   : 2D Acoustic Wave Equation (Observed Convergence Order p >= 1.90)
+"""
 
 from __future__ import annotations
 
@@ -14,10 +19,17 @@ from dataclasses import asdict, dataclass
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent
-DEFAULT_HARNESS = REPO_ROOT / "harness_cavity.cpp"
-DEFAULT_KERNEL = REPO_ROOT / "baseline_kernel.hpp"
-DEFAULT_BINARY = REPO_ROOT / "build" / "harness_cavity"
+
+# Workload 1: Cavity Defaults
+DEFAULT_HARNESS_CAVITY = REPO_ROOT / "harness_cavity.cpp"
+DEFAULT_KERNEL_CAVITY = REPO_ROOT / "baseline_kernel.hpp"
+DEFAULT_BINARY_CAVITY = REPO_ROOT / "build" / "harness_cavity"
 REFERENCE_BINARY = REPO_ROOT / "reference_cavity_129.bin"
+
+# Workload 2: Wave Defaults
+DEFAULT_HARNESS_WAVE = REPO_ROOT / "harness_wave.cpp"
+DEFAULT_KERNEL_WAVE = REPO_ROOT / "wave_baseline.hpp"
+DEFAULT_BINARY_WAVE = REPO_ROOT / "build" / "harness_wave"
 
 BANNED_PATTERNS = [
     r"#pragma\s+GCC\s+optimize\s*\(\s*\"fast-math\"\s*\)",
@@ -177,56 +189,13 @@ def stage2_compile(
     except subprocess.TimeoutExpired:
         return StageResult("Stage 2", False, "COMPILE_TIMEOUT", "Local compilation timed out")
 
-def run_harness_json(binary_path: pathlib.Path, mode: str = "--all") -> dict:
-    env = dict(os.environ)
-    env.update({"OMP_PROC_BIND": "close", "OMP_PLACES": "cores"})
-
-    result = run_command([str(binary_path), mode], env=env, timeout=60.0)
-    if result.returncode != 0 and mode != "--all":
-        raise RuntimeError(
-            f"Binary exited with code {result.returncode}\nSTDERR:\n{result.stderr}\nSTDOUT:\n{result.stdout}"
-        )
-
-    match = re.search(
-        r"__VERIKERNEL_JSON_START__\s*(\{.*?\})\s*__VERIKERNEL_JSON_END__",
-        result.stdout,
-        re.DOTALL,
-    )
-    if not match:
-        raise RuntimeError(
-            f"Failed to find __VERIKERNEL_JSON_START__ delimiter.\nOutput:\n{result.stdout}\nError:\n{result.stderr}"
-        )
-
-    return json.loads(match.group(1))
-
-
-def stage3_determinism(telemetry: dict) -> StageResult:
-    det = telemetry.get("stage3_determinism", {})
-    passed = det.get("pass", False)
-    max_thread = det.get("max_thread_delta", 1.0)
-    max_repeat = det.get("max_repeat_delta", 1.0)
-
-    if not passed or max(max_thread, max_repeat) > 1e-11:
-        return StageResult(
-            "Stage 3",
-            False,
-            "RACE_NON_DETERMINISTIC",
-            f"Determinism violation: max_thread_delta={max_thread:.2e}, max_repeat_delta={max_repeat:.2e}",
-        )
-    return StageResult(
-        "Stage 3",
-        True,
-        "DETERMINISM_PASS",
-        f"Passed with zero drift across threads (max_delta={max(max_thread, max_repeat):.2e})",
-    )
-
 
 def run_harness_json(binary_path: pathlib.Path, mode: str = "--all") -> dict:
     env = dict(os.environ)
     env.update({"OMP_PROC_BIND": "close", "OMP_PLACES": "cores"})
 
     result = run_command([str(binary_path), mode], env=env, timeout=60.0)
-    if result.returncode != 0 and mode != "--all":
+    if result.returncode != 0 and mode not in ("--all", "--bench"):
         raise RuntimeError(
             f"Binary exited with code {result.returncode}\nSTDERR:\n{result.stderr}\nSTDOUT:\n{result.stdout}"
         )
@@ -247,14 +216,73 @@ def run_harness_json(binary_path: pathlib.Path, mode: str = "--all") -> dict:
     return json.loads(clean_json)
 
 
-def stage4_physics(telemetry: dict) -> StageResult:
+def stage3_determinism(telemetry: dict, workload: str = "cavity") -> StageResult:
+    if workload == "wave":
+        drift = telemetry.get("max_thread_drift", 1.0)
+        if drift is None or drift > 1e-11:
+            drift_str = f"{float(drift):.2e}" if drift is not None else "NaN"
+            return StageResult(
+                "Stage 3",
+                False,
+                "RACE_NON_DETERMINISTIC",
+                f"Determinism violation: max_thread_drift={drift_str} (req <= 1e-11)",
+            )
+        return StageResult(
+            "Stage 3",
+            True,
+            "DETERMINISM_PASS",
+            f"Passed with zero drift across threads (max_delta={drift:.2e})",
+        )
+
+    # Cavity Workload
+    det = telemetry.get("stage3_determinism", {})
+    passed = det.get("pass", False)
+    max_thread = det.get("max_thread_delta", 1.0)
+    max_repeat = det.get("max_repeat_delta", 1.0)
+
+    if not passed or max(max_thread, max_repeat) > 1e-11:
+        return StageResult(
+            "Stage 3",
+            False,
+            "RACE_NON_DETERMINISTIC",
+            f"Determinism violation: max_thread_delta={max_thread:.2e}, max_repeat_delta={max_repeat:.2e}",
+        )
+    return StageResult(
+        "Stage 3",
+        True,
+        "DETERMINISM_PASS",
+        f"Passed with zero drift across threads (max_delta={max(max_thread, max_repeat):.2e})",
+    )
+
+
+def stage4_physics(telemetry: dict, workload: str = "cavity") -> StageResult:
+    if workload == "wave":
+        p = telemetry.get("observed_order_p")
+        finest_l2 = telemetry.get("finest_grid_l2")
+        p_str = f"{float(p):.4f}" if p is not None else "NaN"
+        l2_str = f"{float(finest_l2):.2e}" if finest_l2 is not None else "NaN"
+
+        if p is None or p < 1.90:
+            return StageResult(
+                "Stage 4",
+                False,
+                "PHYSICS_FAIL",
+                f"Failed: observed order p={p_str} (req >= 1.90), finest L2={l2_str}. Truncation error detected.",
+            )
+        return StageResult(
+            "Stage 4",
+            True,
+            "PHYSICS_PASS",
+            f"Passed: observed order p={p:.4f} (req >= 1.90), finest L2={l2_str}",
+        )
+
+    # Cavity Workload
     phy = telemetry.get("stage4_physics", {})
     passed = phy.get("pass", False)
     rel_l2 = phy.get("relative_l2")
     ghia_u = phy.get("ghia_u_rmse")
     converged_steps = phy.get("converged_steps", 0)
 
-    # Convert null/NaN to inf for reporting
     rel_l2_str = f"{float(rel_l2):.2e}" if rel_l2 is not None else "NaN/Inf"
     ghia_u_str = f"{float(ghia_u):.4f}" if ghia_u is not None else "NaN/Inf"
 
@@ -272,7 +300,27 @@ def stage4_physics(telemetry: dict) -> StageResult:
         f"Passed: relative_l2={rel_l2_str}, Ghia U RMSE={ghia_u_str} in {converged_steps} steps",
     )
 
-def stage5_timing(telemetry: dict) -> StageResult:
+
+def stage5_timing(telemetry: dict, workload: str = "cavity") -> StageResult:
+    if workload == "wave":
+        throughput = telemetry.get("throughput_gb_s", 0.0)
+        median_ms = telemetry.get("median_ms", 0.0)
+
+        if median_ms <= 0.0 or throughput <= 0.0:
+            return StageResult(
+                "Stage 5",
+                False,
+                "BENCH_FAIL",
+                f"Invalid benchmark measurements: median_ms={median_ms}, throughput={throughput} GB/s",
+            )
+        return StageResult(
+            "Stage 5",
+            True,
+            "BENCH_PASS",
+            f"Throughput: {throughput:.2f} GB/s (Median latency: {median_ms:.2f} ms)",
+        )
+
+    # Cavity Workload
     bench = telemetry.get("stage5_benchmark", {})
     median_time = bench.get("median_time_s", 0.0)
     throughput = bench.get("throughput_gb_s", 0.0)
@@ -294,16 +342,33 @@ def stage5_timing(telemetry: dict) -> StageResult:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="VeriKernel 5-Stage Verification Referee")
-    parser.add_argument("--kernel", type=pathlib.Path, default=DEFAULT_KERNEL, help="Path to candidate_kernel.hpp")
-    parser.add_argument("--harness", type=pathlib.Path, default=DEFAULT_HARNESS, help="Path to harness_cavity.cpp")
-    parser.add_argument("--binary", type=pathlib.Path, default=DEFAULT_BINARY, help="Output compiled binary path")
+    parser.add_argument("--kernel", type=pathlib.Path, default=None, help="Path to candidate C++ header")
+    parser.add_argument("--workload", type=str, choices=["cavity", "wave"], default=None, help="Evaluation workload")
+    parser.add_argument("--harness", type=pathlib.Path, default=None, help="Path to test harness source")
+    parser.add_argument("--binary", type=pathlib.Path, default=None, help="Output compiled binary path")
     parser.add_argument("--json", action="store_true", help="Output machine-readable JSON summary")
-    parser.add_argument("--local", action="store_true", help="Force local g++ compilation")
+    parser.add_argument("--local", action="store_true", help="Force local g++ compilation without Docker")
     args = parser.parse_args()
 
-    kernel_path = args.kernel.resolve()
-    harness_path = args.harness.resolve()
-    binary_path = args.binary.resolve()
+    # Automatic Workload Resolution
+    workload = args.workload
+    if workload is None:
+        if args.kernel and "wave" in str(args.kernel).lower():
+            workload = "wave"
+        elif args.harness and "wave" in str(args.harness).lower():
+            workload = "wave"
+        else:
+            workload = "cavity"
+
+    # Default paths according to resolved workload
+    if workload == "wave":
+        kernel_path = (args.kernel or DEFAULT_KERNEL_WAVE).resolve()
+        harness_path = (args.harness or DEFAULT_HARNESS_WAVE).resolve()
+        binary_path = (args.binary or DEFAULT_BINARY_WAVE).resolve()
+    else:
+        kernel_path = (args.kernel or DEFAULT_KERNEL_CAVITY).resolve()
+        harness_path = (args.harness or DEFAULT_HARNESS_CAVITY).resolve()
+        binary_path = (args.binary or DEFAULT_BINARY_CAVITY).resolve()
 
     if not kernel_path.exists():
         print(f"Kernel file not found: {kernel_path}", file=sys.stderr)
@@ -312,10 +377,10 @@ def main() -> int:
         print(f"Harness file not found: {harness_path}", file=sys.stderr)
         return 2
 
-    # Auto-generate baseline reference if missing
-    if not REFERENCE_BINARY.exists():
+    # Auto-generate baseline reference if missing (Cavity only)
+    if workload == "cavity" and not REFERENCE_BINARY.exists():
         print(f"Generating missing reference binary at {REFERENCE_BINARY}...", file=sys.stderr)
-        stage2_compile(harness_path, DEFAULT_KERNEL, binary_path)
+        stage2_compile(harness_path, DEFAULT_KERNEL_CAVITY, binary_path, force_local=args.local)
         run_command([str(binary_path), "--generate-ref"], timeout=120.0)
 
     stages: list[StageResult] = []
@@ -330,16 +395,17 @@ def main() -> int:
     if not stages[-1].ok:
         return finalize(stages, args.json)
 
-    # Stages 3, 4, 5: Single --all execution
+    # Stages 3, 4, 5 Execution
+    mode = "--bench" if workload == "wave" else "--all"
     try:
-        telemetry = run_harness_json(binary_path, mode="--all")
+        telemetry = run_harness_json(binary_path, mode=mode)
     except Exception as exc:
         stages.append(StageResult("Execution", False, "RUNTIME_ERROR", str(exc)))
         return finalize(stages, args.json)
 
-    stages.append(stage3_determinism(telemetry))
-    stages.append(stage4_physics(telemetry))
-    stages.append(stage5_timing(telemetry))
+    stages.append(stage3_determinism(telemetry, workload=workload))
+    stages.append(stage4_physics(telemetry, workload=workload))
+    stages.append(stage5_timing(telemetry, workload=workload))
 
     return finalize(stages, args.json)
 
