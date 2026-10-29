@@ -237,7 +237,9 @@ def run_agent_optimization():
             "attempt": attempt,
             "cost_usd": call_cost,
             "tokens": {"prompt": p_tok, "completion": c_tok},
+            "code": candidate_code,
             "telemetry": telemetry,
+            "tavily_guidance": None,
             "passed": all_passed,
         })
 
@@ -263,6 +265,13 @@ def run_agent_optimization():
         recovery = retrieve_recovery_guidance(stage_name, status_tag, detail)
         print(f"    Query : {recovery['query']}")
         print(f"    Cached: {recovery.get('cached', False)}")
+
+        attempts_history[-1]["tavily_guidance"] = {
+            "query": recovery.get("query"),
+            "snippets": [s.get("content", "") for s in recovery.get("snippets", [])],
+            "urls": [s.get("url", "") for s in recovery.get("snippets", []) if s.get("url")],
+            "answer": recovery.get("answer", ""),
+        }
 
         # Construct self-correction retry prompt
         retry_prompt = (

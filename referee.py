@@ -34,6 +34,8 @@ DEFAULT_BINARY_WAVE = REPO_ROOT / "build" / "harness_wave"
 BANNED_PATTERNS = [
     r"#pragma\s+GCC\s+optimize\s*\(\s*\"fast-math\"\s*\)",
     r"#pragma\s+clang\s+fp\s+contract\s*\(\s*fast\s*\)",
+    r"#pragma\s+(?:GCC\s+)?unroll\b",
+    r"#pragma\s+clang\s+loop\s+unroll",
     r"-ffast-math",
     r"\bfork\s*\(",
     r"\bsystem\s*\(",

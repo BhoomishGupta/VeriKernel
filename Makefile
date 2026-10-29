@@ -121,9 +121,15 @@ clean-all: clean
 	@rm -f $(CAVITY_REF_DATA)
 	@echo "> Full clean complete."
 
+# Run FastAPI Lab Instrument Dashboard
+app:
+	@echo "==> Launching VeriKernel Execution Server on http://0.0.0.0:8000..."
+	$(PYTHON) server.py
+
 # Help menu
 help:
 	@echo "VeriKernel Build and Test Commands:"
+	@echo "  make app          - Launches the VeriKernel FastAPI execution server and lab dashboard"
 	@echo "  make              - Compiles both Cavity and Wave test harnesses into $(BUILD_DIR)/"
 	@echo "  make ref          - Generates $(CAVITY_REF_DATA) on 1 thread"
 	@echo "  make test         - Runs referee.py on baseline_kernel.hpp (All 5 Stages)"
@@ -135,3 +141,4 @@ help:
 	@echo "  make bench-wave   - Runs Stage 5 pinned memory bandwidth benchmark for Wave (512x512)"
 	@echo "  make clean        - Deletes compiled binaries and temporary test files"
 	@echo "  make clean-all    - Deletes binaries AND $(CAVITY_REF_DATA)"
+

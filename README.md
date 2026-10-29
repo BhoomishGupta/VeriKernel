@@ -59,15 +59,16 @@ VeriKernel enforces a strict separation between an **Immutable Test Harness** (`
 
 ## Break-It Gallery (Adversarial Verification Suite)
 
-To prove that the referee deterministically isolates bugs without requiring live LLM token usage, VeriKernel includes 5 pre-baked adversarial kernels in `gallery/`:
+To prove that the referee deterministically isolates bugs without requiring live LLM token usage, VeriKernel includes pre-baked adversarial kernels in `gallery/`:
 
 | Kernel File | Injected Defect | Caught By Gate | Real-World Failure Mode |
 | --- | --- | --- | --- |
-| `bug_1_naive_omp_race.hpp` | Naive `#pragma omp parallel for` over lexicographical Gauss-Seidel | **Stage 3: Determinism** | Run-to-run drift Δ=3.87×10−5>10−11. Appears 5.7× faster, but produces non-deterministic physics. |
-| `bug_2_fast_mathcheat.hpp` | `#pragma GCC optimize("fast-math")` compiler pragma | **Stage 1: Linter** | Violates IEEE-754 precision; static regex halts execution before compilation. |
+| `bug_1_fast_mathcheat.hpp` | `#pragma GCC optimize("fast-math")` compiler pragma | **Stage 1: Linter** | Violates IEEE-754 precision; static regex halts execution before compilation. |
+| `bug_2_naive_omp_race.hpp` | Naive `#pragma omp parallel for` over lexicographical Gauss-Seidel | **Stage 3: Determinism** | Run-to-run drift Δ=3.87×10−5>10−11. Appears 5.7× faster, but produces non-deterministic physics. |
 | `bug_3_boundary_off_by_one.hpp` | Boundary loop indexing terminates at n−2 instead of n−1 | **Stage 4: Physics** | Momentum transfer severed from lid; Ghia RMSE collapses to 0.3872 (>0.05). |
 | `bug_4_fp32_downgrade.hpp` | Inner Poisson relaxation converted from `double` to `float` | **Stage 4: Physics** | Numerical precision limits cause residual to stall above 10−6; hits 15,000-step timeout. |
 | `bug_5_wrong_redblack_index.hpp` | Checkerboard parity checked via 1D index `(i * (n-1) + j) % 2` | **Stage 4: Physics** | Bypasses alternating color update; achieves fake 13.3× speedup (279 GB/s) with 99% relative error. |
+| `bug_6_wave_naive_startup.hpp` | Naive 1st-order Taylor startup for 2D acoustic wave equation | **Stage 4: Physics (Wave)** | Truncation error degrades observed multi-grid convergence order from $p \approx 2.00$ to $p = 1.008$ (<1.90). |
 
 ## Empirical Evaluation Study (N=30)
 
