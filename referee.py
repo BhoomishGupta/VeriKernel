@@ -66,9 +66,25 @@ def run_command(
     env: dict[str, str] | None = None,
     timeout: float = 30.0,
 ) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        command, check=False, text=True, capture_output=True, env=env, timeout=timeout
+    import signal
+    p = subprocess.Popen(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        env=env,
+        start_new_session=True,
     )
+    try:
+        stdout, stderr = p.communicate(timeout=timeout)
+        return subprocess.CompletedProcess(command, p.returncode, stdout, stderr)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+        except (ProcessLookupError, OSError):
+            pass
+        p.communicate()
+        raise
 
 
 def stage1_static_lint(kernel_path: pathlib.Path) -> StageResult:

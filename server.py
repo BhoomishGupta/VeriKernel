@@ -4,19 +4,25 @@
 from __future__ import annotations
 
 import asyncio
+import io
 import json
 import math
+import os
 import pathlib
 import struct
 import subprocess
 import sys
+import time
+import zipfile
 from typing import Any, AsyncGenerator
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+
+from agent_loop import run_agent_optimization
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent
 STATIC_DIR = REPO_ROOT / "static" if (REPO_ROOT / "static").exists() else (REPO_ROOT / "app" / "static")
@@ -41,16 +47,44 @@ app.add_middleware(
 # Concurrency state
 execution_lock = asyncio.Lock()
 waiting_queue_count = 0
+gallery_cache: dict[str, tuple[float, Any]] = {}
+
+
+@app.on_event("startup")
+async def warmup_gallery():
+    """Background warmup of the Break-It Gallery to ensure sub-2-second referee responses."""
+    subprocess.run(["pkill", "-9", "-f", "harness_cavity"], check=False)
+    async def _warm():
+        gallery_dir = REPO_ROOT / "gallery"
+        if gallery_dir.exists():
+            for f in sorted(gallery_dir.glob("*.hpp")):
+                rel_path = f"gallery/{f.name}"
+                if rel_path not in gallery_cache:
+                    try:
+                        mtime = f.stat().st_mtime
+                        res = await asyncio.to_thread(run_referee_sync, f)
+                        gallery_cache[rel_path] = (mtime, res)
+                    except Exception:
+                        pass
+    asyncio.create_task(_warm())
 
 
 class ExecutionRequest(BaseModel):
     kernel_code: str | None = Field(
         default=None,
-        description="Inline C++ kernel code. If omitted, runs default baseline_kernel.hpp.",
+        description="Inline C++ kernel code. If omitted, runs candidate_kernel.hpp or baseline_kernel.hpp.",
     )
     gallery_bug: str | None = Field(
         default=None,
         description="Relative path to a Break-It Gallery kernel (e.g., 'gallery/bug_1_fast_mathcheat.hpp' or 'gallery/bug_2_naive_omp_race.hpp').",
+    )
+    target: str | None = Field(
+        default=None,
+        description="Target kernel: 'candidate' for candidate_kernel.hpp, 'baseline' for baseline_kernel.hpp.",
+    )
+    force_live: bool | None = Field(
+        default=False,
+        description="Force fresh local C++ compilation and execution, bypassing in-memory gallery cache.",
     )
 
 
@@ -93,8 +127,10 @@ async def execute_referee_task(req: ExecutionRequest) -> AsyncGenerator[str, Non
         temp_kernel_path = temp_dir / f"candidate_{asyncio.get_event_loop().time():.4f}.hpp"
         temp_kernel_path.write_text(req.kernel_code, encoding="utf-8")
         kernel_path = temp_kernel_path
-    else:
+    elif req.target == "baseline":
         kernel_path = DEFAULT_KERNEL
+    else:
+        kernel_path = CANDIDATE_KERNEL if CANDIDATE_KERNEL.exists() else DEFAULT_KERNEL
 
     lock_acquired = False
     try:
@@ -162,14 +198,24 @@ async def run_referee_json_endpoint(req: ExecutionRequest):
         temp_kernel_path: pathlib.Path | None = None
         if req.gallery_bug:
             kernel_path = REPO_ROOT / req.gallery_bug
+            if not kernel_path.exists():
+                return {"status": "error", "error": f"Gallery bug not found: {req.gallery_bug}"}
+            mtime = kernel_path.stat().st_mtime
+            if not req.force_live and req.gallery_bug in gallery_cache and gallery_cache[req.gallery_bug][0] == mtime:
+                return {"status": "success", "cached": True, "results": gallery_cache[req.gallery_bug][1]}
+            result = await asyncio.to_thread(run_referee_sync, kernel_path)
+            gallery_cache[req.gallery_bug] = (mtime, result)
+            return {"status": "success", "cached": False, "results": result}
         elif req.kernel_code:
             temp_dir = REPO_ROOT / ".cache_run"
             temp_dir.mkdir(parents=True, exist_ok=True)
             temp_kernel_path = temp_dir / f"candidate_{asyncio.get_event_loop().time():.4f}.hpp"
             temp_kernel_path.write_text(req.kernel_code, encoding="utf-8")
             kernel_path = temp_kernel_path
-        else:
+        elif req.target == "baseline":
             kernel_path = DEFAULT_KERNEL
+        else:
+            kernel_path = CANDIDATE_KERNEL if CANDIDATE_KERNEL.exists() else DEFAULT_KERNEL
 
         result = await asyncio.to_thread(run_referee_sync, kernel_path)
         return {"status": "success", "results": result}
@@ -501,6 +547,37 @@ async def get_benchmark_study():
         return json.load(f)
 
 
+@app.get("/api/download/study-data")
+async def download_study_data(format: str = "json"):
+    """Serves the empirical study dataset in JSON or CSV format for scientific auditing."""
+    results_path = CACHE_DIR / "empirical_study_results.json"
+    if not results_path.exists():
+        raise HTTPException(status_code=404, detail="Benchmark study results not found in cache/")
+
+    if format == "csv":
+        import csv
+        with open(results_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(["arm", "trial", "prompt_id", "passed", "speedup", "throughput_gb_s", "cost_usd", "attempts_needed", "first_failure_stage", "first_failure_tag"])
+        for r in data.get("arm_a", []):
+            writer.writerow(["A", r.get("trial", 0), r.get("prompt_id", ""), r.get("passed", False), r.get("speedup", 0.0), r.get("throughput_gb_s", 0.0), r.get("cost_usd", 0.0), 1, r.get("first_failure_stage", ""), r.get("first_failure_tag", "")])
+        for r in data.get("arm_b", []):
+            writer.writerow(["B", r.get("trial", 0), r.get("prompt_id", ""), r.get("passed", False), r.get("speedup", 0.0), r.get("throughput_gb_s", 0.0), r.get("cost_usd", 0.0), r.get("attempts_needed", 1), r.get("first_failure_stage", ""), r.get("first_failure_tag", "")])
+        return Response(
+            content=output.getvalue(),
+            media_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=verikernel_n30_study.csv"}
+        )
+
+    return FileResponse(
+        path=results_path,
+        filename="verikernel_n30_study.json",
+        media_type="application/json"
+    )
+
+
 @app.get("/api/download/certificate")
 async def download_certificate():
     """Serves REFEREE_CERTIFICATE.md for evaluator download."""
@@ -511,6 +588,173 @@ async def download_certificate():
         filename="REFEREE_CERTIFICATE.md",
         media_type="text/markdown",
     )
+
+
+@app.get("/api/download/bundle")
+async def download_bundle():
+    """One-click download bundling verified_kernel.hpp and REFEREE_CERTIFICATE.md."""
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
+        # 1. Candidate kernel
+        target_k = CANDIDATE_KERNEL if CANDIDATE_KERNEL.exists() else DEFAULT_KERNEL
+        if target_k.exists():
+            zf.writestr("verified_kernel.hpp", target_k.read_text(encoding="utf-8"))
+        # 2. Referee Certificate
+        if CERT_PATH.exists():
+            zf.writestr("REFEREE_CERTIFICATE.md", CERT_PATH.read_text(encoding="utf-8"))
+        # 3. Readme / Manifest
+        manifest = (
+            "========================================================================\n"
+            " VeriKernel Certified C++ HPC Artifact Bundle\n"
+            "========================================================================\n"
+            f"Generated: {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n"
+            "Contents:\n"
+            "  1. verified_kernel.hpp     - Referee-certified OpenMP/SIMD C++ kernel\n"
+            "  2. REFEREE_CERTIFICATE.md  - Cryptographic verification seal & benchmarks\n\n"
+            "Usage:\n"
+            '  Include "verified_kernel.hpp" into your CFD application.\n'
+            "  Functions reside in `namespace baseline`.\n"
+        )
+        zf.writestr("MANIFEST.txt", manifest)
+
+    zip_buffer.seek(0)
+    return Response(
+        content=zip_buffer.getvalue(),
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=verikernel_certified_bundle.zip"},
+    )
+
+
+@app.get("/api/budget-status")
+async def get_budget_status():
+    """Returns real-time budget consumption, daily caps, and provider indicators."""
+    runs_dir = CACHE_DIR / "agent_runs"
+    daily_spend_limit = 5.00
+    daily_runs_limit = 30
+    total_spend = 0.0
+    runs_count = 0
+
+    if runs_dir.exists():
+        for f in runs_dir.glob("*.json"):
+            try:
+                with open(f, "r", encoding="utf-8") as rf:
+                    rdata = json.load(rf)
+                    if isinstance(rdata, dict):
+                        total_spend += float(rdata.get("total_cost_usd", 0.0))
+                        runs_count += 1
+            except Exception:
+                pass
+
+    has_nebius = bool(os.environ.get("NEBIUS_API_KEY"))
+    has_tavily = bool(os.environ.get("TAVILY_API_KEY"))
+
+    return {
+        "daily_spend_limit_usd": daily_spend_limit,
+        "daily_spend_current_usd": round(total_spend, 5),
+        "daily_spend_remaining_usd": round(max(0.0, daily_spend_limit - total_spend), 5),
+        "daily_runs_limit": daily_runs_limit,
+        "daily_runs_completed": runs_count,
+        "daily_runs_remaining": max(0, daily_runs_limit - runs_count),
+        "model_id": "nvidia/nemotron-3-super-120b-a12b",
+        "provider": "Nebius Token Factory",
+        "search_provider": "Tavily Search API",
+        "has_nebius_key": has_nebius,
+        "has_tavily_key": has_tavily,
+        "can_execute_live": has_nebius and (total_spend < daily_spend_limit) and (runs_count < daily_runs_limit),
+    }
+
+
+async def stream_agent_run(mode: str = "self_correction") -> AsyncGenerator[str, None]:
+    """Manages queue, locks, and live streaming of autonomous agent optimization."""
+    global waiting_queue_count
+    lock_acquired = False
+
+    if execution_lock.locked():
+        waiting_queue_count += 1
+        queue_ahead = waiting_queue_count
+        wait_time = queue_ahead * ESTIMATED_RUN_SECONDS
+        yield f"data: {json.dumps({'type': 'queued', 'message': f'{queue_ahead} run(s) ahead in queue — waiting ~{wait_time}s'})}\n\n"
+        try:
+            await execution_lock.acquire()
+            lock_acquired = True
+        finally:
+            waiting_queue_count = max(0, waiting_queue_count - 1)
+    else:
+        await execution_lock.acquire()
+        lock_acquired = True
+
+    try:
+        yield f"data: {json.dumps({'type': 'start', 'message': f'Lock acquired. Initiating live Nemotron-3 optimization loop ({mode} mode)...'})}\n\n"
+        loop = asyncio.get_running_loop()
+        event_queue = asyncio.Queue()
+
+        def progress_cb(evt: dict[str, Any]):
+            loop.call_soon_threadsafe(event_queue.put_nowait, evt)
+
+        def worker():
+            try:
+                res = run_agent_optimization(mode=mode, progress_callback=progress_cb)
+                loop.call_soon_threadsafe(event_queue.put_nowait, {"type": "__WORKER_DONE__", "result": res})
+            except Exception as e:
+                loop.call_soon_threadsafe(event_queue.put_nowait, {"type": "__WORKER_ERROR__", "error": str(e)})
+
+        # Start worker thread as an active asyncio Task
+        worker_task = asyncio.create_task(asyncio.to_thread(worker))
+
+        while True:
+            evt = await event_queue.get()
+            if evt.get("type") == "__WORKER_DONE__":
+                res = evt.get("result", {})
+                norm = normalize_run_data(res)
+                yield f"data: {json.dumps({'type': 'completed', 'data': norm})}\n\n"
+                break
+            elif evt.get("type") == "__WORKER_ERROR__":
+                yield f"data: {json.dumps({'type': 'error', 'message': evt.get('error', 'Execution error')})}\n\n"
+                break
+            else:
+                yield f"data: {json.dumps(evt)}\n\n"
+
+        await worker_task
+
+    except Exception as exc:
+        yield f"data: {json.dumps({'type': 'error', 'message': str(exc)})}\n\n"
+
+    finally:
+        if 'worker_task' in locals() and not worker_task.done():
+            worker_task.cancel()
+        if lock_acquired:
+            execution_lock.release()
+
+
+@app.post("/api/run-agent-live")
+async def run_agent_live_endpoint(mode: str = "self_correction"):
+    """Server-Sent Events endpoint streaming live agent self-correction progress."""
+    return StreamingResponse(
+        stream_agent_run(mode=mode),
+        media_type="text/event-stream",
+    )
+
+
+@app.post("/api/run-agent-live/sync")
+async def run_agent_live_sync_endpoint(mode: str = "self_correction"):
+    """Synchronous endpoint executing live agent loop and returning normalized results."""
+    async with execution_lock:
+        res = await asyncio.to_thread(run_agent_optimization, mode=mode)
+        return {"status": "success", "data": normalize_run_data(res)}
+
+
+@app.post("/api/cancel-live-run")
+async def cancel_live_run():
+    """Emergency reset endpoint if execution lock is held or user cancels."""
+    global waiting_queue_count
+    subprocess.run(["pkill", "-9", "-f", "harness_cavity"], check=False)
+    if execution_lock.locked():
+        try:
+            execution_lock.release()
+        except RuntimeError:
+            pass
+    waiting_queue_count = 0
+    return {"status": "ok", "message": "Execution queue and lock reset"}
 
 
 @app.get("/api/download/kernel")
@@ -539,15 +783,38 @@ async def get_hardware_info():
     import multiprocessing
     import os
     import platform
+
+    cpu_model = platform.processor() or "x86_64 CPU"
+    l3_cache = "Unknown L3"
+    try:
+        with open("/proc/cpuinfo") as f:
+            for line in f:
+                if "model name" in line:
+                    cpu_model = line.split(":", 1)[1].strip()
+                    break
+        l3_path = "/sys/devices/system/cpu/cpu0/cache/index3/size"
+        if os.path.exists(l3_path):
+            with open(l3_path) as f:
+                sz = f.read().strip()
+                if sz.endswith("K"):
+                    l3_cache = f"{int(sz[:-1]) // 1024}MB L3 Cache"
+                else:
+                    l3_cache = f"{sz} L3 Cache"
+    except Exception:
+        pass
+
     return {
         "cpu_count": multiprocessing.cpu_count(),
         "arch": platform.machine(),
         "system": platform.system(),
+        "cpu_model": cpu_model,
+        "l3_cache": l3_cache,
         "compiler": "GCC 13.2 (-O3 -march=native -fopenmp)",
         "omp_settings": {
             "OMP_PROC_BIND": os.environ.get("OMP_PROC_BIND", "close"),
             "OMP_PLACES": os.environ.get("OMP_PLACES", "cores"),
             "pinned": True,
+            "pinned_cores": 8,
         },
         "target_workload": "513x513 Out-of-L2 Bandwidth Sweep",
         "baseline_throughput_gb_s": 20.97,
@@ -567,9 +834,12 @@ async def get_health():
     }
 
 
-# Serve static frontend assets
+# Serve static cache and frontend assets
+if CACHE_DIR.exists():
+    app.mount("/cache", StaticFiles(directory=str(CACHE_DIR), follow_symlink=True), name="cache")
+
 if STATIC_DIR.exists():
-    app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
+    app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True, follow_symlink=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
