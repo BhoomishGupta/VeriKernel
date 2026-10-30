@@ -13,7 +13,7 @@ CAVITY_TARGET   := $(BUILD_DIR)/harness_cavity
 CAVITY_SRC      := harness_cavity.cpp
 CAVITY_BASELINE := baseline_kernel.hpp
 CAVITY_REF_DATA := reference_cavity_129.bin
-KERNEL_DEF      := -DKERNEL_HEADER="$(abspath $(CAVITY_BASELINE))"
+KERNEL_DEF      := -DKERNEL_HEADER='"'$(abspath $(CAVITY_BASELINE))'"'
 
 # Backward-compatibility aliases
 TARGET          := $(CAVITY_TARGET)
@@ -24,7 +24,7 @@ WAVE_TARGET     := $(BUILD_DIR)/harness_wave
 WAVE_SRC        := harness_wave.cpp
 WAVE_BASELINE   := wave_baseline.hpp
 
-.PHONY: all clean clean-all test test-local bench ref gallery wave test-wave bench-wave help
+.PHONY: all clean clean-all test test-local bench ref gallery wave test-wave bench-wave help static test-guards test-static preflight tunnel docker-build docker-run docker-stop
 
 # Default target compiles both computational harnesses
 all: $(CAVITY_TARGET) $(WAVE_TARGET)
@@ -126,9 +126,59 @@ app:
 	@echo "==> Launching VeriKernel Execution Server on http://0.0.0.0:8000..."
 	$(PYTHON) server.py
 
+# ==============================================================================
+# Step 9: 3-Tier Deployment & Availability Protection Targets
+# ==============================================================================
+
+# Build standalone static distribution for GitHub Pages & Netlify
+static:
+	@echo "==> Materializing standalone static distribution in static/..."
+	$(PYTHON) scripts/build_static.py
+
+# Test strict API guards (IP rate limiter, daily cap, cloud spend limit)
+test-guards:
+	@echo "==> Running VeriKernel API Guards and Availability Protection test suite..."
+	$(PYTHON) scripts/test_api_guards.py
+
+# Test zero-backend static fallback layer
+test-static: static
+	@echo "==> Verifying Zero-Backend Static Fallback on local HTTP server..."
+	$(PYTHON) scripts/verify_static_fallback.py
+
+# Pre-flight 3-tier readiness audit (verifies Tier 1 static, Tier 2 guards, Tier 3 physics)
+preflight: static
+	@echo "==> Running Step 9 Pre-Flight 3-Tier Readiness Audit..."
+	$(PYTHON) scripts/judge_preflight_check.py
+
+# Launch HTTPS Cloudflare tunnel for port 8000 (eliminates mixed content)
+tunnel:
+	@bash scripts/run_tunnel.sh
+
+# Build production Docker container
+docker-build:
+	@echo "==> Building production Docker image (verikernel:latest)..."
+	docker build -t verikernel:latest .
+
+# Run production Docker container with 8 pinned CPU cores and memory limits
+docker-run:
+	@echo "==> Running VeriKernel container on port 8000 (8 CPUs, 2GB RAM, OpenMP Pinned)..."
+	docker run -d --name verikernel-backend --rm \
+		-p 8000:8000 \
+		--cpus=8.0 \
+		--memory=2g \
+		--pids-limit=128 \
+		--env-file .env \
+		-v $(abspath cache):/app/cache \
+		verikernel:latest
+
+# Stop production Docker container
+docker-stop:
+	@echo "==> Stopping VeriKernel container..."
+	-docker stop verikernel-backend
+
 # Help menu
 help:
-	@echo "VeriKernel Build and Test Commands:"
+	@echo "VeriKernel Build, Test & Deployment Commands:"
 	@echo "  make app          - Launches the VeriKernel FastAPI execution server and lab dashboard"
 	@echo "  make              - Compiles both Cavity and Wave test harnesses into $(BUILD_DIR)/"
 	@echo "  make ref          - Generates $(CAVITY_REF_DATA) on 1 thread"
@@ -139,6 +189,14 @@ help:
 	@echo "  make wave         - Compiles the 2D Wave test harness into $(BUILD_DIR)/"
 	@echo "  make test-wave    - Runs 2D Wave multi-grid convergence & determinism check"
 	@echo "  make bench-wave   - Runs Stage 5 pinned memory bandwidth benchmark for Wave (512x512)"
+	@echo "  make static       - Builds standalone static distribution for GitHub Pages/Netlify"
+	@echo "  make test-guards  - Tests IP rate limiting (5 calls/hr), daily cap (30), spend & judge VIP"
+	@echo "  make test-static  - Validates zero-backend static fallback layer resolution"
+	@echo "  make preflight    - End-to-end audit of 3-Tier deployment (Static + Guards + Physics)"
+	@echo "  make tunnel       - Launches Cloudflare HTTPS tunnel for port 8000"
+	@echo "  make docker-build - Builds production Docker image (verikernel:latest)"
+	@echo "  make docker-run   - Runs containerized backend with 8 pinned cores on http://localhost:8000"
+	@echo "  make docker-stop  - Stops running container"
 	@echo "  make clean        - Deletes compiled binaries and temporary test files"
 	@echo "  make clean-all    - Deletes binaries AND $(CAVITY_REF_DATA)"
 

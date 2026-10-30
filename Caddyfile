@@ -1,0 +1,31 @@
+# ==============================================================================
+# VeriKernel: Caddy Automated HTTPS Reverse Proxy
+# Provides zero-configuration TLS for judges connecting from HTTPS frontends
+# (e.g. GitHub Pages / Netlify) to the Dockerized multi-core VM backend.
+#
+# Usage:
+#   1. Replace YOUR_VM_IP with your public virtual machine IP address
+#      or set the DOMAIN environment variable: export DOMAIN=api.YOUR_VM_IP.nip.io
+#   2. Run: caddy run --config Caddyfile
+#   Let's Encrypt will automatically issue a valid TLS certificate.
+# ==============================================================================
+
+{$DOMAIN:api.localhost.nip.io} {
+    encode gzip zstd
+
+    reverse_proxy 127.0.0.1:8000 {
+        header_up Host {upstream_hostport}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    header {
+        Access-Control-Allow-Origin *
+        Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization, X-Forwarded-For, X-Judge-Token"
+        X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+}

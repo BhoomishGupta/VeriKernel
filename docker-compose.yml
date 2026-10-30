@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  verikernel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: verikernel:latest
+    container_name: verikernel-backend
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 2g
+    cpus: 8.0
+    ports:
+      - "8000:8000"
+    environment:
+      - NEBIUS_API_KEY=${NEBIUS_API_KEY}
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - JUDGE_SECRET_TOKEN=${JUDGE_SECRET_TOKEN:-verikernel-judge-2026}
+      - OMP_PROC_BIND=close
+      - OMP_PLACES=cores
+      - OMP_NUM_THREADS=8
+      - DAILY_SPEND_LIMIT_USD=5.00
+      - DAILY_RUNS_LIMIT=30
+      - IP_HOURLY_LIMIT=5
+    volumes:
+      - ./cache:/app/cache
+    tmpfs:
+      - /tmp:rw,size=256m,mode=1777
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s

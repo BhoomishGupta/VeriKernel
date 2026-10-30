@@ -1,0 +1,11 @@
+.git
+.github
+.venv
+__pycache__
+*.pyc
+*.o
+*.d
+build/
+.cache_run/
+.vscode/
+*.log

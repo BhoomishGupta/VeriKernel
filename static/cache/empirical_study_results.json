@@ -1,0 +1,2928 @@
+{
+  "arm_a": [
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 50.86,
+      "tokens": {
+        "prompt": 1387,
+        "completion": 9594,
+        "total": 10981
+      },
+      "cost_usd": 0.00905,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:31:39: error: invalid controlling predicate\n   31 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:57:35: error: invalid controlling predicate\n   57 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:31:39: error: invalid controlling predicate\n   31 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:57:35: error: invalid controlling predicate\n   57 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 43.52,
+      "tokens": {
+        "prompt": 1387,
+        "completion": 8006,
+        "total": 9393
+      },
+      "cost_usd": 0.00762,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 203.94 GB/s (Median latency: 6.15 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 203.94,
+      "speedup": 9.73,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 41.13,
+      "tokens": {
+        "prompt": 1387,
+        "completion": 8662,
+        "total": 10049
+      },
+      "cost_usd": 0.00821,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 242.68 GB/s (Median latency: 5.16 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 242.68,
+      "speedup": 11.57,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 26.72,
+      "tokens": {
+        "prompt": 1387,
+        "completion": 6343,
+        "total": 7730
+      },
+      "cost_usd": 0.00612,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:39: error: invalid controlling predicate\n   61 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:39: error: invalid controlling predicate\n   61 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 15.23,
+      "tokens": {
+        "prompt": 1387,
+        "completion": 2870,
+        "total": 4257
+      },
+      "cost_usd": 0.003,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:39: error: invalid controlling predicate\n   21 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:43: error: invalid controlling predicate\n   22 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:34:39: error: invalid controlling predicate\n   34 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:35:43: error: invalid controlling predicate\n   35 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:62:17: error: not enough for loops to collapse\n   62 |         #pragma omp simd\n      |                 ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:64:39: error: \u2018i\u2019 was not declared in this scope\n   64 |             const std::size_t c = idx(i, j, n);\n      |                                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:63:39: error: invalid controlling predicate\n   63 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:39: error: invalid controlling predicate\n   21 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:43: error: invalid controlling predicate\n   22 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:34:39: error: invalid controlling predicate\n   34 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:35:43: error: invalid controlling predicate\n   35 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:62:17: error: not enough for loops to collapse\n   62 |         #pragma omp simd\n      |                 ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:64:39: error: \u2018i\u2019 was not declared in this scope\n   64 |             const std::size_t c = idx(i, j, n);\n      |                                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:63:39: error: invalid controlling predicate\n   63 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 45.93,
+      "tokens": {
+        "prompt": 1387,
+        "completion": 10637,
+        "total": 12024
+      },
+      "cost_usd": 0.00999,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:39: error: invalid controlling predicate\n   21 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:59: error: invalid controlling predicate\n   22 |             for (std::size_t j = 1 + ((i + 1) % 2); j + 1 < n; j += 2) {\n      |                                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:53: error: invalid controlling predicate\n   33 |             for (std::size_t j = 1 + (i % 2); j + 1 < n; j += 2) {\n      |                                               ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:63:13: error: \u2018__m25d\u2019 was not declared in this scope; did you mean \u2018__m256d\u2019?\n   63 |             __m25d psi_jm1 = _mm256_loadu_pd(psi + idx(i, j-1, n));\n      |             ^~~~~~\n      |             __m256d\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:64:19: error: expected \u2018;\u2019 before \u2018psi_jp1\u2019\n   64 |             __m25d psi_jp1 = _mm256_loadu_pd(psi + idx(i, j+1, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:66:19: error: expected \u2018;\u2019 before \u2018u\u2019\n   66 |             __m25d u = _mm256_sub_pd(psi_jp1, psi_jm1);\n      |                   ^~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:67:13: error: \u2018u\u2019 was not declared in this scope\n   67 |             u = _mm256_mul_pd(u, _mm256_set1_pd(inv_2h));\n      |             ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:70:19: error: expected \u2018;\u2019 before \u2018psi_im1\u2019\n   70 |             __m25d psi_im1 = _mm256_loadu_pd(psi + idx(i-1, j, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:71:19: error: expected \u2018;\u2019 before \u2018psi_ip1\u2019\n   71 |             __m25d psi_ip1 = _mm256_loadu_pd(psi + idx(i+1, j, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:73:19: error: expected \u2018;\u2019 before \u2018v\u2019\n   73 |             __m25d v = _mm256_sub_pd(psi_ip1, psi_im1);\n      |                   ^~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:74:13: error: \u2018v\u2019 was not declared in this scope\n   74 |             v = _mm256_mul_pd(v, _mm256_set1_pd(-inv_2h));\n      |             ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:77:19: error: expected \u2018;\u2019 before \u2018omg_im1\u2019\n   77 |             __m25d omg_im1 = _mm256_loadu_pd(omega + idx(i-1, j, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:78:19: error: expected \u2018;\u2019 before \u2018omg_ip1\u2019\n   78 |             __m25d omg_ip1 = _mm256_loadu_pd(omega + idx(i+1, j, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:80:19: error: expected \u2018;\u2019 before \u2018domega_dx\u2019\n   80 |             __m25d domega_dx = _mm256_sub_pd(omg_ip1, omg_im1);\n      |                   ^~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:81:13: error: \u2018domega_dx\u2019 was not declared in this scope\n   81 |             domega_dx = _mm256_mul_pd(domega_dx, _mm256_set1_pd(inv_2h));\n      |             ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:84:19: error: expected \u2018;\u2019 before \u2018omg_jm1\u2019\n   84 |             __m25d omg_jm1 = _mm256_loadu_pd(omega + idx(i, j-1, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:85:19: error: expected \u2018;\u2019 before \u2018omg_jp1\u2019\n   85 |             __m25d omg_jp1 = _mm256_loadu_pd(omega + idx(i, j+1, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:87:19: error: expected \u2018;\u2019 before \u2018domega_dy\u2019\n   87 |             __m25d domega_dy = _mm256_sub_pd(omg_jp1, omg_jm1);\n      |                   ^~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:88:13: error: \u2018domega_dy\u2019 was not declared in this scope\n   88 |             domega_dy = _mm256_mul_pd(domega_dy, _mm256_set1_pd(inv_2h));\n      |             ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:91:19: error: expected \u2018;\u2019 before \u2018advection\u2019\n   91 |             __m25d advection = _mm256_add_pd(\n      |                   ^~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:97:19: error: expected \u2018;\u2019 before \u2018omg_c\u2019\n   97 |             __m25d omg_c = _mm256_loadu_pd(omega + idx(i, j, n));\n      |                   ^~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:98:19: error: expected \u2018;\u2019 before \u2018omg_l\u2019\n   98 |             __m25d omg_l = _mm256_loadu_pd(omega + idx(i, j-1, n));\n      |                   ^~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:99:19: error: expected \u2018;\u2019 before \u2018omg_r\u2019\n   99 |             __m25d omg_r = _mm256_loadu_pd(omega + idx(i, j+1, n));\n      |                   ^~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:100:19: error: expected \u2018;\u2019 before \u2018omg_u\u2019\n  100 |             __m25d omg_u = _mm256_loadu_pd(omega + idx(i-1, j, n));\n      |                   ^~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:101:19: error: expected \u2018;\u2019 before \u2018omg_d\u2019\n  101 |             __m25d omg_d = _mm256_loadu_pd(omega + idx(i+1, j, n));\n      |                   ^~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:103:19: error: expected \u2018;\u2019 before \u2018laplacian\u2019\n  103 |             __m25d laplacian = _mm256_add_pd(\n      |                   ^~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:107:13: error: \u2018laplacian\u2019 was not declared in this scope\n  107 |             laplacian = _mm256_sub_pd(laplacian, _mm256_mul_pd(omg_c, _mm256_set1_pd(4.0)));\n      |             ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:107:64: error: \u2018omg_c\u2019 was not declared in this scope\n  107 |             laplacian = _mm256_sub_pd(laplacian, _mm256_mul_pd(omg_c, _mm256_set1_pd(4.0)));\n      |                                                                ^~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:111:19: error: expected \u2018;\u2019 before \u2018omega_val\u2019\n  111 |             __m25d omega_val = _mm256_loadu_pd(omega + idx(i, j, n));\n      |                   ^~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:112:19: error: expected \u2018;\u2019 before \u2018omega_new_val\u2019\n  112 |             __m25d omega_new_val = _mm256_add_pd(\n      |                   ^~~~~~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:122:56: error: \u2018omega_new_val\u2019 was not declared in this scope; did you mean \u2018omega_new\u2019?\n  122 |             _mm256_storeu_pd(omega_new + idx(i, j, n), omega_new_val);\n      |                                                        ^~~~~~~~~~~~~\n      |                                                        omega_new\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:58:35: error: invalid controlling predicate\n   58 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:39: error: invalid controlling predicate\n   21 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:59: error: invalid controlling predicate\n   22 |             for (std::size_t j = 1 + ((i + 1) % 2); j + 1 < n; j += 2) {\n      |                                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:53: error: invalid controlling predicate\n   33 |             for (std::size_t j = 1 + (i % 2); j + 1 < n; j += 2) {\n      |                                               ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:63:13: error: \u2018__m25d\u2019 was not declared in this scope; did you mean \u2018__m256d\u2019?\n   63 |             __m25d psi_jm1 = _mm256_loadu_pd(psi + idx(i, j-1, n));\n      |             ^~~~~~\n      |             __m256d\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:64:19: error: expected \u2018;\u2019 before \u2018psi_jp1\u2019\n   64 |             __m25d psi_jp1 = _mm256_loadu_pd(psi + idx(i, j+1, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:66:19: error: expected \u2018;\u2019 before \u2018u\u2019\n   66 |             __m25d u = _mm256_sub_pd(psi_jp1, psi_jm1);\n      |                   ^~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:67:13: error: \u2018u\u2019 was not declared in this scope\n   67 |             u = _mm256_mul_pd(u, _mm256_set1_pd(inv_2h));\n      |             ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:70:19: error: expected \u2018;\u2019 before \u2018psi_im1\u2019\n   70 |             __m25d psi_im1 = _mm256_loadu_pd(psi + idx(i-1, j, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:71:19: error: expected \u2018;\u2019 before \u2018psi_ip1\u2019\n   71 |             __m25d psi_ip1 = _mm256_loadu_pd(psi + idx(i+1, j, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:73:19: error: expected \u2018;\u2019 before \u2018v\u2019\n   73 |             __m25d v = _mm256_sub_pd(psi_ip1, psi_im1);\n      |                   ^~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:74:13: error: \u2018v\u2019 was not declared in this scope\n   74 |             v = _mm256_mul_pd(v, _mm256_set1_pd(-inv_2h));\n      |             ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:77:19: error: expected \u2018;\u2019 before \u2018omg_im1\u2019\n   77 |             __m25d omg_im1 = _mm256_loadu_pd(omega + idx(i-1, j, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:78:19: error: expected \u2018;\u2019 before \u2018omg_ip1\u2019\n   78 |             __m25d omg_ip1 = _mm256_loadu_pd(omega + idx(i+1, j, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:80:19: error: expected \u2018;\u2019 before \u2018domega_dx\u2019\n   80 |             __m25d domega_dx = _mm256_sub_pd(omg_ip1, omg_im1);\n      |                   ^~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:81:13: error: \u2018domega_dx\u2019 was not declared in this scope\n   81 |             domega_dx = _mm256_mul_pd(domega_dx, _mm256_set1_pd(inv_2h));\n      |             ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:84:19: error: expected \u2018;\u2019 before \u2018omg_jm1\u2019\n   84 |             __m25d omg_jm1 = _mm256_loadu_pd(omega + idx(i, j-1, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:85:19: error: expected \u2018;\u2019 before \u2018omg_jp1\u2019\n   85 |             __m25d omg_jp1 = _mm256_loadu_pd(omega + idx(i, j+1, n));\n      |                   ^~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:87:19: error: expected \u2018;\u2019 before \u2018domega_dy\u2019\n   87 |             __m25d domega_dy = _mm256_sub_pd(omg_jp1, omg_jm1);\n      |                   ^~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:88:13: error: \u2018domega_dy\u2019 was not declared in this scope\n   88 |             domega_dy = _mm256_mul_pd(domega_dy, _mm256_set1_pd(inv_2h));\n      |             ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:91:19: error: expected \u2018;\u2019 before \u2018advection\u2019\n   91 |             __m25d advection = _mm256_add_pd(\n      |                   ^~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:97:19: error: expected \u2018;\u2019 before \u2018omg_c\u2019\n   97 |             __m25d omg_c = _mm256_loadu_pd(omega + idx(i, j, n));\n      |                   ^~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:98:19: error: expected \u2018;\u2019 before \u2018omg_l\u2019\n   98 |             __m25d omg_l = _mm256_loadu_pd(omega + idx(i, j-1, n));\n      |                   ^~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:99:19: error: expected \u2018;\u2019 before \u2018omg_r\u2019\n   99 |             __m25d omg_r = _mm256_loadu_pd(omega + idx(i, j+1, n));\n      |                   ^~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:100:19: error: expected \u2018;\u2019 before \u2018omg_u\u2019\n  100 |             __m25d omg_u = _mm256_loadu_pd(omega + idx(i-1, j, n));\n      |                   ^~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:101:19: error: expected \u2018;\u2019 before \u2018omg_d\u2019\n  101 |             __m25d omg_d = _mm256_loadu_pd(omega + idx(i+1, j, n));\n      |                   ^~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:103:19: error: expected \u2018;\u2019 before \u2018laplacian\u2019\n  103 |             __m25d laplacian = _mm256_add_pd(\n      |                   ^~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:107:13: error: \u2018laplacian\u2019 was not declared in this scope\n  107 |             laplacian = _mm256_sub_pd(laplacian, _mm256_mul_pd(omg_c, _mm256_set1_pd(4.0)));\n      |             ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:107:64: error: \u2018omg_c\u2019 was not declared in this scope\n  107 |             laplacian = _mm256_sub_pd(laplacian, _mm256_mul_pd(omg_c, _mm256_set1_pd(4.0)));\n      |                                                                ^~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:111:19: error: expected \u2018;\u2019 before \u2018omega_val\u2019\n  111 |             __m25d omega_val = _mm256_loadu_pd(omega + idx(i, j, n));\n      |                   ^~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:112:19: error: expected \u2018;\u2019 before \u2018omega_new_val\u2019\n  112 |             __m25d omega_new_val = _mm256_add_pd(\n      |                   ^~~~~~~~~~~~~~\n      |                   ;\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:122:56: error: \u2018omega_new_val\u2019 was not declared in this scope; did you mean \u2018omega_new\u2019?\n  122 |             _mm256_storeu_pd(omega_new + idx(i, j, n), omega_new_val);\n      |                                                        ^~~~~~~~~~~~~\n      |                                                        omega_new\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:58:35: error: invalid controlling predicate\n   58 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 13.67,
+      "tokens": {
+        "prompt": 1387,
+        "completion": 3651,
+        "total": 5038
+      },
+      "cost_usd": 0.0037,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:26:39: error: invalid controlling predicate\n   26 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:27:43: error: invalid controlling predicate\n   27 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:40:39: error: invalid controlling predicate\n   40 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:41:43: error: invalid controlling predicate\n   41 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:69:39: error: invalid controlling predicate\n   69 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:67:35: error: invalid controlling predicate\n   67 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:26:39: error: invalid controlling predicate\n   26 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:27:43: error: invalid controlling predicate\n   27 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:40:39: error: invalid controlling predicate\n   40 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:41:43: error: invalid controlling predicate\n   41 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:69:39: error: invalid controlling predicate\n   69 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:67:35: error: invalid controlling predicate\n   67 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 29.57,
+      "tokens": {
+        "prompt": 1387,
+        "completion": 6210,
+        "total": 7597
+      },
+      "cost_usd": 0.00601,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:39: error: invalid controlling predicate\n   61 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:39: error: invalid controlling predicate\n   61 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 37.71,
+      "tokens": {
+        "prompt": 1387,
+        "completion": 8900,
+        "total": 10287
+      },
+      "cost_usd": 0.00843,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:13: error: not enough for loops to collapse\n   21 |             std::size_t j_start = (i % 2 == 0) ? 2 : 1;\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:36: error: \u2018i\u2019 was not declared in this scope\n   21 |             std::size_t j_start = (i % 2 == 0) ? 2 : 1;\n      |                                    ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:13: error: not enough for loops to collapse\n   33 |             std::size_t j_start = (i % 2 == 0) ? 1 : 2;\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:36: error: \u2018i\u2019 was not declared in this scope\n   33 |             std::size_t j_start = (i % 2 == 0) ? 1 : 2;\n      |                                    ^\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:13: error: not enough for loops to collapse\n   21 |             std::size_t j_start = (i % 2 == 0) ? 2 : 1;\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:36: error: \u2018i\u2019 was not declared in this scope\n   21 |             std::size_t j_start = (i % 2 == 0) ? 2 : 1;\n      |                                    ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:13: error: not enough for loops to collapse\n   33 |             std::size_t j_start = (i % 2 == 0) ? 1 : 2;\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:36: error: \u2018i\u2019 was not declared in this scope\n   33 |             std::size_t j_start = (i % 2 == 0) ? 1 : 2;\n      |                                    ^\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 22.27,
+      "tokens": {
+        "prompt": 1387,
+        "completion": 5150,
+        "total": 6537
+      },
+      "cost_usd": 0.00505,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:31:39: error: invalid controlling predicate\n   31 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:39: error: invalid controlling predicate\n   59 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:57:35: error: invalid controlling predicate\n   57 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:31:39: error: invalid controlling predicate\n   31 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:39: error: invalid controlling predicate\n   59 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:57:35: error: invalid controlling predicate\n   57 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 9.14,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 2062,
+        "total": 3452
+      },
+      "cost_usd": 0.00227,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:17: error: not enough for loops to collapse\n   21 |                 const std::size_t j_start = 1 + ((i + parity) & 1);\n      |                 ^~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:51: error: \u2018i\u2019 was not declared in this scope\n   21 |                 const std::size_t j_start = 1 + ((i + parity) & 1);\n      |                                                   ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:48:17: error: not enough for loops to collapse\n   48 |         #pragma omp simd\n      |                 ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:50:39: error: \u2018i\u2019 was not declared in this scope\n   50 |             const std::size_t c = idx(i, j, n);\n      |                                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:49:39: error: invalid controlling predicate\n   49 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:17: error: not enough for loops to collapse\n   21 |                 const std::size_t j_start = 1 + ((i + parity) & 1);\n      |                 ^~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:51: error: \u2018i\u2019 was not declared in this scope\n   21 |                 const std::size_t j_start = 1 + ((i + parity) & 1);\n      |                                                   ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:48:17: error: not enough for loops to collapse\n   48 |         #pragma omp simd\n      |                 ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:50:39: error: \u2018i\u2019 was not declared in this scope\n   50 |             const std::size_t c = idx(i, j, n);\n      |                                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:49:39: error: invalid controlling predicate\n   49 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 10.97,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 2204,
+        "total": 3594
+      },
+      "cost_usd": 0.0024,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:25:13: error: not enough for loops to collapse\n   25 |             std::size_t j_start = ((i & 1) == 0) ? 1 : 2; // ensure (i+j) even\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:25:37: error: \u2018i\u2019 was not declared in this scope\n   25 |             std::size_t j_start = ((i & 1) == 0) ? 1 : 2; // ensure (i+j) even\n      |                                     ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:38:13: error: not enough for loops to collapse\n   38 |             std::size_t j_start = ((i & 1) == 0) ? 2 : 1; // ensure (i+j) odd\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:38:37: error: \u2018i\u2019 was not declared in this scope\n   38 |             std::size_t j_start = ((i & 1) == 0) ? 2 : 1; // ensure (i+j) odd\n      |                                     ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:63:35: error: invalid controlling predicate\n   63 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:64:39: error: invalid controlling predicate\n   64 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:25:13: error: not enough for loops to collapse\n   25 |             std::size_t j_start = ((i & 1) == 0) ? 1 : 2; // ensure (i+j) even\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:25:37: error: \u2018i\u2019 was not declared in this scope\n   25 |             std::size_t j_start = ((i & 1) == 0) ? 1 : 2; // ensure (i+j) even\n      |                                     ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:38:13: error: not enough for loops to collapse\n   38 |             std::size_t j_start = ((i & 1) == 0) ? 2 : 1; // ensure (i+j) odd\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:38:37: error: \u2018i\u2019 was not declared in this scope\n   38 |             std::size_t j_start = ((i & 1) == 0) ? 2 : 1; // ensure (i+j) odd\n      |                                     ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:63:35: error: invalid controlling predicate\n   63 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:64:39: error: invalid controlling predicate\n   64 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 32.51,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 6240,
+        "total": 7630
+      },
+      "cost_usd": 0.00603,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:60:32: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   60 |         double* psi_curr = psi + i * n;\n      |                            ~~~~^~~~~~~\n      |                                |\n      |                                const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:32: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   61 |         double* psi_up   = psi + (i + 1) * n;\n      |                            ~~~~^~~~~~~~~~~~~\n      |                                |\n      |                                const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:62:32: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   62 |         double* psi_down = psi + (i - 1) * n;\n      |                            ~~~~^~~~~~~~~~~~~\n      |                                |\n      |                                const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:64:36: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   64 |         double* omega_curr = omega + i * n;\n      |                              ~~~~~~^~~~~~~\n      |                                    |\n      |                                    const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:65:36: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   65 |         double* omega_up   = omega + (i + 1) * n;\n      |                              ~~~~~~^~~~~~~~~~~~~\n      |                                    |\n      |                                    const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:66:36: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   66 |         double* omega_down = omega + (i - 1) * n;\n      |                              ~~~~~~^~~~~~~~~~~~~\n      |                                    |\n      |                                    const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:71:39: error: invalid controlling predicate\n   71 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:60:32: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   60 |         double* psi_curr = psi + i * n;\n      |                            ~~~~^~~~~~~\n      |                                |\n      |                                const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:32: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   61 |         double* psi_up   = psi + (i + 1) * n;\n      |                            ~~~~^~~~~~~~~~~~~\n      |                                |\n      |                                const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:62:32: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   62 |         double* psi_down = psi + (i - 1) * n;\n      |                            ~~~~^~~~~~~~~~~~~\n      |                                |\n      |                                const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:64:36: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   64 |         double* omega_curr = omega + i * n;\n      |                              ~~~~~~^~~~~~~\n      |                                    |\n      |                                    const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:65:36: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   65 |         double* omega_up   = omega + (i + 1) * n;\n      |                              ~~~~~~^~~~~~~~~~~~~\n      |                                    |\n      |                                    const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:66:36: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   66 |         double* omega_down = omega + (i - 1) * n;\n      |                              ~~~~~~^~~~~~~~~~~~~\n      |                                    |\n      |                                    const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:71:39: error: invalid controlling predicate\n   71 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 22.91,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 5091,
+        "total": 6481
+      },
+      "cost_usd": 0.005,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": false,
+          "status_tag": "PHYSICS_FAIL",
+          "detail": "Failed: relative_l2=9.90e-01 (req <= 1e-5), Ghia U RMSE=0.3884 (req <= 0.05), steps=15000"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 234.54 GB/s (Median latency: 5.34 ms)"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 4",
+      "first_failure_tag": "PHYSICS_FAIL",
+      "first_failure_detail": "Failed: relative_l2=9.90e-01 (req <= 1e-5), Ghia U RMSE=0.3884 (req <= 0.05), steps=15000",
+      "throughput_gb_s": 234.54,
+      "speedup": 11.18,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 30.34,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 5864,
+        "total": 7254
+      },
+      "cost_usd": 0.00569,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:43: error: invalid controlling predicate\n   21 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:43: error: invalid controlling predicate\n   33 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:60:39: error: invalid controlling predicate\n   60 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:43: error: invalid controlling predicate\n   21 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:43: error: invalid controlling predicate\n   33 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:60:39: error: invalid controlling predicate\n   60 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 19.38,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 3966,
+        "total": 5356
+      },
+      "cost_usd": 0.00399,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:43: error: invalid controlling predicate\n   22 |             for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:51:17: error: not enough for loops to collapse\n   51 |         #pragma omp simd\n      |                 ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:53:39: error: \u2018i\u2019 was not declared in this scope\n   53 |             const std::size_t c = idx(i, j, n);\n      |                                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:52:39: error: invalid controlling predicate\n   52 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:43: error: invalid controlling predicate\n   22 |             for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:51:17: error: not enough for loops to collapse\n   51 |         #pragma omp simd\n      |                 ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:53:39: error: \u2018i\u2019 was not declared in this scope\n   53 |             const std::size_t c = idx(i, j, n);\n      |                                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:52:39: error: invalid controlling predicate\n   52 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 25.22,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 5454,
+        "total": 6844
+      },
+      "cost_usd": 0.00533,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:13: error: not enough for loops to collapse\n   21 |             std::size_t j_start = 1 + ((i & 1) ^ 1); // match parity of i\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:41: error: \u2018i\u2019 was not declared in this scope\n   21 |             std::size_t j_start = 1 + ((i & 1) ^ 1); // match parity of i\n      |                                         ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:13: error: not enough for loops to collapse\n   32 |             std::size_t j_start = 1 + (i & 1); // opposite parity of i\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:40: error: \u2018i\u2019 was not declared in this scope\n   32 |             std::size_t j_start = 1 + (i & 1); // opposite parity of i\n      |                                        ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:57:39: error: invalid controlling predicate\n   57 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:55:35: error: invalid controlling predicate\n   55 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:13: error: not enough for loops to collapse\n   21 |             std::size_t j_start = 1 + ((i & 1) ^ 1); // match parity of i\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:41: error: \u2018i\u2019 was not declared in this scope\n   21 |             std::size_t j_start = 1 + ((i & 1) ^ 1); // match parity of i\n      |                                         ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:13: error: not enough for loops to collapse\n   32 |             std::size_t j_start = 1 + (i & 1); // opposite parity of i\n      |             ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:40: error: \u2018i\u2019 was not declared in this scope\n   32 |             std::size_t j_start = 1 + (i & 1); // opposite parity of i\n      |                                        ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:57:39: error: invalid controlling predicate\n   57 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:55:35: error: invalid controlling predicate\n   55 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 50.51,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 10249,
+        "total": 11639
+      },
+      "cost_usd": 0.00964,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:39: error: invalid controlling predicate\n   33 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:35: error: invalid controlling predicate\n   61 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:39: error: invalid controlling predicate\n   33 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:35: error: invalid controlling predicate\n   61 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 55.91,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 11018,
+        "total": 12408
+      },
+      "cost_usd": 0.01033,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:32:39: error: invalid controlling predicate\n   32 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 24.83,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 3638,
+        "total": 5028
+      },
+      "cost_usd": 0.00369,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:39: error: invalid controlling predicate\n   21 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:43: error: invalid controlling predicate\n   22 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:39: error: invalid controlling predicate\n   33 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:34:43: error: invalid controlling predicate\n   34 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:60:35: error: invalid controlling predicate\n   60 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:39: error: invalid controlling predicate\n   61 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:21:39: error: invalid controlling predicate\n   21 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:43: error: invalid controlling predicate\n   22 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:39: error: invalid controlling predicate\n   33 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:34:43: error: invalid controlling predicate\n   34 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:60:35: error: invalid controlling predicate\n   60 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:39: error: invalid controlling predicate\n   61 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 11.85,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 1472,
+        "total": 2860
+      },
+      "cost_usd": 0.00174,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:28:53: error: invalid controlling predicate\n   28 |                 for (std::size_t j = j_start; j + 1 < n; j += 2) {\n      |                                               ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:24:43: error: invalid controlling predicate\n   24 |             for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:55:39: error: invalid controlling predicate\n   55 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:53:35: error: invalid controlling predicate\n   53 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:28:53: error: invalid controlling predicate\n   28 |                 for (std::size_t j = j_start; j + 1 < n; j += 2) {\n      |                                               ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:24:43: error: invalid controlling predicate\n   24 |             for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:55:39: error: invalid controlling predicate\n   55 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:53:35: error: invalid controlling predicate\n   53 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 34.62,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 7609,
+        "total": 8997
+      },
+      "cost_usd": 0.00726,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:19:39: error: invalid controlling predicate\n   19 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:31:39: error: invalid controlling predicate\n   31 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:39: error: invalid controlling predicate\n   61 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:19:39: error: invalid controlling predicate\n   19 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:31:39: error: invalid controlling predicate\n   31 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:39: error: invalid controlling predicate\n   61 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:59:35: error: invalid controlling predicate\n   59 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 32.82,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 5415,
+        "total": 6803
+      },
+      "cost_usd": 0.00529,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:17: error: not enough for loops to collapse\n   22 |                 const std::size_t parity = (color + (i & 1)) & 1;\n      |                 ^~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:54: error: \u2018i\u2019 was not declared in this scope\n   22 |                 const std::size_t parity = (color + (i & 1)) & 1;\n      |                                                      ^\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:17: error: not enough for loops to collapse\n   22 |                 const std::size_t parity = (color + (i & 1)) & 1;\n      |                 ^~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:22:54: error: \u2018i\u2019 was not declared in this scope\n   22 |                 const std::size_t parity = (color + (i & 1)) & 1;\n      |                                                      ^\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 34.23,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 6812,
+        "total": 8200
+      },
+      "cost_usd": 0.00655,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 243.10 GB/s (Median latency: 5.16 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 243.1,
+      "speedup": 11.59,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 23.17,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 2613,
+        "total": 4001
+      },
+      "cost_usd": 0.00277,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:24:21: error: not enough for loops to collapse\n   24 |             #pragma omp simd\n      |                     ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:26:23: error: \u2018i\u2019 was not declared in this scope\n   26 |                 if (((i + j) & 1) == 0) {\n      |                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:25:43: error: invalid controlling predicate\n   25 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:38:21: error: not enough for loops to collapse\n   38 |             #pragma omp simd\n      |                     ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:40:23: error: \u2018i\u2019 was not declared in this scope\n   40 |                 if (((i + j) & 1) == 1) {\n      |                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:39:43: error: invalid controlling predicate\n   39 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:66:17: error: not enough for loops to collapse\n   66 |         #pragma omp simd\n      |                 ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:68:39: error: \u2018i\u2019 was not declared in this scope\n   68 |             const std::size_t c = idx(i, j, n);\n      |                                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:67:39: error: invalid controlling predicate\n   67 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:24:21: error: not enough for loops to collapse\n   24 |             #pragma omp simd\n      |                     ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:26:23: error: \u2018i\u2019 was not declared in this scope\n   26 |                 if (((i + j) & 1) == 0) {\n      |                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:25:43: error: invalid controlling predicate\n   25 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:38:21: error: not enough for loops to collapse\n   38 |             #pragma omp simd\n      |                     ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:40:23: error: \u2018i\u2019 was not declared in this scope\n   40 |                 if (((i + j) & 1) == 1) {\n      |                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:39:43: error: invalid controlling predicate\n   39 |             for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:66:17: error: not enough for loops to collapse\n   66 |         #pragma omp simd\n      |                 ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:68:39: error: \u2018i\u2019 was not declared in this scope\n   68 |             const std::size_t c = idx(i, j, n);\n      |                                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:67:39: error: invalid controlling predicate\n   67 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 15.46,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 2618,
+        "total": 4006
+      },
+      "cost_usd": 0.00277,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 202.28 GB/s (Median latency: 6.20 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 202.28,
+      "speedup": 9.65,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 115.19,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 16384,
+        "total": 17772
+      },
+      "cost_usd": 0.01516,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:46: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   33 |                 double* base_omega_i = omega + i * n;\n      |                                        ~~~~~~^~~~~~~\n      |                                              |\n      |                                              const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:23:39: error: invalid controlling predicate\n   23 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:73:46: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   73 |                 double* base_omega_i = omega + i * n;\n      |                                        ~~~~~~^~~~~~~\n      |                                              |\n      |                                              const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:19:1: error: expected unqualified-id before \u2018namespace\u2019\n   19 | namespace {\n      | ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:321:46: error: a function-definition is not allowed here before \u2018{\u2019 token\n  321 | int main(const int argc, const char* argv[]) {\n      |                                              ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:427:2: error: expected \u2018}\u2019 at end of input\n  427 | }\n      |  ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:67:45: note: to match this \u2018{\u2019\n   67 |             for (; j <= j_end; j += VL * 2) {\n      |                                             ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:75:25: warning: unused variable \u2018psi_north\u2019 [-Wunused-variable]\n   75 |                 __m256d psi_north = _mm256_i64gather_pd(psi + (i-1)*n, idx_j, 1);\n      |                         ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:76:25: warning: unused variable \u2018psi_south\u2019 [-Wunused-variable]\n   76 |                 __m256d psi_south = _mm256_i64gather_pd(psi + (i+1)*n, idx_j, 1);\n      |                         ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:77:25: warning: unused variable \u2018psi_west\u2019 [-Wunused-variable]\n   77 |                 __m256d psi_west = _mm256_i64gather_pd(base_psi_i, idx_west, 1);\n      |                         ^~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:78:25: warning: unused variable \u2018psi_east\u2019 [-Wunused-variable]\n   78 |                 __m256d psi_east = _mm256_i64gather_pd(base_psi_i, idx_east, 1);\n      |                         ^~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:79:25: warning: unused variable \u2018omega_center\u2019 [-Wunused-variable]\n   79 |                 __m256d omega_center = _mm256_i64gather_pd(base_omega_i, idx_j, 1);\n      |                         ^~~~~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:427:2: error: expected \u2018}\u2019 at end of input\n  427 | }\n      |  ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:63:49: note: to match this \u2018{\u2019\n   63 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                                 ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:63:39: error: invalid controlling predicate\n   63 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:427:2: error: expected \u2018}\u2019 at end of input\n  427 | }\n      |  ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:58: note: to match this \u2018{\u2019\n   20 |     for (std::size_t sweep = 0; sweep < sweeps; ++sweep) {\n      |                                                          ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:427:2: error: expected \u2018}\u2019 at end of input\n  427 | }\n      |  ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:16:51: note: to match this \u2018{\u2019\n   16 |     const double h, const std::size_t sweeps = 1) {\n      |                                                   ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp: At global scope:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:427:2: error: expected \u2018}\u2019 at end of input\n  427 | }\n      |  ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:8:20: note: to match this \u2018{\u2019\n    8 | namespace baseline {\n      |                    ^\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:46: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   33 |                 double* base_omega_i = omega + i * n;\n      |                                        ~~~~~~^~~~~~~\n      |                                              |\n      |                                              const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:23:39: error: invalid controlling predicate\n   23 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:73:46: error: invalid conversion from \u2018const double*\u2019 to \u2018double*\u2019 [-fpermissive]\n   73 |                 double* base_omega_i = omega + i * n;\n      |                                        ~~~~~~^~~~~~~\n      |                                              |\n      |                                              const double*\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:19:1: error: expected unqualified-id before \u2018namespace\u2019\n   19 | namespace {\n      | ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:321:46: error: a function-definition is not allowed here before \u2018{\u2019 token\n  321 | int main(const int argc, const char* argv[]) {\n      |                                              ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:427:2: error: expected \u2018}\u2019 at end of input\n  427 | }\n      |  ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:67:45: note: to match this \u2018{\u2019\n   67 |             for (; j <= j_end; j += VL * 2) {\n      |                                             ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:75:25: warning: unused variable \u2018psi_north\u2019 [-Wunused-variable]\n   75 |                 __m256d psi_north = _mm256_i64gather_pd(psi + (i-1)*n, idx_j, 1);\n      |                         ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:76:25: warning: unused variable \u2018psi_south\u2019 [-Wunused-variable]\n   76 |                 __m256d psi_south = _mm256_i64gather_pd(psi + (i+1)*n, idx_j, 1);\n      |                         ^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:77:25: warning: unused variable \u2018psi_west\u2019 [-Wunused-variable]\n   77 |                 __m256d psi_west = _mm256_i64gather_pd(base_psi_i, idx_west, 1);\n      |                         ^~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:78:25: warning: unused variable \u2018psi_east\u2019 [-Wunused-variable]\n   78 |                 __m256d psi_east = _mm256_i64gather_pd(base_psi_i, idx_east, 1);\n      |                         ^~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:79:25: warning: unused variable \u2018omega_center\u2019 [-Wunused-variable]\n   79 |                 __m256d omega_center = _mm256_i64gather_pd(base_omega_i, idx_j, 1);\n      |                         ^~~~~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:427:2: error: expected \u2018}\u2019 at end of input\n  427 | }\n      |  ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:63:49: note: to match this \u2018{\u2019\n   63 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                                 ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:63:39: error: invalid controlling predicate\n   63 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:427:2: error: expected \u2018}\u2019 at end of input\n  427 | }\n      |  ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:58: note: to match this \u2018{\u2019\n   20 |     for (std::size_t sweep = 0; sweep < sweeps; ++sweep) {\n      |                                                          ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:427:2: error: expected \u2018}\u2019 at end of input\n  427 | }\n      |  ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:16:51: note: to match this \u2018{\u2019\n   16 |     const double h, const std::size_t sweeps = 1) {\n      |                                                   ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp: At global scope:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:427:2: error: expected \u2018}\u2019 at end of input\n  427 | }\n      |  ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:8:20: note: to match this \u2018{\u2019\n    8 | namespace baseline {\n      |                    ^\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 41.13,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 6343,
+        "total": 7731
+      },
+      "cost_usd": 0.00613,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:25:39: warning: comparison of integer expressions of different signedness: \u2018std::size_t\u2019 {aka \u2018long unsigned int\u2019} and \u2018int\u2019 [-Wsign-compare]\n   25 |                     if (((i + j) & 1) == parity) {   // checkerboard condition\n      |                         ~~~~~~~~~~~~~~^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:23:43: error: invalid controlling predicate\n   23 |             for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:24:47: error: invalid controlling predicate\n   24 |                 for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                         ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:25:39: warning: comparison of integer expressions of different signedness: \u2018std::size_t\u2019 {aka \u2018long unsigned int\u2019} and \u2018int\u2019 [-Wsign-compare]\n   25 |                     if (((i + j) & 1) == parity) {   // checkerboard condition\n      |                         ~~~~~~~~~~~~~~^~~~~~~~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:23:43: error: invalid controlling predicate\n   23 |             for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                     ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:24:47: error: invalid controlling predicate\n   24 |                 for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                         ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 22.07,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 3209,
+        "total": 4597
+      },
+      "cost_usd": 0.0033,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:24:25: error: not enough for loops to collapse\n   24 |                 #pragma omp simd\n      |                         ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:26:27: error: \u2018i\u2019 was not declared in this scope\n   26 |                     if (((i + j) & 1) == std::size_t(parity)) {\n      |                           ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:25:47: error: invalid controlling predicate\n   25 |                 for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                         ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:53:17: error: not enough for loops to collapse\n   53 |         #pragma omp simd\n      |                 ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:55:39: error: \u2018i\u2019 was not declared in this scope\n   55 |             const std::size_t c = idx(i, j, n);\n      |                                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:54:39: error: invalid controlling predicate\n   54 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:24:25: error: not enough for loops to collapse\n   24 |                 #pragma omp simd\n      |                         ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:26:27: error: \u2018i\u2019 was not declared in this scope\n   26 |                     if (((i + j) & 1) == std::size_t(parity)) {\n      |                           ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:25:47: error: invalid controlling predicate\n   25 |                 for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                         ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:53:17: error: not enough for loops to collapse\n   53 |         #pragma omp simd\n      |                 ^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:55:39: error: \u2018i\u2019 was not declared in this scope\n   55 |             const std::size_t c = idx(i, j, n);\n      |                                       ^\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:54:39: error: invalid controlling predicate\n   54 |         for (std::size_t j = 1; j + 1 < n; ++j) {\n      |                                 ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm A (One-Shot Ungated)",
+      "duration_s": 49.5,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 7399,
+        "total": 8787
+      },
+      "cost_usd": 0.00708,
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:39: error: invalid controlling predicate\n   33 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:35: error: invalid controlling predicate\n   61 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:33:39: error: invalid controlling predicate\n   33 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:61:35: error: invalid controlling predicate\n   61 |     for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                             ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    }
+  ],
+  "arm_b": [
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 68.88,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4822,
+        "completion": 10623,
+        "total": 15445
+      },
+      "cost_usd": 0.01101,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00767,
+          "tokens": 9447,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00334,
+          "tokens": 5998,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 434.11 GB/s (Median latency: 2.89 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 434.11,
+      "speedup": 20.7,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 67.8,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4832,
+        "completion": 10747,
+        "total": 15579
+      },
+      "cost_usd": 0.01112,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00884,
+          "tokens": 10742,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00229,
+          "tokens": 4837,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 198.80 GB/s (Median latency: 6.30 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 198.8,
+      "speedup": 9.48,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 72.17,
+      "attempts_needed": 3,
+      "tokens": {
+        "prompt": 10646,
+        "completion": 11226,
+        "total": 21872
+      },
+      "cost_usd": 0.0133,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00301,
+          "tokens": 4265,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00717,
+          "tokens": 10358,
+          "passed": false
+        },
+        {
+          "attempt": 3,
+          "cost_usd": 0.00313,
+          "tokens": 7249,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 213.64 GB/s (Median latency: 5.87 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 213.64,
+      "speedup": 10.19,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 30.09,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4859,
+        "completion": 5182,
+        "total": 10041
+      },
+      "cost_usd": 0.00612,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00334,
+          "tokens": 4639,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00278,
+          "tokens": 5402,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 196.90 GB/s (Median latency: 6.37 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 196.9,
+      "speedup": 9.39,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 36.8,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4814,
+        "completion": 6681,
+        "total": 11495
+      },
+      "cost_usd": 0.00746,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.0048,
+          "tokens": 6254,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00266,
+          "tokens": 5241,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 198.38 GB/s (Median latency: 6.32 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 198.38,
+      "speedup": 9.46,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 37.53,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4804,
+        "completion": 6621,
+        "total": 11425
+      },
+      "cost_usd": 0.0074,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00467,
+          "tokens": 6117,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00273,
+          "tokens": 5308,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 286.35 GB/s (Median latency: 4.38 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 286.35,
+      "speedup": 13.66,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 97.48,
+      "attempts_needed": 4,
+      "tokens": {
+        "prompt": 19704,
+        "completion": 20713,
+        "total": 40417
+      },
+      "cost_usd": 0.02455,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.0074,
+          "tokens": 9142,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00594,
+          "tokens": 9433,
+          "passed": false
+        },
+        {
+          "attempt": 3,
+          "cost_usd": 0.00432,
+          "tokens": 8922,
+          "passed": false
+        },
+        {
+          "attempt": 4,
+          "cost_usd": 0.0069,
+          "tokens": 12920,
+          "passed": false
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:31:39: error: invalid controlling predicate\n   31 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::gauss_seidel_poisson_sweep(double*, const double*, std::size_t, double, std::size_t)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:20:39: error: invalid controlling predicate\n   20 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:31:39: error: invalid controlling predicate\n   31 |         for (std::size_t i = 1; i + 1 < n; ++i) {\n      |                                 ~~~~~~^~~\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 42.85,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4739,
+        "completion": 8631,
+        "total": 13370
+      },
+      "cost_usd": 0.00919,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00635,
+          "tokens": 7985,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00284,
+          "tokens": 5385,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 367.38 GB/s (Median latency: 3.41 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 367.38,
+      "speedup": 17.52,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 150.09,
+      "attempts_needed": 4,
+      "tokens": {
+        "prompt": 24599,
+        "completion": 20512,
+        "total": 45111
+      },
+      "cost_usd": 0.02584,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00679,
+          "tokens": 8467,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00441,
+          "tokens": 8122,
+          "passed": false
+        },
+        {
+          "attempt": 3,
+          "cost_usd": 0.00791,
+          "tokens": 13971,
+          "passed": false
+        },
+        {
+          "attempt": 4,
+          "cost_usd": 0.00673,
+          "tokens": 14551,
+          "passed": false
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": false,
+          "status_tag": "COMPILE_FAIL",
+          "detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:171:61: error: \u2018n_minus_2\u2019 was not declared in this scope; did you mean \u2018n_minus_1\u2019?\n  171 |         omega_new[idx(i, n_minus_1, n)] = -2.0 * psi[idx(i, n_minus_2, n)] / h2 - two_over_h;\n      |                                                             ^~~~~~~~~\n      |                                                             n_minus_1\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:181:58: error: \u2018n_minus_2\u2019 was not declared in this scope; did you mean \u2018n_minus_1\u2019?\n  181 |         omega_new[idx(n_minus_1, j, n)] = -2.0 * psi[idx(n_minus_2, j, n)] / h2;\n      |                                                          ^~~~~~~~~\n      |                                                          n_minus_1\n"
+        }
+      ],
+      "passed": false,
+      "first_failure_stage": "Stage 2",
+      "first_failure_tag": "COMPILE_FAIL",
+      "first_failure_detail": "Local g++ build failed:\nIn file included from /home/bhoomish/NebiusxNVIDIA/VeriKernel/harness_cavity.cpp:17:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp: In function \u2018void baseline::vorticity_transport_step(double*, const double*, const double*, std::size_t, double, double, double)\u2019:\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:171:61: error: \u2018n_minus_2\u2019 was not declared in this scope; did you mean \u2018n_minus_1\u2019?\n  171 |         omega_new[idx(i, n_minus_1, n)] = -2.0 * psi[idx(i, n_minus_2, n)] / h2 - two_over_h;\n      |                                                             ^~~~~~~~~\n      |                                                             n_minus_1\n/home/bhoomish/NebiusxNVIDIA/VeriKernel/temp_benchmark_kernel.hpp:181:58: error: \u2018n_minus_2\u2019 was not declared in this scope; did you mean \u2018n_minus_1\u2019?\n  181 |         omega_new[idx(n_minus_1, j, n)] = -2.0 * psi[idx(n_minus_2, j, n)] / h2;\n      |                                                          ^~~~~~~~~\n      |                                                          n_minus_1\n",
+      "throughput_gb_s": 0.0,
+      "speedup": 0.0,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 72.15,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4820,
+        "completion": 10705,
+        "total": 15525
+      },
+      "cost_usd": 0.01108,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00867,
+          "tokens": 10555,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00241,
+          "tokens": 4970,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 253.21 GB/s (Median latency: 4.95 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 253.21,
+      "speedup": 12.07,
+      "prompt_id": "variant_1_explicit_openmp"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 59.41,
+      "attempts_needed": 1,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 8591,
+        "total": 9981
+      },
+      "cost_usd": 0.00815,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00815,
+          "tokens": 9981,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 220.94 GB/s (Median latency: 5.67 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 220.94,
+      "speedup": 10.54,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 42.09,
+      "attempts_needed": 1,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 5920,
+        "total": 7310
+      },
+      "cost_usd": 0.00575,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00575,
+          "tokens": 7310,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 314.81 GB/s (Median latency: 3.98 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 314.81,
+      "speedup": 15.01,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 58.21,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4832,
+        "completion": 7681,
+        "total": 12513
+      },
+      "cost_usd": 0.00836,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00585,
+          "tokens": 7423,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00252,
+          "tokens": 5090,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 388.16 GB/s (Median latency: 3.23 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 388.16,
+      "speedup": 18.51,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 48.86,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4832,
+        "completion": 7138,
+        "total": 11970
+      },
+      "cost_usd": 0.00787,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00553,
+          "tokens": 7072,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00234,
+          "tokens": 4898,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 428.29 GB/s (Median latency: 2.93 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 428.29,
+      "speedup": 20.42,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 56.05,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4753,
+        "completion": 7269,
+        "total": 12022
+      },
+      "cost_usd": 0.00797,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00509,
+          "tokens": 6584,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00288,
+          "tokens": 5438,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 327.74 GB/s (Median latency: 3.82 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 327.74,
+      "speedup": 15.63,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 75.88,
+      "attempts_needed": 3,
+      "tokens": {
+        "prompt": 10227,
+        "completion": 12280,
+        "total": 22507
+      },
+      "cost_usd": 0.01412,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.0077,
+          "tokens": 9480,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00275,
+          "tokens": 5349,
+          "passed": false
+        },
+        {
+          "attempt": 3,
+          "cost_usd": 0.00367,
+          "tokens": 7678,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 240.87 GB/s (Median latency: 5.20 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 240.87,
+      "speedup": 11.49,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 45.76,
+      "attempts_needed": 1,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 7708,
+        "total": 9098
+      },
+      "cost_usd": 0.00735,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00735,
+          "tokens": 9098,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 257.84 GB/s (Median latency: 4.86 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 257.84,
+      "speedup": 12.3,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 45.25,
+      "attempts_needed": 1,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 6741,
+        "total": 8131
+      },
+      "cost_usd": 0.00648,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00648,
+          "tokens": 8131,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 343.22 GB/s (Median latency: 3.65 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 343.22,
+      "speedup": 16.37,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 52.85,
+      "attempts_needed": 3,
+      "tokens": {
+        "prompt": 10099,
+        "completion": 7314,
+        "total": 17413
+      },
+      "cost_usd": 0.00961,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00357,
+          "tokens": 4894,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00329,
+          "tokens": 5923,
+          "passed": false
+        },
+        {
+          "attempt": 3,
+          "cost_usd": 0.00275,
+          "tokens": 6596,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 243.11 GB/s (Median latency: 5.16 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 243.11,
+      "speedup": 11.59,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 56.77,
+      "attempts_needed": 1,
+      "tokens": {
+        "prompt": 1390,
+        "completion": 10602,
+        "total": 11992
+      },
+      "cost_usd": 0.00996,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00996,
+          "tokens": 11992,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 374.01 GB/s (Median latency: 3.35 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 374.01,
+      "speedup": 17.84,
+      "prompt_id": "variant_2_algorithmic_poisson"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 68.86,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 6481,
+        "completion": 17521,
+        "total": 24002
+      },
+      "cost_usd": 0.01771,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.01204,
+          "tokens": 14298,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00568,
+          "tokens": 9704,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 204.01 GB/s (Median latency: 6.14 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 204.01,
+      "speedup": 9.73,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 72.34,
+      "attempts_needed": 4,
+      "tokens": {
+        "prompt": 36254,
+        "completion": 17145,
+        "total": 53399
+      },
+      "cost_usd": 0.02631,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00762,
+          "tokens": 9388,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00303,
+          "tokens": 5678,
+          "passed": false
+        },
+        {
+          "attempt": 3,
+          "cost_usd": 0.00727,
+          "tokens": 17866,
+          "passed": false
+        },
+        {
+          "attempt": 4,
+          "cost_usd": 0.00838,
+          "tokens": 20467,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 212.46 GB/s (Median latency: 5.90 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 212.46,
+      "speedup": 10.13,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 30.95,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 5014,
+        "completion": 6552,
+        "total": 11566
+      },
+      "cost_usd": 0.0074,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00348,
+          "tokens": 4790,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00392,
+          "tokens": 6776,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 259.86 GB/s (Median latency: 4.82 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 259.86,
+      "speedup": 12.39,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 56.22,
+      "attempts_needed": 1,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 11241,
+        "total": 12629
+      },
+      "cost_usd": 0.01053,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.01053,
+          "tokens": 12629,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 266.24 GB/s (Median latency: 4.71 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 266.24,
+      "speedup": 12.7,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 31.74,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4634,
+        "completion": 7022,
+        "total": 11656
+      },
+      "cost_usd": 0.00771,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00502,
+          "tokens": 6499,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00269,
+          "tokens": 5157,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 348.18 GB/s (Median latency: 3.60 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 348.18,
+      "speedup": 16.6,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 36.97,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 4830,
+        "completion": 7258,
+        "total": 12088
+      },
+      "cost_usd": 0.00798,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00577,
+          "tokens": 7337,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00221,
+          "tokens": 4751,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 421.90 GB/s (Median latency: 2.97 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 421.9,
+      "speedup": 20.12,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 46.84,
+      "attempts_needed": 3,
+      "tokens": {
+        "prompt": 10018,
+        "completion": 11664,
+        "total": 21682
+      },
+      "cost_usd": 0.0135,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00697,
+          "tokens": 8675,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00348,
+          "tokens": 6120,
+          "passed": false
+        },
+        {
+          "attempt": 3,
+          "cost_usd": 0.00305,
+          "tokens": 6887,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 342.02 GB/s (Median latency: 3.66 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 342.02,
+      "speedup": 16.31,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 76.42,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 7614,
+        "completion": 18267,
+        "total": 25881
+      },
+      "cost_usd": 0.01872,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.01516,
+          "tokens": 17772,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00356,
+          "tokens": 8109,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 317.02 GB/s (Median latency: 3.95 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 317.02,
+      "speedup": 15.12,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 41.65,
+      "attempts_needed": 1,
+      "tokens": {
+        "prompt": 1388,
+        "completion": 7881,
+        "total": 9269
+      },
+      "cost_usd": 0.00751,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00751,
+          "tokens": 9269,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 216.44 GB/s (Median latency: 5.79 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 216.44,
+      "speedup": 10.32,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    },
+    {
+      "arm": "Arm B (Referee-Gated + Tavily Loop)",
+      "duration_s": 69.93,
+      "attempts_needed": 2,
+      "tokens": {
+        "prompt": 5457,
+        "completion": 13873,
+        "total": 19330
+      },
+      "cost_usd": 0.01412,
+      "attempts_history": [
+        {
+          "attempt": 1,
+          "cost_usd": 0.00957,
+          "tokens": 11563,
+          "passed": false
+        },
+        {
+          "attempt": 2,
+          "cost_usd": 0.00455,
+          "tokens": 7767,
+          "passed": true
+        }
+      ],
+      "telemetry": [
+        {
+          "stage": "Stage 1",
+          "ok": true,
+          "status_tag": "LINT_PASS",
+          "detail": "Static linter checks passed"
+        },
+        {
+          "stage": "Stage 2",
+          "ok": true,
+          "status_tag": "COMPILE_PASS",
+          "detail": "Local g++ build passed"
+        },
+        {
+          "stage": "Stage 3",
+          "ok": true,
+          "status_tag": "DETERMINISM_PASS",
+          "detail": "Passed with zero drift across threads (max_delta=0.00e+00)"
+        },
+        {
+          "stage": "Stage 4",
+          "ok": true,
+          "status_tag": "PHYSICS_PASS",
+          "detail": "Passed: relative_l2=2.31e-07, Ghia U RMSE=0.0020 in 13672 steps"
+        },
+        {
+          "stage": "Stage 5",
+          "ok": true,
+          "status_tag": "BENCH_PASS",
+          "detail": "Throughput: 437.50 GB/s (Median latency: 2.86 ms)"
+        }
+      ],
+      "passed": true,
+      "first_failure_stage": null,
+      "first_failure_tag": null,
+      "first_failure_detail": null,
+      "throughput_gb_s": 437.5,
+      "speedup": 20.86,
+      "prompt_id": "variant_3_cfd_loop_tuning"
+    }
+  ]
+}

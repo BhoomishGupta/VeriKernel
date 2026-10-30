@@ -12,14 +12,14 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <!-- Chart.js for Physics & Bandwidth visual telemetry (offline vendor bundle with CDN fallback) -->
-    <script src="/vendor/chart.umd.min.js"
+    <script src="./vendor/chart.umd.min.js"
         onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/chart.js';"></script>
     <!-- Diff2Html & JS Diff for side-by-side / unified code diffing -->
-    <link rel="stylesheet" href="/vendor/diff2html.min.css"
+    <link rel="stylesheet" href="./vendor/diff2html.min.css"
         onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/diff2html/bundles/css/diff2html.min.css';" />
-    <script src="/vendor/diff.min.js"
+    <script src="./vendor/diff.min.js"
         onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/diff@5.1.0/dist/diff.min.js';"></script>
-    <script src="/vendor/diff2html.min.js"
+    <script src="./vendor/diff2html.min.js"
         onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/diff2html/bundles/js/diff2html.min.js';"></script>
     <!-- Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1882,6 +1882,103 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Tablet & Mobile Responsive Adjustments */
+        @media (max-width: 768px) {
+            header {
+                padding: 12px 16px;
+            }
+
+            .brand-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .tagline {
+                border-left: none;
+                padding-left: 0;
+                font-size: 0.78rem;
+            }
+
+            .header-badges {
+                width: 100%;
+                justify-content: flex-start;
+                gap: 6px;
+            }
+
+            nav.tabs {
+                padding: 0 16px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .tab-btn {
+                padding: 10px 14px;
+                font-size: 0.78rem;
+                white-space: nowrap;
+            }
+
+            main {
+                padding: 16px 12px !important;
+            }
+
+            .gate-checklist {
+                grid-template-columns: 1fr;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .break-it-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-responsive-container {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-badges .badge {
+                font-size: 0.7rem;
+                padding: 3px 8px;
+            }
+
+            .brand-logo {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Backend Connection Configuration Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+        }
     </style>
 </head>
 
@@ -1901,7 +1998,7 @@
                 <button class="mode-btn" id="modeFresh" onclick="setOperationalMode('fresh', event)">🚀 Fresh Live
                     Run</button>
             </div>
-            <span class="badge live" id="backendStatusBadge">🟢 Host Connected</span>
+            <span class="badge live" id="backendStatusBadge" onclick="openBackendModal()" style="cursor: pointer;" title="Configure Backend VM Endpoint / Fallback Mode">🟢 Host Connected</span>
             <span class="badge" id="queueStatus">Queue: Idle</span>
             <span class="badge" id="targetHardwareBadge">Target: 8-Core Pinned</span>
             <span class="badge live" id="liveModeBadge">● Verified Self-Correction Active</span>
@@ -2562,16 +2659,16 @@
                 <!-- One-Click Bundle Download & Individual Files -->
                 <div style="display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap;">
                     <a href="/api/download/bundle"
-                        onclick="downloadFileWithFallback(event, '/verikernel_certified_bundle.zip')" class="action-btn"
+                        onclick="downloadFileWithFallback(event, './verikernel_certified_bundle.zip')" class="action-btn"
                         style="background: var(--accent-blue); color: #0d1117; font-weight: 700; padding: 9px 18px;">
                         📦 Download Bundle (.ZIP)
                     </a>
                     <a href="/api/download/certificate"
-                        onclick="downloadFileWithFallback(event, '/REFEREE_CERTIFICATE.md')"
+                        onclick="downloadFileWithFallback(event, './REFEREE_CERTIFICATE.md')"
                         class="action-btn secondary">
                         📄 REFEREE_CERTIFICATE.md
                     </a>
-                    <a href="/api/download/kernel" onclick="downloadFileWithFallback(event, '/candidate_kernel.hpp')"
+                    <a href="/api/download/kernel" onclick="downloadFileWithFallback(event, './candidate_kernel.hpp')"
                         class="action-btn secondary">
                         ⚡ verified_kernel.hpp
                     </a>
@@ -2738,12 +2835,59 @@
         let hardwareOracleInfo = null;
         let currentDiffModes = {}; // attemptIdx -> 'side-by-side' | 'line-by-line'
 
-        function updateBackendConnectionStatus(isOnline) {
+        // 3-Tier Architecture: Remote VM API Base URL & Offline Fallback Resolution
+        const urlParams = new URLSearchParams(window.location.search);
+        let backendBaseUrl = urlParams.get('api') || urlParams.get('backend') || localStorage.getItem('verikernel_backend_url') || '';
+        if (backendBaseUrl.endsWith('/')) {
+            backendBaseUrl = backendBaseUrl.slice(0, -1);
+        }
+
+        let judgeToken = urlParams.get('judge_token') || urlParams.get('judge_key') || urlParams.get('key') || localStorage.getItem('verikernel_judge_token') || '';
+        if (judgeToken) {
+            localStorage.setItem('verikernel_judge_token', judgeToken);
+        }
+
+        function getAuthHeaders(customHeaders = {}) {
+            const headers = { ...customHeaders };
+            if (judgeToken) {
+                headers['X-Judge-Token'] = judgeToken;
+            }
+            return headers;
+        }
+
+        function getApiUrl(endpoint) {
+            if (!endpoint.startsWith('/')) endpoint = '/' + endpoint;
+            let finalUrl = backendBaseUrl ? `${backendBaseUrl}${endpoint}` : endpoint;
+            if (judgeToken && !finalUrl.includes('judge_token=')) {
+                const sep = finalUrl.includes('?') ? '&' : '?';
+                finalUrl = `${finalUrl}${sep}judge_token=${encodeURIComponent(judgeToken)}`;
+            }
+            return finalUrl;
+        }
+
+        function resolveRelativePath(path) {
+            if (!path) return '';
+            if (path.startsWith('./')) return path;
+            if (path.startsWith('/')) return '.' + path;
+            return './' + path;
+        }
+
+        function updateBackendConnectionStatus(isOnline, isJudge = false) {
             const badge = document.getElementById('backendStatusBadge');
             if (badge) {
                 if (isOnline) {
                     badge.className = 'badge live';
-                    badge.innerText = '🟢 Host Backend Connected';
+                    const judgeIndicator = (isJudge || judgeToken) ? ' [VIP Judge]' : '';
+                    if (backendBaseUrl) {
+                        try {
+                            const parsed = new URL(backendBaseUrl);
+                            badge.innerText = `🟢 VM Connected (${parsed.hostname})${judgeIndicator}`;
+                        } catch (e) {
+                            badge.innerText = `🟢 VM Connected${judgeIndicator}`;
+                        }
+                    } else {
+                        badge.innerText = `🟢 Host Backend Connected${judgeIndicator}`;
+                    }
                 } else {
                     badge.className = 'badge warning';
                     badge.innerText = '⚡ Static Demo Mode (Cached)';
@@ -2752,31 +2896,44 @@
         }
 
         async function fetchWithFallback(apiPath, fallbackPath, options = {}) {
+            const relFallback = resolveRelativePath(fallbackPath);
             try {
-                const res = await fetch(apiPath, { ...options, signal: AbortSignal.timeout(2500) });
+                const fullApi = getApiUrl(apiPath);
+                const reqOptions = {
+                    ...options,
+                    headers: getAuthHeaders(options.headers || {}),
+                    signal: AbortSignal.timeout(options.timeout || 3500)
+                };
+                const res = await fetch(fullApi, reqOptions);
                 if (res.ok) {
-                    updateBackendConnectionStatus(true);
+                    const isJudgeHeader = res.headers.get('X-Judge-Authorized') === 'true';
+                    updateBackendConnectionStatus(true, isJudgeHeader);
                     return await res.json();
                 }
                 throw new Error(`HTTP ${res.status}`);
             } catch (e) {
-                console.warn(`[Offline Fallback] ${apiPath} failed, attempting ${fallbackPath}:`, e);
+                console.warn(`[Offline Fallback] ${apiPath} failed, attempting ${relFallback}:`, e);
                 updateBackendConnectionStatus(false);
                 try {
-                    const fallbackRes = await fetch(fallbackPath);
+                    const fallbackRes = await fetch(relFallback);
                     if (fallbackRes.ok) {
                         return await fallbackRes.json();
                     }
                 } catch (err2) {
-                    console.error(`[Offline Fallback] Failed to fetch static asset ${fallbackPath}:`, err2);
+                    console.error(`[Offline Fallback] Failed to fetch static asset ${relFallback}:`, err2);
                 }
                 return null;
             }
         }
 
         async function fetchTextWithFallback(apiPath, fallbackPath) {
+            const relFallback = resolveRelativePath(fallbackPath);
             try {
-                const res = await fetch(apiPath, { signal: AbortSignal.timeout(2500) });
+                const fullApi = getApiUrl(apiPath);
+                const res = await fetch(fullApi, {
+                    headers: getAuthHeaders(),
+                    signal: AbortSignal.timeout(3500)
+                });
                 if (res.ok) {
                     updateBackendConnectionStatus(true);
                     return await res.text();
@@ -2785,7 +2942,7 @@
             } catch (e) {
                 updateBackendConnectionStatus(false);
                 try {
-                    const fallbackRes = await fetch(fallbackPath);
+                    const fallbackRes = await fetch(relFallback);
                     if (fallbackRes.ok) {
                         return await fallbackRes.text();
                     }
@@ -2796,7 +2953,7 @@
 
         async function fetchBaselineCode() {
             try {
-                const text = await fetchTextWithFallback('/api/download/kernel?type=baseline', '/baseline_kernel.hpp');
+                const text = await fetchTextWithFallback('/api/download/kernel?type=baseline', './baseline_kernel.hpp');
                 if (text) {
                     windowBaselineCode = text;
                     const diffBox0 = document.getElementById('diffBox-0');
@@ -2824,7 +2981,7 @@
 
         async function updateQueue() {
             try {
-                const res = await fetch('/api/queue-status', { signal: AbortSignal.timeout(2000) });
+                const res = await fetch(getApiUrl('/api/queue-status'), { signal: AbortSignal.timeout(2000) });
                 if (res.ok) {
                     const data = await res.json();
                     const msg = data.waiting > 0
@@ -2844,7 +3001,7 @@
 
         async function loadRunOptions() {
             try {
-                const res = await fetch('/api/agent-runs', { signal: AbortSignal.timeout(2000) });
+                const res = await fetch(getApiUrl('/api/agent-runs'), { signal: AbortSignal.timeout(2000) });
                 if (res.ok) {
                     const data = await res.json();
                     const selector = document.getElementById('runSelector');
@@ -2871,7 +3028,7 @@
         async function onSelectRun(selectedVal) {
             try {
                 const url = selectedVal === 'latest' ? '/api/latest-run' : `/api/agent-runs/${selectedVal}`;
-                const fallbackUrl = selectedVal === 'latest' ? '/cache/latest_agent_run.json' : `/cache/agent_runs/${selectedVal}`;
+                const fallbackUrl = selectedVal === 'latest' ? './cache/latest_agent_run.json' : `./cache/agent_runs/${selectedVal}`;
                 const data = await fetchWithFallback(url, fallbackUrl);
                 if (data) renderAttemptLadder(data);
             } catch (e) {
@@ -2881,7 +3038,7 @@
 
         async function loadLatestRun() {
             try {
-                const data = await fetchWithFallback('/api/latest-run', '/cache/latest_agent_run.json');
+                const data = await fetchWithFallback('/api/latest-run', './cache/latest_agent_run.json');
                 if (data) renderAttemptLadder(data);
             } catch (e) {
                 console.error("Failed to load latest run", e);
@@ -3743,7 +3900,7 @@
             try {
                 let data = null;
                 try {
-                    const res = await fetch('/api/run-referee', {
+                    const res = await fetch(getApiUrl('/api/run-referee'), {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -3995,7 +4152,7 @@
 
         async function fetchBudgetStatus() {
             try {
-                const res = await fetch('/api/budget-status');
+                const res = await fetch(getApiUrl('/api/budget-status'));
                 if (!res.ok) return;
                 const b = await res.json();
                 const spendEl = document.getElementById('budgetSpend');
@@ -4077,7 +4234,7 @@
                 liveStopwatchInterval = null;
             }
             try {
-                await fetch('/api/cancel-live-run', { method: 'POST' });
+                await fetch(getApiUrl('/api/cancel-live-run'), { method: 'POST' });
             } catch (e) {
                 console.warn("Cancel API error", e);
             }
@@ -4110,6 +4267,22 @@
             const spinner = document.getElementById('liveSpinner');
             const phaseText = document.getElementById('livePhaseText');
             const timerEl = document.getElementById('liveElapsedTimer');
+
+            // Static fallback check
+            const statusIndicator = document.getElementById('backendStatusBadge');
+            const isStaticMode = statusIndicator && statusIndicator.innerText.includes('Static');
+            if (isStaticMode && !backendBaseUrl) {
+                alert("⚡ Static Demo Mode Active\n\nLive LLM code optimization requires a multi-core VM backend with OpenMP pinning.\n\nTo connect to a live backend VM, click the 'Static Demo Mode' badge in the header, or run locally:\n  docker compose up -d\n\nYou can explore all 4 attempts, code diffs, Break-It gallery live checks, and empirical study data offline in this static dashboard.");
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '🚀 Launch Live Optimization Run';
+                }
+                if (statusBadge) {
+                    statusBadge.className = 'badge live';
+                    statusBadge.innerText = '● Standby';
+                }
+                return;
+            }
 
             if (btn) {
                 btn.disabled = true;
@@ -4146,13 +4319,18 @@
             term.innerText = ">>> [VeriKernel] Requesting execution lock from FastAPI scheduler...\n";
 
             try {
-                const res = await fetch(`/api/run-agent-live?mode=${encodeURIComponent(currentLiveMode)}`, {
+                const res = await fetch(getApiUrl(`/api/run-agent-live?mode=${encodeURIComponent(currentLiveMode)}`), {
                     method: 'POST',
                     signal: liveAbortController.signal
                 });
                 if (!res.ok) {
-                    term.innerText += `[Error] Server returned HTTP ${res.status}\n`;
-                    if (phaseText) phaseText.innerText = `Error: Server returned HTTP ${res.status}`;
+                    let errDetail = `Server returned HTTP ${res.status}`;
+                    try {
+                        const errJson = await res.json();
+                        if (errJson && errJson.detail) errDetail = errJson.detail;
+                    } catch (e) { }
+                    term.innerText += `[Interception] ${errDetail}\n`;
+                    if (phaseText) phaseText.innerText = errDetail;
                     return;
                 }
 
@@ -4372,11 +4550,16 @@
             try {
                 badge.className = 'badge warning';
                 badge.innerText = '⚡ Re-verifying candidate_kernel.hpp locally (0 Tokens)...';
-                const res = await fetch('/api/run-referee', {
+                const res = await fetch(getApiUrl('/api/run-referee'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ target: 'candidate' })
                 });
+                if (res.status === 429) {
+                    const errJson = await res.json().catch(() => ({}));
+                    badge.innerText = errJson.detail || 'Rate limit reached (5 live calls/hr). Please use Instant Replay.';
+                    return;
+                }
                 const data = await res.json();
                 const stages = data.results || [];
                 const allPassed = stages.length > 0 && stages.every(s => s.ok);
@@ -4392,7 +4575,7 @@
 
         async function fetchHardwareInfo() {
             try {
-                const res = await fetch('/api/hardware-info');
+                const res = await fetch(getApiUrl('/api/hardware-info'));
                 if (!res.ok) return;
                 const info = await res.json();
                 hardwareOracleInfo = info;
@@ -4414,7 +4597,7 @@
 
         async function loadEvidence() {
             try {
-                const data = await fetchWithFallback('/api/benchmark-study', '/cache/empirical_study_results.json');
+                const data = await fetchWithFallback('/api/benchmark-study', './cache/empirical_study_results.json');
                 if (data) {
                     evidenceRawData = data;
                     applyEvidenceFilter(currentPromptFilter);
@@ -4899,9 +5082,99 @@
 
         function downloadFileWithFallback(ev, fallbackPath) {
             const badge = document.getElementById('backendStatusBadge');
-            if (badge && badge.innerText.includes('Static')) {
+            const isStatic = badge && badge.innerText.includes('Static');
+            const cleanPath = resolveRelativePath(fallbackPath);
+            if (isStatic && !backendBaseUrl) {
                 ev.preventDefault();
-                window.location.href = fallbackPath;
+                window.location.href = cleanPath;
+            } else if (backendBaseUrl) {
+                const href = ev.currentTarget.getAttribute('href');
+                if (href && href.startsWith('/api/')) {
+                    ev.preventDefault();
+                    window.location.href = getApiUrl(href);
+                }
+            }
+        }
+
+        function openBackendModal() {
+            const modal = document.getElementById('backendModal');
+            const input = document.getElementById('backendUrlInput');
+            const tokenInput = document.getElementById('judgeTokenInput');
+            const statusEl = document.getElementById('backendModalStatus');
+            if (modal) {
+                if (input) input.value = backendBaseUrl || '';
+                if (tokenInput) tokenInput.value = judgeToken || '';
+                if (statusEl) {
+                    const badge = document.getElementById('backendStatusBadge');
+                    statusEl.innerHTML = `<span style="color: var(--text-secondary);">Current Status: <strong>${badge ? badge.innerText : 'Unknown'}</strong></span>`;
+                }
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeBackendModal() {
+            const modal = document.getElementById('backendModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function testAndSaveBackend() {
+            const input = document.getElementById('backendUrlInput');
+            const tokenInput = document.getElementById('judgeTokenInput');
+            const statusEl = document.getElementById('backendModalStatus');
+            let rawUrl = (input ? input.value : '').trim();
+            if (rawUrl.endsWith('/')) rawUrl = rawUrl.slice(0, -1);
+
+            let rawToken = (tokenInput ? tokenInput.value : '').trim();
+            judgeToken = rawToken;
+            if (rawToken) {
+                localStorage.setItem('verikernel_judge_token', rawToken);
+            } else {
+                localStorage.removeItem('verikernel_judge_token');
+            }
+
+            if (!rawUrl) {
+                backendBaseUrl = '';
+                localStorage.removeItem('verikernel_backend_url');
+                if (statusEl) statusEl.innerHTML = '<span style="color: var(--warn-amber);">Switched to Standalone Static Demo Mode (Cached)</span>';
+                updateBackendConnectionStatus(false);
+                setTimeout(closeBackendModal, 1000);
+                return;
+            }
+
+            // Mixed Content warning check
+            if (window.location.protocol === 'https:' && rawUrl.startsWith('http:')) {
+                if (statusEl) {
+                    statusEl.innerHTML = `<span style="color: var(--fail-red);">⚠️ Mixed Content Warning: This page is loaded over HTTPS. Modern browsers block requests to insecure HTTP backends (<code>${rawUrl}</code>). Please use HTTPS (Cloudflare Tunnel or Caddy) for your VM backend.</span>`;
+                }
+                return;
+            }
+
+            if (statusEl) statusEl.innerHTML = '<span style="color: var(--accent-blue);">Pinging backend VM /api/health...</span>';
+            try {
+                const pingUrl = rawToken ? `${rawUrl}/api/budget-status?judge_token=${encodeURIComponent(rawToken)}` : `${rawUrl}/api/health`;
+                const res = await fetch(pingUrl, {
+                    headers: rawToken ? { 'X-Judge-Token': rawToken } : {},
+                    signal: AbortSignal.timeout(3500)
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    backendBaseUrl = rawUrl;
+                    localStorage.setItem('verikernel_backend_url', rawUrl);
+                    const isJudge = data.is_judge || (data.guards && data.guards.judge_passkey_enabled && !!rawToken);
+                    const judgeMsg = isJudge ? ' [VIP Judge Mode Active]' : '';
+                    if (statusEl) statusEl.innerHTML = `<span style="color: var(--pass-green);">✓ Connected! Multi-core backend online${judgeMsg}.</span>`;
+                    updateBackendConnectionStatus(true, isJudge);
+                    setTimeout(() => {
+                        closeBackendModal();
+                        loadLatestRun();
+                        fetchBudgetStatus();
+                        fetchHardwareInfo();
+                    }, 1200);
+                } else {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+            } catch (err) {
+                if (statusEl) statusEl.innerHTML = `<span style="color: var(--fail-red);">✗ Connection failed (${err.message}). Ensure CORS and HTTPS are active.</span>`;
             }
         }
 
@@ -4927,7 +5200,7 @@
 
         async function copyVerifiedKernelCode(btn) {
             try {
-                const code = await fetchTextWithFallback('/api/download/kernel?type=verified', '/candidate_kernel.hpp');
+                const code = await fetchTextWithFallback('/api/download/kernel?type=verified', './candidate_kernel.hpp');
                 if (!code) return;
                 await navigator.clipboard.writeText(code);
                 const orig = btn.innerText;
@@ -5095,7 +5368,7 @@
             // 2. If not found in runData, try querying the live comparison endpoint
             if (!verifiedU) {
                 try {
-                    const res = await fetch('/api/ghia-comparison');
+                    const res = await fetch(getApiUrl('/api/ghia-comparison'));
                     if (res.ok) {
                         const compData = await res.json();
                         if (compData.y_ghia && compData.u_ghia && compData.u_verified) {
@@ -5430,7 +5703,7 @@
 
         async function loadCertPreview() {
             try {
-                const text = await fetchTextWithFallback('/api/download/certificate', '/REFEREE_CERTIFICATE.md');
+                const text = await fetchTextWithFallback('/api/download/certificate', './REFEREE_CERTIFICATE.md');
                 if (!text) return;
                 const certEl = document.getElementById('certPreview');
                 if (certEl) certEl.innerText = text;
@@ -5480,6 +5753,43 @@
             try { await loadCertPreview(); } catch (e) { console.warn("loadCertPreview error:", e); }
         };
     </script>
+
+    <!-- 3-Tier Backend Connection Modal -->
+    <div id="backendModal" class="modal-overlay" onclick="if(event.target===this) closeBackendModal()">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <div style="font-family: var(--font-mono); font-size: 1rem; font-weight: 700; color: var(--text-primary);">
+                    ⚙️ 3-Tier Architecture &amp; VM Endpoint
+                </div>
+                <button onclick="closeBackendModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">&times;</button>
+            </div>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+                VeriKernel features a 3-tier architecture: <strong>(1) Live Containerized VM Backend</strong> with 8 pinned CPU cores, <strong>(2) In-Memory Availability Guardrails</strong> (IP rate limits, daily run caps, cloud spend limits), and <strong>(3) Zero-Latency Static Fallback</strong> for GitHub Pages &amp; Netlify.
+            </p>
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 6px;">
+                    Remote Backend VM URL (HTTPS or Cloudflare Tunnel, leave empty for Static Fallback):
+                </label>
+                <input id="backendUrlInput" type="text" placeholder="e.g. https://api.verikernel.nip.io or https://xyz.trycloudflare.com"
+                    style="width: 100%; background: var(--bg-base); border: 1px solid var(--border-subtle); color: var(--text-primary); padding: 8px 12px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.85rem;" />
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
+                    Note: For HTTPS-hosted deployments (GitHub Pages/Netlify), use an HTTPS backend URL (Cloudflare Tunnel or Caddy) to prevent Mixed Content security blocking.
+                </div>
+            </div>
+            <div style="margin-bottom: 14px;">
+                <label style="display: block; font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 6px;">
+                    Judge VIP Passkey (Optional — unlocks unmetered judge evaluation):
+                </label>
+                <input id="judgeTokenInput" type="password" placeholder="e.g. verikernel-judge-2026"
+                    style="width: 100%; background: var(--bg-base); border: 1px solid var(--border-subtle); color: var(--text-primary); padding: 8px 12px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.85rem;" />
+            </div>
+            <div id="backendModalStatus" style="font-size: 0.78rem; font-family: var(--font-mono); margin-bottom: 16px; min-height: 20px;"></div>
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <button onclick="closeBackendModal()" class="action-btn secondary" style="padding: 7px 14px; font-size: 0.8rem;">Cancel</button>
+                <button onclick="testAndSaveBackend()" class="action-btn" style="background: var(--accent-blue); color: #0d1117; font-weight: 700; padding: 7px 16px; font-size: 0.8rem;">Test &amp; Connect</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

@@ -16,7 +16,7 @@ import time
 import zipfile
 from typing import Any, AsyncGenerator
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -32,6 +32,15 @@ DEFAULT_KERNEL = REPO_ROOT / "baseline_kernel.hpp"
 CANDIDATE_KERNEL = REPO_ROOT / "candidate_kernel.hpp"
 CERT_PATH = REPO_ROOT / "REFEREE_CERTIFICATE.md"
 ESTIMATED_RUN_SECONDS = 4
+
+# Availability Protection & Guardrail Defaults
+IP_HOURLY_LIMIT = int(os.environ.get("IP_HOURLY_LIMIT", "5"))
+DAILY_RUNS_LIMIT = int(os.environ.get("DAILY_RUNS_LIMIT", "30"))
+DAILY_SPEND_LIMIT_USD = float(os.environ.get("DAILY_SPEND_LIMIT_USD", "5.00"))
+JUDGE_SECRET_TOKEN = os.environ.get("JUDGE_SECRET_TOKEN", "verikernel-judge-2026")
+
+# IP call history: maps client IP -> list of timestamps
+ip_call_history: dict[str, list[float]] = {}
 
 app = FastAPI(title="VeriKernel Execution API", version="1.0.0")
 
@@ -110,6 +119,122 @@ def run_referee_sync(kernel_path: pathlib.Path) -> dict:
     return telemetry
 
 
+def get_client_ip(request: Request) -> str:
+    """Extract real client IP considering reverse proxies (Cloudflare, Nginx, Netlify)."""
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    real_ip = request.headers.get("x-real-ip")
+    if real_ip:
+        return real_ip.strip()
+    return request.client.host if (request.client and request.client.host) else "127.0.0.1"
+
+
+def get_daily_metrics() -> tuple[int, float]:
+    """Calculate the number of live runs and total USD spend completed in the rolling 24-hour window."""
+    runs_dir = CACHE_DIR / "agent_runs"
+    now = time.time()
+    cutoff = now - 86400.0  # 24 hours rolling
+    daily_runs = 0
+    daily_spend = 0.0
+
+    if runs_dir.exists():
+        for f in runs_dir.glob("*.json"):
+            try:
+                mtime = f.stat().st_mtime
+                if mtime >= cutoff:
+                    with open(f, "r", encoding="utf-8") as rf:
+                        rdata = json.load(rf)
+                        if isinstance(rdata, dict):
+                            daily_spend += float(rdata.get("total_cost_usd", 0.0))
+                            daily_runs += 1
+            except Exception:
+                pass
+
+    return daily_runs, round(daily_spend, 5)
+
+
+def is_judge_request(request: Request) -> bool:
+    """Verifies whether incoming request carries valid Judge VIP authentication."""
+    token = (
+        request.headers.get("x-judge-token")
+        or request.query_params.get("judge_token")
+        or request.query_params.get("judge_key")
+        or request.query_params.get("key")
+    )
+    return bool(token and token.strip() == JUDGE_SECRET_TOKEN)
+
+
+def check_availability_guards(request: Request, is_llm_run: bool = True) -> dict[str, Any]:
+    """Evaluates IP rate limit, global daily run cap, and cloud spending limit.
+    Raises HTTPException(429) if any limit is exceeded; returns quota metadata.
+    Judges with a valid VIP token bypass unauthenticated IP limits and daily run caps."""
+    now = time.time()
+    client_ip = get_client_ip(request)
+    is_judge = is_judge_request(request)
+
+    daily_runs, daily_spend = get_daily_metrics()
+
+    # 1. Cloud Spending Limit ($5.00/day) - Absolute financial protection for all callers
+    if is_llm_run and daily_spend >= DAILY_SPEND_LIMIT_USD:
+        raise HTTPException(
+            status_code=429,
+            detail=(
+                f"Daily cloud spending budget reached (${daily_spend:.4f} / ${DAILY_SPEND_LIMIT_USD:.2f} USD). "
+                "Live LLM calls are temporarily halted to protect project credits. "
+                "Please switch to 'Instant Replay' mode to inspect verified runs."
+            ),
+        )
+
+    # 2. Global Daily Run Cap (30 runs/day) - Bypassed for verified judges
+    if not is_judge and daily_runs >= DAILY_RUNS_LIMIT:
+        raise HTTPException(
+            status_code=429,
+            detail=(
+                f"Global daily execution cap reached ({daily_runs}/{DAILY_RUNS_LIMIT} live runs today). "
+                "The VeriKernel VM is preserving compute availability for judges. "
+                "Please switch to 'Instant Replay' or 'Re-Verify Live (0 Tokens)' mode, or provide a Judge VIP token."
+            ),
+        )
+
+    # 3. IP-based Hourly Rate Limit (5 live calls/hour) - Bypassed for verified judges
+    if not is_judge:
+        history = [t for t in ip_call_history.get(client_ip, []) if t > (now - 3600.0)]
+        ip_call_history[client_ip] = history
+
+        if len(history) >= IP_HOURLY_LIMIT:
+            oldest = history[0]
+            reset_minutes = max(1, int(math.ceil((oldest + 3600.0 - now) / 60.0)))
+            raise HTTPException(
+                status_code=429,
+                detail=(
+                    f"Rate limit exceeded: {IP_HOURLY_LIMIT} live calls per hour per IP. "
+                    f"Your quota resets in ~{reset_minutes} minute(s). "
+                    "Please explore cached runs or Break-It Gallery tests in the meantime, or enter a Judge VIP token."
+                ),
+            )
+
+        # Record this live call
+        history.append(now)
+        ip_call_history[client_ip] = history
+
+        remaining_ip = max(0, IP_HOURLY_LIMIT - len(history))
+        reset_secs = int(max(0, (history[0] + 3600.0 - now)))
+    else:
+        remaining_ip = 999
+        reset_secs = 0
+
+    return {
+        "client_ip": client_ip,
+        "is_judge": is_judge,
+        "ip_remaining": remaining_ip,
+        "ip_reset_seconds": reset_secs,
+        "daily_runs_completed": daily_runs + 1,
+        "daily_runs_remaining": max(0, DAILY_RUNS_LIMIT - (daily_runs + 1)),
+        "daily_spend_usd": daily_spend,
+    }
+
+
 async def execute_referee_task(req: ExecutionRequest) -> AsyncGenerator[str, None]:
     """Manages queue position notifications, lock acquisition, and referee execution."""
     global waiting_queue_count
@@ -169,18 +294,33 @@ async def execute_referee_task(req: ExecutionRequest) -> AsyncGenerator[str, Non
 
 
 @app.post("/api/run-referee-stream")
-async def run_referee_stream_endpoint(req: ExecutionRequest):
+async def run_referee_stream_endpoint(req: ExecutionRequest, request: Request):
     """Server-Sent Events endpoint streaming queue position and final referee results."""
+    # Apply availability guards if live C++ execution is requested
+    quota_headers = {}
+    if req.force_live or req.kernel_code:
+        quota = check_availability_guards(request, is_llm_run=False)
+        quota_headers = {
+            "X-RateLimit-Limit": str(IP_HOURLY_LIMIT),
+            "X-RateLimit-Remaining": str(quota["ip_remaining"]),
+            "X-RateLimit-Reset": str(quota["ip_reset_seconds"]),
+        }
+
     return StreamingResponse(
         execute_referee_task(req),
         media_type="text/event-stream",
+        headers=quota_headers,
     )
 
 
 @app.post("/api/run-referee")
-async def run_referee_json_endpoint(req: ExecutionRequest):
+async def run_referee_json_endpoint(req: ExecutionRequest, request: Request):
     """Standard serialized JSON endpoint waiting for execution lock."""
     global waiting_queue_count
+
+    # Apply availability guards if live C++ execution is requested
+    if req.force_live or req.kernel_code:
+        check_availability_guards(request, is_llm_run=False)
 
     lock_acquired = False
     if execution_lock.locked():
@@ -626,41 +766,47 @@ async def download_bundle():
 
 
 @app.get("/api/budget-status")
-async def get_budget_status():
-    """Returns real-time budget consumption, daily caps, and provider indicators."""
-    runs_dir = CACHE_DIR / "agent_runs"
-    daily_spend_limit = 5.00
-    daily_runs_limit = 30
-    total_spend = 0.0
-    runs_count = 0
+async def get_budget_status(request: Request):
+    """Returns real-time budget consumption, daily caps, provider indicators, and IP rate limits."""
+    client_ip = get_client_ip(request)
+    is_judge = is_judge_request(request)
+    now = time.time()
+    history = [t for t in ip_call_history.get(client_ip, []) if t > (now - 3600.0)]
+    ip_call_history[client_ip] = history
+    ip_used = len(history)
+    ip_remaining = 999 if is_judge else max(0, IP_HOURLY_LIMIT - ip_used)
 
-    if runs_dir.exists():
-        for f in runs_dir.glob("*.json"):
-            try:
-                with open(f, "r", encoding="utf-8") as rf:
-                    rdata = json.load(rf)
-                    if isinstance(rdata, dict):
-                        total_spend += float(rdata.get("total_cost_usd", 0.0))
-                        runs_count += 1
-            except Exception:
-                pass
+    daily_runs, daily_spend = get_daily_metrics()
+    daily_spend_remaining = round(max(0.0, DAILY_SPEND_LIMIT_USD - daily_spend), 5)
+    daily_runs_remaining = max(0, DAILY_RUNS_LIMIT - daily_runs)
 
     has_nebius = bool(os.environ.get("NEBIUS_API_KEY"))
     has_tavily = bool(os.environ.get("TAVILY_API_KEY"))
 
+    can_execute = (
+        has_nebius
+        and (daily_spend < DAILY_SPEND_LIMIT_USD)
+        and (is_judge or (daily_runs < DAILY_RUNS_LIMIT and ip_remaining > 0))
+    )
+
     return {
-        "daily_spend_limit_usd": daily_spend_limit,
-        "daily_spend_current_usd": round(total_spend, 5),
-        "daily_spend_remaining_usd": round(max(0.0, daily_spend_limit - total_spend), 5),
-        "daily_runs_limit": daily_runs_limit,
-        "daily_runs_completed": runs_count,
-        "daily_runs_remaining": max(0, daily_runs_limit - runs_count),
+        "daily_spend_limit_usd": DAILY_SPEND_LIMIT_USD,
+        "daily_spend_current_usd": round(daily_spend, 5),
+        "daily_spend_remaining_usd": daily_spend_remaining,
+        "daily_runs_limit": DAILY_RUNS_LIMIT,
+        "daily_runs_completed": daily_runs,
+        "daily_runs_remaining": daily_runs_remaining,
+        "ip_hourly_limit": IP_HOURLY_LIMIT,
+        "ip_calls_used": ip_used,
+        "ip_calls_remaining": ip_remaining,
+        "client_ip": client_ip,
+        "is_judge": is_judge,
         "model_id": "nvidia/nemotron-3-super-120b-a12b",
         "provider": "Nebius Token Factory",
         "search_provider": "Tavily Search API",
         "has_nebius_key": has_nebius,
         "has_tavily_key": has_tavily,
-        "can_execute_live": has_nebius and (total_spend < daily_spend_limit) and (runs_count < daily_runs_limit),
+        "can_execute_live": can_execute,
     }
 
 
@@ -727,20 +873,38 @@ async def stream_agent_run(mode: str = "self_correction") -> AsyncGenerator[str,
 
 
 @app.post("/api/run-agent-live")
-async def run_agent_live_endpoint(mode: str = "self_correction"):
+async def run_agent_live_endpoint(request: Request, mode: str = "self_correction"):
     """Server-Sent Events endpoint streaming live agent self-correction progress."""
+    quota = check_availability_guards(request, is_llm_run=True)
     return StreamingResponse(
         stream_agent_run(mode=mode),
         media_type="text/event-stream",
+        headers={
+            "X-RateLimit-Limit": str(IP_HOURLY_LIMIT),
+            "X-RateLimit-Remaining": str(quota["ip_remaining"]),
+            "X-RateLimit-Reset": str(quota["ip_reset_seconds"]),
+            "X-Judge-Authorized": "true" if quota.get("is_judge") else "false",
+        },
     )
 
 
 @app.post("/api/run-agent-live/sync")
-async def run_agent_live_sync_endpoint(mode: str = "self_correction"):
+async def run_agent_live_sync_endpoint(request: Request, mode: str = "self_correction"):
     """Synchronous endpoint executing live agent loop and returning normalized results."""
+    quota = check_availability_guards(request, is_llm_run=True)
     async with execution_lock:
         res = await asyncio.to_thread(run_agent_optimization, mode=mode)
-        return {"status": "success", "data": normalize_run_data(res)}
+        headers = {
+            "X-RateLimit-Limit": str(IP_HOURLY_LIMIT),
+            "X-RateLimit-Remaining": str(quota["ip_remaining"]),
+            "X-RateLimit-Reset": str(quota["ip_reset_seconds"]),
+            "X-Judge-Authorized": "true" if quota.get("is_judge") else "false",
+        }
+        return Response(
+            content=json.dumps({"status": "success", "data": normalize_run_data(res)}),
+            media_type="application/json",
+            headers=headers,
+        )
 
 
 @app.post("/api/cancel-live-run")
@@ -825,12 +989,24 @@ async def get_hardware_info():
 @app.get("/api/health")
 async def get_health():
     """Health check for deployment monitoring and availability protection."""
+    daily_runs, daily_spend = get_daily_metrics()
+    load_avg = list(os.getloadavg()) if hasattr(os, "getloadavg") else [0.0, 0.0, 0.0]
     return {
         "status": "ok",
         "busy": execution_lock.locked(),
         "waiting_queue_count": waiting_queue_count,
         "ref_binary_exists": (REPO_ROOT / "reference_cavity_129.bin").exists(),
         "cert_exists": CERT_PATH.exists(),
+        "daily_runs_completed": daily_runs,
+        "daily_spend_usd": daily_spend,
+        "cpu_count": os.cpu_count() or 1,
+        "load_avg": [round(x, 2) for x in load_avg],
+        "guards": {
+            "daily_runs_limit": DAILY_RUNS_LIMIT,
+            "daily_spend_limit_usd": DAILY_SPEND_LIMIT_USD,
+            "ip_hourly_limit": IP_HOURLY_LIMIT,
+            "judge_passkey_enabled": True,
+        },
     }
 
 
