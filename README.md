@@ -178,19 +178,40 @@ make test
 [Stage 5] BENCH_PASS: Throughput: 21.04 GB/s (Median latency: 59.57 ms)
 ```
 
-### 4. Run Stage 5 Bandwidth Benchmark
+### 4. Run One-Command Verification Suite
+
+Run the complete verification suite verifying the baseline cavity solver, the 2D wave multi-grid convergence order ($p \ge 1.90$), and all 6 adversarial defect kernels:
+
+```
+make check
+```
+
+### 5. Run Stage 5 Bandwidth Benchmark
 
 ```
 make bench
 ```
 
-### 5. Verify the Adversarial Break-It Gallery
+### 6. Verify the Adversarial Break-It Gallery
 
-Execute all 5 gallery defect kernels to verify that the gates trigger properly:
+Execute all 6 gallery defect kernels to verify that the gates trigger properly:
 
 ```
 make gallery
 ```
+
+## Token Economics Summary
+
+Inference evaluated on `nvidia/nemotron-3-super-120b-a12b` via Nebius Token Factory (\$0.30/M input tokens, \$0.90/M output tokens):
+
+| Inference Metric | Arm A: One-Shot Ungated (Standard LLM) | Arm B: Referee-Gated + Tavily (VeriKernel) | Economic Impact |
+| :--- | :--- | :--- | :--- |
+| **Verification Pass Rate** | 13.3% (4 / 30 kernels) | **93.3% (28 / 30 kernels)** | **+80.0% reliability gain** |
+| **Mean Cost per Invocation** | \$0.0060 USD | \$0.0115 USD | +\$0.0055 USD per session |
+| **Wasted Spend on Invalid Code** | 86.7% (\$0.1560 total) | **6.7% (\$0.0230 total)** | Eliminates compute & token waste |
+| **Effective Cost per Usable Kernel** | **\$0.0449 USD** | **\$0.0123 USD** | **3.6× cheaper per production asset** |
+
+> **Economic Insight:** One-shot generation appears cheap on paper (\$0.0060/call) but wastes 86.7% of budget producing syntactically malformed or mathematically non-deterministic code. VeriKernel's automated self-correction loop amortizes multi-turn costs across a 93.3% pass rate, delivering certified high-performance code at more than one-third of the effective cost.
 
 ## Nebius Token Factory & NVIDIA Technical Feedback
 
@@ -204,6 +225,13 @@ Key topics covered in the report:
 3. **Inference Economics ($N=30$ Study):** Why ungated generation wasted 86.7% of tokens on invalid code (\$0.0449/usable kernel), whereas VeriKernel's Nemotron loop achieved \$0.0123/usable kernel (**3.6× cheaper per usable production asset**).
 4. **Cloud vCPU OpenMP Thread-Pinning:** Overcoming virtualized CPU scheduling jitter using `OMP_PROC_BIND=close` and `OMP_PLACES=cores`.
 5. **Platform UX & Roadmap Requests:** Granular `usage.reasoning_tokens`, bit-exact seed pinning, and console consolidation.
+
+## Future Roadmap
+
+1. **3D Cavity & Spectral Navier-Stokes:** Extend the immutable harness from 2D ($129^2$, $513^2$) to 3D staggered grids ($128^3$) and pseudo-spectral methods for high-Reynolds regimes ($\text{Re} \ge 1000$).
+2. **GPU Kernel Synthesis (CUDA & Triton):** Integrate GPU Referee gates evaluating warp divergence, shared memory bank conflicts, and NVIDIA Nsight Compute roofline benchmarks.
+3. **Formal Invariant Proving:** Integrate symbolic execution (SymPy / Z3) into Stage 1 to formally prove boundary conditions and stencil symmetries before compilation.
+4. **Adaptive Tiered Reasoning:** Dynamic model routing escalating from `Nemotron-3-Nano` for syntax repairs to `Nemotron-3-Super` for complex cache blocking and SIMD AVX-512 vectorization.
 
 ## Citation & References
 

@@ -1998,7 +1998,8 @@
                 <button class="mode-btn" id="modeFresh" onclick="setOperationalMode('fresh', event)">🚀 Fresh Live
                     Run</button>
             </div>
-            <span class="badge live" id="backendStatusBadge" onclick="openBackendModal()" style="cursor: pointer;" title="Configure Backend VM Endpoint / Fallback Mode">🟢 Host Connected</span>
+            <span class="badge live" id="backendStatusBadge" onclick="openBackendModal()" style="cursor: pointer;"
+                title="Configure Backend VM Endpoint / Fallback Mode">🟢 Host Connected</span>
             <span class="badge" id="queueStatus">Queue: Idle</span>
             <span class="badge" id="targetHardwareBadge">Target: 8-Core Pinned</span>
             <span class="badge live" id="liveModeBadge">● Verified Self-Correction Active</span>
@@ -2100,7 +2101,7 @@
                             <strong id="liveAttemptBadge" style="color: var(--accent-blue);">1 / 4</strong>
                             <span style="margin-left: 14px; color: var(--text-secondary);">Elapsed: </span>
                             <strong id="liveElapsedTimer" style="color: #7ee787;">00:00s</strong>
-                            <span style="margin-left: 6px; font-size: 0.7rem; color: var(--text-muted);">(est. ~20s
+                            <span style="margin-left: 6px; font-size: 0.7rem; color: var(--text-muted);">(est. ~40s
                                 total per
                                 attempt)</span>
                         </div>
@@ -2210,9 +2211,12 @@
                         <div class="cfd-control-bar">
                             <span class="cfd-control-label">Defect Overlay:</span>
                             <div class="cfd-segmented-pill">
-                                <button id="btnGhiaOverlayNone" class="cfd-seg-btn active" onclick="setGhiaOverlayMode('none', event)">Verified Only</button>
-                                <button id="btnGhiaOverlayRace" class="cfd-seg-btn btn-defect-race" onclick="setGhiaOverlayMode('race', event)">Bug 2: Race</button>
-                                <button id="btnGhiaOverlayBoundary" class="cfd-seg-btn btn-defect-lid" onclick="setGhiaOverlayMode('boundary', event)">Bug 3: Lid Flaw</button>
+                                <button id="btnGhiaOverlayNone" class="cfd-seg-btn active"
+                                    onclick="setGhiaOverlayMode('none', event)">Verified Only</button>
+                                <button id="btnGhiaOverlayRace" class="cfd-seg-btn btn-defect-race"
+                                    onclick="setGhiaOverlayMode('race', event)">Bug 2: Race</button>
+                                <button id="btnGhiaOverlayBoundary" class="cfd-seg-btn btn-defect-lid"
+                                    onclick="setGhiaOverlayMode('boundary', event)">Bug 3: Lid Flaw</button>
                             </div>
                         </div>
 
@@ -2223,7 +2227,8 @@
                                 <span>Ghia Ref (1982)</span>
                             </div>
                             <div class="cfd-legend-item">
-                                <span class="cfd-legend-symbol" style="color: #6e7681; font-weight: bold; letter-spacing: -1px;">╌╌</span>
+                                <span class="cfd-legend-symbol"
+                                    style="color: #6e7681; font-weight: bold; letter-spacing: -1px;">╌╌</span>
                                 <span>Baseline Serial</span>
                             </div>
                             <div class="cfd-legend-item">
@@ -2238,7 +2243,7 @@
                         <div style="height: 330px; position: relative; width: 100%;">
                             <canvas id="ghiaChart"></canvas>
                         </div>
-                        
+
                         <div class="cfd-stat-footer">
                             <div class="cfd-stat-cell">
                                 <span class="cfd-stat-label">Cavity Floor (y=0)</span>
@@ -2475,7 +2480,8 @@
                 <div id="galleryChartWrapper" style="height: 240px; position: relative;">
                     <canvas id="galleryPhysicsCanvas"></canvas>
                 </div>
-                <div id="galleryLinterView" style="display: none; padding: 14px 18px; background: #0d1117; border-radius: 6px; border: 1px solid #30363d; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5;">
+                <div id="galleryLinterView"
+                    style="display: none; padding: 14px 18px; background: #0d1117; border-radius: 6px; border: 1px solid #30363d; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5;">
                 </div>
             </div>
         </div>
@@ -2659,7 +2665,8 @@
                 <!-- One-Click Bundle Download & Individual Files -->
                 <div style="display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap;">
                     <a href="/api/download/bundle"
-                        onclick="downloadFileWithFallback(event, './verikernel_certified_bundle.zip')" class="action-btn"
+                        onclick="downloadFileWithFallback(event, './verikernel_certified_bundle.zip')"
+                        class="action-btn"
                         style="background: var(--accent-blue); color: #0d1117; font-weight: 700; padding: 9px 18px;">
                         📦 Download Bundle (.ZIP)
                     </a>
@@ -5326,7 +5333,7 @@
 
         let currentGhiaOverlayMode = 'none';
 
-        window.setGhiaOverlayMode = function(mode, ev) {
+        window.setGhiaOverlayMode = function (mode, ev) {
             currentGhiaOverlayMode = mode;
             ['btnGhiaOverlayNone', 'btnGhiaOverlayRace', 'btnGhiaOverlayBoundary'].forEach(id => {
                 const btn = document.getElementById(id);
@@ -5777,35 +5784,48 @@
     <div id="backendModal" class="modal-overlay" onclick="if(event.target===this) closeBackendModal()">
         <div class="modal-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                <div style="font-family: var(--font-mono); font-size: 1rem; font-weight: 700; color: var(--text-primary);">
+                <div
+                    style="font-family: var(--font-mono); font-size: 1rem; font-weight: 700; color: var(--text-primary);">
                     ⚙️ 3-Tier Architecture &amp; VM Endpoint
                 </div>
-                <button onclick="closeBackendModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">&times;</button>
+                <button onclick="closeBackendModal()"
+                    style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">&times;</button>
             </div>
             <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
-                VeriKernel features a 3-tier architecture: <strong>(1) Live Containerized VM Backend</strong> with 8 pinned CPU cores, <strong>(2) In-Memory Availability Guardrails</strong> (IP rate limits, daily run caps, cloud spend limits), and <strong>(3) Zero-Latency Static Fallback</strong> for GitHub Pages &amp; Netlify.
+                VeriKernel features a 3-tier architecture: <strong>(1) Live Containerized VM Backend</strong> with 8
+                pinned CPU cores, <strong>(2) In-Memory Availability Guardrails</strong> (IP rate limits, daily run
+                caps, cloud spend limits), and <strong>(3) Zero-Latency Static Fallback</strong> for GitHub Pages &amp;
+                Netlify.
             </p>
             <div style="margin-bottom: 14px;">
-                <label style="display: block; font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 6px;">
+                <label
+                    style="display: block; font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 6px;">
                     Remote Backend VM URL (HTTPS or Cloudflare Tunnel, leave empty for Static Fallback):
                 </label>
-                <input id="backendUrlInput" type="text" placeholder="e.g. https://api.verikernel.nip.io or https://xyz.trycloudflare.com"
+                <input id="backendUrlInput" type="text"
+                    placeholder="e.g. https://api.verikernel.nip.io or https://xyz.trycloudflare.com"
                     style="width: 100%; background: var(--bg-base); border: 1px solid var(--border-subtle); color: var(--text-primary); padding: 8px 12px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.85rem;" />
                 <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
-                    Note: For HTTPS-hosted deployments (GitHub Pages/Netlify), use an HTTPS backend URL (Cloudflare Tunnel or Caddy) to prevent Mixed Content security blocking.
+                    Note: For HTTPS-hosted deployments (GitHub Pages/Netlify), use an HTTPS backend URL (Cloudflare
+                    Tunnel or Caddy) to prevent Mixed Content security blocking.
                 </div>
             </div>
             <div style="margin-bottom: 14px;">
-                <label style="display: block; font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 6px;">
+                <label
+                    style="display: block; font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 6px;">
                     Judge VIP Passkey (Optional — unlocks unmetered judge evaluation):
                 </label>
                 <input id="judgeTokenInput" type="password" placeholder="e.g. verikernel-judge-2026"
                     style="width: 100%; background: var(--bg-base); border: 1px solid var(--border-subtle); color: var(--text-primary); padding: 8px 12px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.85rem;" />
             </div>
-            <div id="backendModalStatus" style="font-size: 0.78rem; font-family: var(--font-mono); margin-bottom: 16px; min-height: 20px;"></div>
+            <div id="backendModalStatus"
+                style="font-size: 0.78rem; font-family: var(--font-mono); margin-bottom: 16px; min-height: 20px;"></div>
             <div style="display: flex; gap: 8px; justify-content: flex-end;">
-                <button onclick="closeBackendModal()" class="action-btn secondary" style="padding: 7px 14px; font-size: 0.8rem;">Cancel</button>
-                <button onclick="testAndSaveBackend()" class="action-btn" style="background: var(--accent-blue); color: #0d1117; font-weight: 700; padding: 7px 16px; font-size: 0.8rem;">Test &amp; Connect</button>
+                <button onclick="closeBackendModal()" class="action-btn secondary"
+                    style="padding: 7px 14px; font-size: 0.8rem;">Cancel</button>
+                <button onclick="testAndSaveBackend()" class="action-btn"
+                    style="background: var(--accent-blue); color: #0d1117; font-weight: 700; padding: 7px 16px; font-size: 0.8rem;">Test
+                    &amp; Connect</button>
             </div>
         </div>
     </div>

@@ -23,13 +23,13 @@ REPO_ROOT = pathlib.Path(__file__).resolve().parent
 # Workload 1: Cavity Defaults
 DEFAULT_HARNESS_CAVITY = REPO_ROOT / "harness_cavity.cpp"
 DEFAULT_KERNEL_CAVITY = REPO_ROOT / "baseline_kernel.hpp"
-DEFAULT_BINARY_CAVITY = REPO_ROOT / "build" / "harness_cavity"
+DEFAULT_BINARY_CAVITY = REPO_ROOT / "build" / "eval_cavity"
 REFERENCE_BINARY = REPO_ROOT / "reference_cavity_129.bin"
 
 # Workload 2: Wave Defaults
 DEFAULT_HARNESS_WAVE = REPO_ROOT / "harness_wave.cpp"
 DEFAULT_KERNEL_WAVE = REPO_ROOT / "wave_baseline.hpp"
-DEFAULT_BINARY_WAVE = REPO_ROOT / "build" / "harness_wave"
+DEFAULT_BINARY_WAVE = REPO_ROOT / "build" / "eval_wave"
 
 BANNED_PATTERNS = [
     r"#pragma\s+GCC\s+optimize\s*\(\s*\"fast-math\"\s*\)",
@@ -398,8 +398,14 @@ def main() -> int:
     # Auto-generate baseline reference if missing (Cavity only)
     if workload == "cavity" and not REFERENCE_BINARY.exists():
         print(f"Generating missing reference binary at {REFERENCE_BINARY}...", file=sys.stderr)
-        stage2_compile(harness_path, DEFAULT_KERNEL_CAVITY, binary_path, force_local=args.local)
-        run_command([str(binary_path), "--generate-ref"], timeout=120.0)
+        ref_binary_path = REPO_ROOT / "build" / "harness_baseline_ref"
+        stage2_compile(harness_path, DEFAULT_KERNEL_CAVITY, ref_binary_path, force_local=args.local)
+        run_command([str(ref_binary_path), "--generate-ref"], timeout=120.0)
+        if ref_binary_path.exists():
+            try:
+                ref_binary_path.unlink()
+            except OSError:
+                pass
 
     stages: list[StageResult] = []
 

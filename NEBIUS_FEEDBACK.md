@@ -21,7 +21,7 @@ This document serves as our official technical feedback deliverable for the Nebi
 ### The Phenomenon
 When querying reasoning-oriented models such as `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` and `nvidia/nemotron-3-super-120b-a12b` for complex C++ HPC refactoring, the model engages in internal chain-of-thought (CoT) planning before emitting visible syntax. 
 
-During our initial development phase with exploratory scripts ([scripts/check_token_factory.py](file:///home/bhoomish/NebiusxNVIDIA/VeriKernel/scripts/check_token_factory.py)), setting conservative limits such as `max_tokens=256` or `max_tokens=2500` resulted in sudden, opaque execution failures:
+During our initial development phase with exploratory scripts ([scripts/check_token_factory.py](scripts/check_token_factory.py)), setting conservative limits such as `max_tokens=256` or `max_tokens=2500` resulted in sudden, opaque execution failures:
 - The API returned `finish_reason: "length"`.
 - The completion payload was either completely empty (`choice.message.content == ""`) or truncated in the middle of a loop boundary predicate (e.g., `for (size_t i = 1; i < n - `).
 - Downstream compiler passes failed with syntax errors (`expected ')' before ';' token`), causing the agent loop to reject the model output as malformed syntax rather than recognizing it as context exhaustion.
@@ -131,7 +131,7 @@ Evaluating multi-threaded C++ OpenMP code on shared cloud virtual machines intro
 2. **False Parallel Speedups:** Naive OpenMP pragmas (`#pragma omp parallel for` placed over lexicographical Gauss-Seidel) appear 5×–13× faster on virtualized cores because cache lines are read concurrently, but race conditions corrupt simulation state.
 
 ### The VeriKernel Architectural Solution
-In our Docker sandbox ([Dockerfile](file:///home/bhoomish/NebiusxNVIDIA/VeriKernel/Dockerfile) and [docker-compose.yml](file:///home/bhoomish/NebiusxNVIDIA/VeriKernel/docker-compose.yml)), we implemented strict core binding:
+In our Docker sandbox ([Dockerfile](Dockerfile) and [docker-compose.yml](docker-compose.yml)), we implemented strict core binding:
 ```yaml
 security_opt:
   - no-new-privileges:true
