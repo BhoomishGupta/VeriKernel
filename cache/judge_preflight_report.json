@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-10-30T08:03:14Z",
+  "timestamp": "2026-10-30T08:16:56Z",
   "tiers": {
     "tier1_static_cdn": {
       "static/index.html": {
         "ok": true,
-        "size_bytes": 276807
+        "size_bytes": 276793
       },
       "static/.nojekyll": {
         "ok": true,

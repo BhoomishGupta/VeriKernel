@@ -2998,13 +2998,13 @@
             const target = document.getElementById('tab-' + tabId);
             if (target) target.classList.add('active');
 
-            // Hide operational mode guidance banner in Break-It Gallery tab
+            // Guidance banner applies exclusively to the Attempt Ladder tab
             const guidanceBanner = document.getElementById('modeGuidanceBanner');
             if (guidanceBanner) {
-                if (tabId === 'gallery') {
-                    guidanceBanner.style.display = 'none';
-                } else {
+                if (tabId === 'ladder') {
                     guidanceBanner.style.display = 'flex';
+                } else {
+                    guidanceBanner.style.display = 'none';
                 }
             }
         }
@@ -4146,7 +4146,7 @@
             const guidanceBanner = document.getElementById('modeGuidanceBanner');
             const guidanceText = document.getElementById('modeGuidanceText');
             const guidanceSub = document.getElementById('modeGuidanceSub');
-            const isGalleryActive = document.getElementById('tab-gallery') && document.getElementById('tab-gallery').classList.contains('active');
+            const isLadderActive = document.getElementById('tab-ladder') && document.getElementById('tab-ladder').classList.contains('active');
 
             if (mode === 'replay') {
                 if (liveBox) liveBox.style.display = 'none';
@@ -4175,9 +4175,9 @@
                 }
             }
 
-            // Ensure guidance banner remains hidden if currently on gallery tab
+            // Guidance banner is only shown when on Attempt Ladder tab
             if (guidanceBanner) {
-                guidanceBanner.style.display = isGalleryActive ? 'none' : 'flex';
+                guidanceBanner.style.display = isLadderActive ? 'flex' : 'none';
             }
         }
 
