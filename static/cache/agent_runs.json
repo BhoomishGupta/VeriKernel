@@ -1,0 +1,36 @@
+{
+  "runs": [
+    {
+      "filename": "run_20261030_034948.json",
+      "size_bytes": 17953
+    },
+    {
+      "filename": "run_20261029_125033.json",
+      "size_bytes": 18125
+    },
+    {
+      "filename": "run_20261029_124529.json",
+      "size_bytes": 4527
+    },
+    {
+      "filename": "run_20261029_120058.json",
+      "size_bytes": 4471
+    },
+    {
+      "filename": "run_20261029_114654.json",
+      "size_bytes": 4682
+    },
+    {
+      "filename": "run_20261026_005952.json",
+      "size_bytes": 1395
+    },
+    {
+      "filename": "agent_run_8ktokens.json",
+      "size_bytes": 5102
+    },
+    {
+      "filename": "agent_run_4attempt_enriched.json",
+      "size_bytes": 17774
+    }
+  ]
+}

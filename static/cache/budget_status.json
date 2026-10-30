@@ -1,0 +1,14 @@
+{
+  "status": "ok",
+  "model_id": "nvidia/nemotron-3-super",
+  "search_provider": "Tavily AI Search",
+  "daily_runs_completed": 30,
+  "daily_runs_limit": 30,
+  "daily_runs_remaining": 0,
+  "daily_spend_current_usd": 0.345,
+  "daily_spend_limit_usd": 5.0,
+  "daily_spend_remaining_usd": 4.655,
+  "is_judge": true,
+  "ip_hourly_limit": 5,
+  "mode": "static_offline_demo"
+}

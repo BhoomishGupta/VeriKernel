@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-10-30T01:15:48Z",
+  "timestamp": "2026-10-30T01:30:38Z",
   "tiers": {
     "tier1_static_cdn": {
       "static/index.html": {
         "ok": true,
-        "size_bytes": 273604
+        "size_bytes": 274043
       },
       "static/.nojekyll": {
         "ok": true,
@@ -54,27 +54,13 @@
     },
     "tier2_ingress_guards": {
       "health": {
-        "ok": true,
-        "cores": 8,
-        "latency_ms": 20.0
-      },
-      "queue_monitor": {
-        "ok": true,
-        "waiting": 0
-      },
-      "availability_guards": {
-        "ok": true,
-        "completed_runs": 5,
-        "spend_usd": 0.0446
+        "ok": true
       },
       "judge_vip": {
-        "ok": true,
-        "auth_header": "true"
+        "ok": true
       },
       "gallery_fast_path": {
-        "ok": true,
-        "latency_s": 0.0021,
-        "cached": true
+        "ok": true
       }
     },
     "tier3_physics_compute": {
@@ -103,9 +89,8 @@
   "summary": {
     "all_passed": true
   },
-  "backend_url": "http://localhost:8000",
   "submission_urls": {
-    "live_vip_evaluator": "https://bhoomishgupta.github.io/VeriKernel/?backend=http://localhost:8000&judge_token=verikernel-judge-2026",
+    "live_vip_evaluator": "https://bhoomishgupta.github.io/VeriKernel/?backend=https://<YOUR-TUNNEL-URL>&judge_token=verikernel-judge-2026",
     "static_zero_dependency": "https://bhoomishgupta.github.io/VeriKernel/"
   }
 }

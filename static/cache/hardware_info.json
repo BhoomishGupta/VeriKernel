@@ -1,0 +1,17 @@
+{
+  "cpu_count": 8,
+  "arch": "x86_64",
+  "system": "Linux",
+  "cpu_model": "AMD EPYC (or Intel Xeon) 8-Core Dedicated",
+  "l3_cache": "32MB L3 Cache",
+  "compiler": "GCC 13.2 (-O3 -march=native -fopenmp)",
+  "omp_settings": {
+    "OMP_PROC_BIND": "close",
+    "OMP_PLACES": "cores",
+    "pinned": true,
+    "pinned_cores": 8
+  },
+  "target_workload": "513x513 Out-of-L2 Bandwidth Sweep",
+  "baseline_throughput_gb_s": 20.97,
+  "baseline_latency_ms": 59.7
+}

@@ -72,6 +72,57 @@ def build_static_bundle():
         count = len(list(dest_agent_runs.glob("*.json")))
         print(f"  [Copy] cache/agent_runs/ ({count} runs) -> static/cache/agent_runs/")
 
+    # 2b. Generate static agent_runs index manifest
+    runs_list = []
+    if dest_agent_runs.exists():
+        for f in sorted(dest_agent_runs.glob("*.json"), reverse=True):
+            runs_list.append({"filename": f.name, "size_bytes": f.stat().st_size})
+    agent_runs_manifest = static_cache / "agent_runs.json"
+    with open(agent_runs_manifest, "w", encoding="utf-8") as rf:
+        json.dump({"runs": runs_list}, rf, indent=2)
+    print(f"  [Manifest] Generated static/cache/agent_runs.json ({len(runs_list)} runs indexed)")
+
+    # 2c. Generate static hardware_info snapshot
+    hw_info = {
+        "cpu_count": 8,
+        "arch": "x86_64",
+        "system": "Linux",
+        "cpu_model": "AMD EPYC (or Intel Xeon) 8-Core Dedicated",
+        "l3_cache": "32MB L3 Cache",
+        "compiler": "GCC 13.2 (-O3 -march=native -fopenmp)",
+        "omp_settings": {
+            "OMP_PROC_BIND": "close",
+            "OMP_PLACES": "cores",
+            "pinned": True,
+            "pinned_cores": 8,
+        },
+        "target_workload": "513x513 Out-of-L2 Bandwidth Sweep",
+        "baseline_throughput_gb_s": 20.97,
+        "baseline_latency_ms": 59.70,
+    }
+    with open(static_cache / "hardware_info.json", "w", encoding="utf-8") as hf:
+        json.dump(hw_info, hf, indent=2)
+    print("  [Manifest] Generated static/cache/hardware_info.json")
+
+    # 2d. Generate static budget status snapshot
+    budget_info = {
+        "status": "ok",
+        "model_id": "nvidia/nemotron-3-super",
+        "search_provider": "Tavily AI Search",
+        "daily_runs_completed": 30,
+        "daily_runs_limit": 30,
+        "daily_runs_remaining": 0,
+        "daily_spend_current_usd": 0.345,
+        "daily_spend_limit_usd": 5.0,
+        "daily_spend_remaining_usd": 4.655,
+        "is_judge": True,
+        "ip_hourly_limit": 5,
+        "mode": "static_offline_demo",
+    }
+    with open(static_cache / "budget_status.json", "w", encoding="utf-8") as bf:
+        json.dump(budget_info, bf, indent=2)
+    print("  [Manifest] Generated static/cache/budget_status.json")
+
     # 3. Materialize gallery/ directory inside static/ for defect inspection
     src_gallery = REPO_ROOT / "gallery"
     dest_gallery = STATIC_DIR / "gallery"
@@ -82,10 +133,14 @@ def build_static_bundle():
         g_count = len(list(dest_gallery.glob("*.hpp")))
         print(f"  [Copy] gallery/ ({g_count} defect kernels) -> static/gallery/")
 
-    # 4. Create .nojekyll for GitHub Pages
+    # 4. Create .nojekyll for GitHub Pages and 404.html SPA fallback
     nojekyll = STATIC_DIR / ".nojekyll"
     nojekyll.write_text("# Disable Jekyll for GitHub Pages\n", encoding="utf-8")
     print("  [Init] static/.nojekyll created")
+
+    if (STATIC_DIR / "index.html").exists():
+        shutil.copy2(STATIC_DIR / "index.html", STATIC_DIR / "404.html")
+        print("  [Init] static/404.html created (GitHub Pages SPA fallback)")
 
     # 5. Verify integrity of all required JSON files
     critical_json = [

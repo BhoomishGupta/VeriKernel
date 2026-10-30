@@ -2984,10 +2984,18 @@
             if (target) target.classList.add('active');
         }
 
+        let consecutiveQueueFailures = 0;
         async function updateQueue() {
+            if (!backendBaseUrl && !['localhost', '127.0.0.1'].includes(window.location.hostname) && consecutiveQueueFailures >= 2) {
+                const el = document.getElementById('queueStatus');
+                if (el) el.innerText = `Queue: Standby`;
+                updateBackendConnectionStatus(false);
+                return;
+            }
             try {
                 const res = await fetch(getApiUrl('/api/queue-status'), { signal: AbortSignal.timeout(2000) });
                 if (res.ok) {
+                    consecutiveQueueFailures = 0;
                     const data = await res.json();
                     const msg = data.waiting > 0
                         ? `${data.waiting} run(s) ahead — ~${data.estimated_wait_seconds}s wait`
@@ -2998,6 +3006,7 @@
                     return;
                 }
             } catch (e) { }
+            consecutiveQueueFailures++;
             const el = document.getElementById('queueStatus');
             if (el) el.innerText = `Queue: Standby`;
             updateBackendConnectionStatus(false);
@@ -3006,9 +3015,8 @@
 
         async function loadRunOptions() {
             try {
-                const res = await fetch(getApiUrl('/api/agent-runs'), { signal: AbortSignal.timeout(2000) });
-                if (res.ok) {
-                    const data = await res.json();
+                const data = await fetchWithFallback('/api/agent-runs', './cache/agent_runs.json', { timeout: 2000 });
+                if (data) {
                     const selector = document.getElementById('runSelector');
                     if (selector && data.runs && data.runs.length > 0) {
                         selector.innerHTML = '';
@@ -4157,9 +4165,8 @@
 
         async function fetchBudgetStatus() {
             try {
-                const res = await fetch(getApiUrl('/api/budget-status'));
-                if (!res.ok) return;
-                const b = await res.json();
+                const b = await fetchWithFallback('/api/budget-status', './cache/budget_status.json', { timeout: 2000 });
+                if (!b) return;
                 const spendEl = document.getElementById('budgetSpend');
                 if (spendEl) {
                     const spendVal = typeof b.daily_spend_current_usd === 'number' ? b.daily_spend_current_usd.toFixed(4) : (b.daily_spend_current_usd || '0.0000');
@@ -4588,9 +4595,8 @@
 
         async function fetchHardwareInfo() {
             try {
-                const res = await fetch(getApiUrl('/api/hardware-info'));
-                if (!res.ok) return;
-                const info = await res.json();
+                const info = await fetchWithFallback('/api/hardware-info', './cache/hardware_info.json', { timeout: 2000 });
+                if (!info) return;
                 hardwareOracleInfo = info;
                 const hwBadge = document.getElementById('hardwareOracleBadge');
                 if (hwBadge) {
