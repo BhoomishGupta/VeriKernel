@@ -37,6 +37,9 @@ SIGNATURE_QUERY_MAP: dict[str, str] = {
     "PHYSICS_FAIL_PARITY": (
         "Red-Black Gauss-Seidel checkerboard 2D grid index parity 5-point stencil"
     ),
+    "PHYSICS_FAIL_WAVE": (
+        "2D wave equation leapfrog stencil second-order Taylor startup convergence order p"
+    ),
     "PHYSICS_FAIL_GENERAL": (
         "Lid-driven cavity Navier-Stokes streamfunction vorticity boundary discretization"
     ),
@@ -74,6 +77,8 @@ def get_diagnostic_query(stage: str, status_tag: str, detail: str) -> str:
         return SIGNATURE_QUERY_MAP["COMPILE_FAIL"]
 
     if "PHYSICS" in status_upper:
+        if "wave" in detail_lower or "observed order" in detail_lower or "truncation" in detail_lower:
+            return SIGNATURE_QUERY_MAP["PHYSICS_FAIL_WAVE"]
         if "steps=15000" in detail_lower or "stalls" in detail_lower:
             return SIGNATURE_QUERY_MAP["PHYSICS_FAIL_STALL"]
         if "wrong_redblack" in detail_lower or "parity" in detail_lower or "0.99" in detail_lower:

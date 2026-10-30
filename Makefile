@@ -18,16 +18,21 @@ KERNEL_DEF      := -DKERNEL_HEADER='"'$(abspath $(CAVITY_BASELINE))'"'
 # Backward-compatibility aliases
 TARGET          := $(CAVITY_TARGET)
 REF_DATA        := $(CAVITY_REF_DATA)
+CAVITY_BASELINE_ALIAS := cavity_baseline.hpp
 
 # --- Workload 2: 2D Acoustic Wave Equation (Hyperbolic Stencil) ---
 WAVE_TARGET     := $(BUILD_DIR)/harness_wave
 WAVE_SRC        := harness_wave.cpp
 WAVE_BASELINE   := wave_baseline.hpp
 
-.PHONY: all clean clean-all test test-local bench check verify-all ref gallery wave test-wave bench-wave help static test-guards test-static preflight tunnel docker-build docker-run docker-stop
+.PHONY: all clean clean-all test test-local bench bench-bandwidth check verify-all ref gallery gallery-local wave test-wave bench-wave help static test-guards test-static preflight tunnel docker-build docker-run docker-stop
 
 # Default target compiles both computational harnesses
-all: $(CAVITY_TARGET) $(WAVE_TARGET)
+all: $(CAVITY_TARGET) $(WAVE_TARGET) $(CAVITY_BASELINE_ALIAS)
+
+# Alias symlink for Step 1 specification compliance
+$(CAVITY_BASELINE_ALIAS): $(CAVITY_BASELINE)
+	@ln -sf $(CAVITY_BASELINE) $(CAVITY_BASELINE_ALIAS)
 
 # Ensure build directory exists
 $(BUILD_DIR):
@@ -64,8 +69,25 @@ test-local: $(CAVITY_REF_DATA)
 	@echo "==> Running VeriKernel Referee locally against $(CAVITY_BASELINE)..."
 	$(PYTHON) referee.py --kernel $(CAVITY_BASELINE) --local
 
-# Stage 5 Pinned Benchmark runner (513x513 out-of-L2 grid)
-bench: $(CAVITY_TARGET)
+# Step 10: Master one-command benchmark & verification execution
+bench: all $(CAVITY_REF_DATA) $(CAVITY_BASELINE_ALIAS)
+	@echo "======================================================================"
+	@echo "   VeriKernel Master Benchmark & Reproducibility Suite (Step 10)     "
+	@echo "======================================================================"
+	@echo "\n==> [1/4] Verifying Baseline Cavity Stencil (5-Stage Sandboxed Referee)..."
+	$(PYTHON) referee.py --kernel $(CAVITY_BASELINE)
+	@echo "\n==> [2/4] Verifying 2D Wave Multi-Grid Convergence Order (p >= 1.90)..."
+	./$(WAVE_TARGET)
+	@echo "\n==> [3/4] Running Break-It Gallery Verification Suite (6 Defects)..."
+	@$(MAKE) gallery
+	@echo "\n==> [4/4] Executing Stage 5 Out-of-L2 Bandwidth Benchmark (513x513, 100 sweeps)..."
+	@OMP_PROC_BIND=close OMP_PLACES=cores ./$(CAVITY_TARGET) --stage5
+	@echo "\n======================================================================"
+	@echo "✓ ALL VERIKERNEL BENCHMARKS & VERIFICATION CHECKS COMPLETED SUCCESSFULLY."
+	@echo "======================================================================"
+
+# Isolated Stage 5 Pinned Benchmark runner (513x513 out-of-L2 grid)
+bench-bandwidth: $(CAVITY_TARGET)
 	@echo "==> Executing Stage 5 Out-of-L2 Bandwidth Benchmark (513x513, 100 sweeps)..."
 	@OMP_PROC_BIND=close OMP_PLACES=cores ./$(CAVITY_TARGET) --stage5
 
@@ -73,6 +95,25 @@ bench: $(CAVITY_TARGET)
 gallery:
 	@echo ""
 	@echo "  Running VeriKernel Break-It Gallery Verification Suite (6 Defects)"
+	@echo ""
+	@echo "\n[1/6] Testing Bug 1: Fast-Math Cheat Pragma (Expect Stage 1 fail)"
+	-$(PYTHON) referee.py --kernel gallery/bug_1_fast_mathcheat.hpp
+	@echo "\n[2/6] Testing Bug 2: Naive OpenMP Race Condition (Expect Stage 3 fail)"
+	-$(PYTHON) referee.py --kernel gallery/bug_2_naive_omp_race.hpp
+	@echo "\n[3/6] Testing Bug 3: Boundary Off-By-One (Expect Stage 4 fail)"
+	-$(PYTHON) referee.py --kernel gallery/bug_3_boundary_off_by_one.hpp
+	@echo "\n[4/6] Testing Bug 4: Float32 Precision Stalling (Expect Stage 4 fail)"
+	-$(PYTHON) referee.py --kernel gallery/bug_4_fp32_downgrade.hpp
+	@echo "\n[5/6] Testing Bug 5: Parity Strided Checkerboard Bug (Expect Stage 4 fail)"
+	-$(PYTHON) referee.py --kernel gallery/bug_5_wrong_redblack_index.hpp
+	@echo "\n[6/6] Testing Bug 6: Wave Naive Startup Order Collapse (Expect Stage 4 fail)"
+	-$(PYTHON) referee.py --kernel gallery/bug_6_wave_naive_startup.hpp --workload wave
+	@echo "\n==> Break-It Gallery suite finished (6/6 adversarial defect kernels evaluated)."
+
+# Local execution of gallery without Docker
+gallery-local:
+	@echo ""
+	@echo "  Running VeriKernel Break-It Gallery Verification Suite Locally"
 	@echo ""
 	@echo "\n[1/6] Testing Bug 1: Fast-Math Cheat Pragma (Expect Stage 1 fail)"
 	-$(PYTHON) referee.py --kernel gallery/bug_1_fast_mathcheat.hpp --local
@@ -86,22 +127,10 @@ gallery:
 	-$(PYTHON) referee.py --kernel gallery/bug_5_wrong_redblack_index.hpp --local
 	@echo "\n[6/6] Testing Bug 6: Wave Naive Startup Order Collapse (Expect Stage 4 fail)"
 	-$(PYTHON) referee.py --kernel gallery/bug_6_wave_naive_startup.hpp --workload wave --local
-	@echo "\n==> Break-It Gallery suite finished (6/6 adversarial defect kernels evaluated)."
+	@echo "\n==> Break-It Gallery local suite finished (6/6 evaluated)."
 
-# One-command comprehensive reproducibility & verification suite
-check: all $(CAVITY_REF_DATA)
-	@echo "======================================================================"
-	@echo "   VeriKernel Complete Automated Verification & Reproducibility Suite "
-	@echo "======================================================================"
-	@echo "\n==> [1/3] Verifying Baseline Cavity Stencil (5-Stage Referee)..."
-	$(PYTHON) referee.py --kernel $(CAVITY_BASELINE) --local
-	@echo "\n==> [2/3] Verifying 2D Wave Multi-Grid Convergence Order (p >= 1.90)..."
-	./$(WAVE_TARGET)
-	@echo "\n==> [3/3] Running Complete Break-It Gallery (6 Adversarial Tests)..."
-	@$(MAKE) gallery
-	@echo "\n======================================================================"
-	@echo "✓ ALL VERIKERNEL VERIFICATION CHECKS COMPLETED SUCCESSFULLY."
-	@echo "======================================================================"
+# Alias for backward-compatibility
+check: bench
 
 verify-all: check
 
@@ -203,14 +232,16 @@ docker-stop:
 # Help menu
 help:
 	@echo "VeriKernel Build, Test & Deployment Commands:"
+	@echo "  make bench        - Master one-command benchmark & verification suite (Baseline + Wave + Gallery + Stage 5)"
+	@echo "  make check        - Alias for make bench (one-command verification suite)"
+	@echo "  make bench-bandwidth - Runs Stage 5 pinned memory bandwidth benchmark for Cavity (513x513)"
 	@echo "  make app          - Launches the VeriKernel FastAPI execution server and lab dashboard"
-	@echo "  make check        - One-command execution: runs baseline test, wave test, and all 6 gallery defect tests"
 	@echo "  make              - Compiles both Cavity and Wave test harnesses into $(BUILD_DIR)/"
 	@echo "  make ref          - Generates $(CAVITY_REF_DATA) on 1 thread using clean baseline"
 	@echo "  make test         - Runs referee.py on baseline_kernel.hpp (All 5 Stages)"
 	@echo "  make test-local   - Runs referee.py forcing native g++ compilation"
-	@echo "  make bench        - Runs Stage 5 pinned memory bandwidth benchmark for Cavity (513x513)"
-	@echo "  make gallery      - Executes all 6 Break-It Gallery adversarial defect tests"
+	@echo "  make gallery      - Executes all 6 Break-It Gallery tests (containerized if Docker available)"
+	@echo "  make gallery-local- Executes all 6 Break-It Gallery tests forcing local g++ compilation"
 	@echo "  make wave         - Compiles the 2D Wave test harness into $(BUILD_DIR)/"
 	@echo "  make test-wave    - Runs 2D Wave multi-grid convergence & determinism check"
 	@echo "  make bench-wave   - Runs Stage 5 pinned memory bandwidth benchmark for Wave (512x512)"

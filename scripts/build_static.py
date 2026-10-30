@@ -20,10 +20,19 @@ def build_static_bundle():
     print(f"==> Building standalone static distribution in {STATIC_DIR}...")
     STATIC_DIR.mkdir(parents=True, exist_ok=True)
 
+    # 0. Synchronize frontend source if app/static exists
+    app_index = REPO_ROOT / "app" / "static" / "index.html"
+    static_index = STATIC_DIR / "index.html"
+    if app_index.exists():
+        if not static_index.exists() or (app_index.stat().st_mtime > static_index.stat().st_mtime):
+            shutil.copy2(app_index, static_index)
+            print("  [Sync] app/static/index.html -> static/index.html")
+
     # 1. Materialize root-level certified artifacts
     files_to_copy = [
         ("baseline_kernel.hpp", REPO_ROOT / "baseline_kernel.hpp"),
         ("candidate_kernel.hpp", REPO_ROOT / "candidate_kernel.hpp"),
+        ("cavity_baseline.hpp", REPO_ROOT / "cavity_baseline.hpp"),
         ("REFEREE_CERTIFICATE.md", REPO_ROOT / "REFEREE_CERTIFICATE.md"),
         ("NEBIUS_FEEDBACK.md", REPO_ROOT / "NEBIUS_FEEDBACK.md"),
         ("README.md", REPO_ROOT / "README.md"),

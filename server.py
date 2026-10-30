@@ -112,7 +112,7 @@ def run_referee_sync(kernel_path: pathlib.Path) -> dict:
         capture_output=True,
         text=True,
         cwd=REPO_ROOT,
-        timeout=30.0,
+        timeout=60.0,
     )
     try:
         telemetry = json.loads(proc.stdout)

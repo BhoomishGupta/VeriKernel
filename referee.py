@@ -65,6 +65,7 @@ def run_command(
     command: list[str],
     env: dict[str, str] | None = None,
     timeout: float = 30.0,
+    cwd: pathlib.Path | None = None,
 ) -> subprocess.CompletedProcess[str]:
     import signal
     p = subprocess.Popen(
@@ -73,6 +74,7 @@ def run_command(
         stderr=subprocess.PIPE,
         text=True,
         env=env,
+        cwd=cwd or REPO_ROOT,
         start_new_session=True,
     )
     try:

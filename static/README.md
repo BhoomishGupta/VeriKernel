@@ -93,13 +93,13 @@ To prove that the referee deterministically isolates bugs without requiring live
 We conducted an empirical benchmark comparing standard **Ungated One-Shot LLM Synthesis** against **Referee-Gated Iterative Self-Correction** across 3 distinct HPC prompting prompts (10 trials each, N=30 total):
 
 **Model:** `nvidia/nemotron-3-super-120b-a12b` via Nebius Token Factory  
-**Workload:** 2D Navier-Stokes Lid-Driven Cavity (Re = 100, 29<sup>2</sup> steady-state & 13<sup>2</sup> pinned benchmark)
+**Workload:** 2D Navier-Stokes Lid-Driven Cavity (Re = 100, 129<sup>2</sup> steady-state & 513<sup>2</sup> pinned benchmark)
 
 | Evaluation Metric | Arm A: One-Shot Ungated (Standard LLM) | Arm B: Referee-Gated + Tavily Loop (VeriKernel) | Impact / Significance |
 | :--- | :--- | :--- | :--- |
 | **Verification Pass Rate** | **4/30 (13.3%)** | **28/30 (93.3%)** | **+80.0% absolute reliability gain** |
 | Local Compiler Failures (Stage 2) | 25/30 runs | 2/30 runs (only after 4 multi-turn retries) | Self-correction eliminates syntax & OpenMP loop bugs |
-| Physics / Invariant Drift (Stage 4) | 1/30 runs (stealth failure) | 0/30 runs ( \le 10^{-5}$, Ghia RMSE $\le 0.05$) | Stage 4 blocks bogus speedups with invalid physics |
+| Physics / Invariant Drift (Stage 4) | 1/30 runs (stealth failure) | 0/30 runs (Relative $L_2 \le 10^{-5}$, Ghia RMSE $\le 0.05$) | Stage 4 blocks bogus speedups with invalid physics |
 | **Failure Attribution: Genuine Bugs** | **25 / 26 (96.2%)** | **0 / 2 (0.0%)** | **0% unrecovered algorithmic bugs in Arm B** |
 | **Failure Attribution: Token Truncation**| 1 / 26 (3.8%) | 2 / 2 (100.0%) | 16k ceiling reached during attempt 4 refactoring |
 | **Mean Attempts to Pass** | 1.00 attempt (no recovery) | **2.10 attempts** | Rapid convergence in ~2 iterations |
@@ -178,25 +178,29 @@ make test
 [Stage 5] BENCH_PASS: Throughput: 21.04 GB/s (Median latency: 59.57 ms)
 ```
 
-### 4. Run One-Command Verification Suite
+### 4. Run One-Command Verification & Benchmark Suite (Step 10)
 
-Run the complete verification suite verifying the baseline cavity solver, the 2D wave multi-grid convergence order ($p \ge 1.90$), and all 6 adversarial defect kernels:
+Run the master verification suite that executes the baseline cavity solver (5 stages), the 2D wave multi-grid convergence order ($p \ge 1.90$), all 6 adversarial Break-It Gallery defect kernels, and the Stage 5 pinned memory bandwidth benchmark:
 
-```
-make check
-```
-
-### 5. Run Stage 5 Bandwidth Benchmark
-
-```
+```bash
 make bench
+```
+
+*(Note: `make check` is also provided as an alias).*
+
+### 5. Run Isolated Stage 5 Bandwidth Benchmark
+
+To execute solely the Stage 5 out-of-L2 ($513 \times 513$) memory bandwidth benchmark with thread pinning:
+
+```bash
+make bench-bandwidth
 ```
 
 ### 6. Verify the Adversarial Break-It Gallery
 
-Execute all 6 gallery defect kernels to verify that the gates trigger properly:
+Execute all 6 gallery defect kernels to verify that each designated gate deterministically rejects defects:
 
-```
+```bash
 make gallery
 ```
 
