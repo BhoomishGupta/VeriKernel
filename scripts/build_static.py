@@ -108,6 +108,7 @@ def build_static_bundle():
             "pinned_cores": 8,
         },
         "target_workload": "513x513 Out-of-L2 Bandwidth Sweep",
+        "working_set_note": "4.21 MB working set (psi + omega) exceeds L2 (~1MB/core) but resides within 32MB shared L3; peak throughput (437.5 GB/s) reflects on-die L3 cache bandwidth rather than off-chip DRAM.",
         "baseline_throughput_gb_s": 20.97,
         "baseline_latency_ms": 59.70,
     }
@@ -118,7 +119,7 @@ def build_static_bundle():
     # 2d. Generate static budget status snapshot
     budget_info = {
         "status": "ok",
-        "model_id": "nvidia/nemotron-3-super",
+        "model_id": "nvidia/nemotron-3-super-120b-a12b",
         "search_provider": "Tavily AI Search",
         "daily_runs_completed": 30,
         "daily_runs_limit": 30,

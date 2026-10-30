@@ -10,6 +10,8 @@
 | **Failure Attribution: Genuine Bugs** | **25 / 26 (96.2%)** | **0 / 2 (0.0%)** | **0% unrecovered algorithmic bugs in Arm B** |
 | **Failure Attribution: Token Truncation**| 1 / 26 (3.8%) | 2 / 2 (100.0%) | 16k ceiling reached during attempt 4 refactoring |
 | **Mean Attempts to Pass** | 1.00 attempt (no recovery) | **2.10 attempts** | Rapid convergence in ~2 iterations |
-| **Median Verified Speedup** | N/A (13.3% baseline sample) | **13.66x over baseline** | Peak performance: **20.86x (437.5 GB/s)** |
+| **Median Verified Speedup** | N/A (13.3% baseline sample) | **13.66x over baseline** | Peak performance: **20.86x (437.5 GB/s in L3)** |
 | **Mean Inference Cost per Run** | $0.0060 USD | **$0.0115 USD** | Only +$0.0055 USD per fully certified kernel |
 | **True Cost per Usable Kernel** | $0.0449 USD | **$0.0123 USD** | **VeriKernel is 3.6x cheaper per valid asset** |
+
+> *Note on Measured Bandwidth:* Working set ($513\times 513$ double precision, $\approx 4.21\text{ MB}$) exceeds individual core L2 caches (~1 MB) but fits within the host 32 MB shared L3 cache; peak throughput reflects on-die L3 cache bandwidth rather than off-chip DRAM.

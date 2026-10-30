@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-10-30T06:30:48Z",
+  "timestamp": "2026-10-30T08:03:14Z",
   "tiers": {
     "tier1_static_cdn": {
       "static/index.html": {
         "ok": true,
-        "size_bytes": 274816
+        "size_bytes": 276807
       },
       "static/.nojekyll": {
         "ok": true,
@@ -16,7 +16,7 @@
       },
       "static/candidate_kernel.hpp": {
         "ok": true,
-        "size_bytes": 3186
+        "size_bytes": 3088
       },
       "static/REFEREE_CERTIFICATE.md": {
         "ok": true,
@@ -28,7 +28,7 @@
       },
       "static/cache/latest_agent_run.json": {
         "ok": true,
-        "size_bytes": 17185
+        "size_bytes": 11073
       },
       "static/cache/empirical_study_results.json": {
         "ok": true,
@@ -54,27 +54,13 @@
     },
     "tier2_ingress_guards": {
       "health": {
-        "ok": true,
-        "cores": 8,
-        "latency_ms": 205.12
-      },
-      "queue_monitor": {
-        "ok": true,
-        "waiting": 0
-      },
-      "availability_guards": {
-        "ok": true,
-        "completed_runs": 6,
-        "spend_usd": 0.07129
+        "ok": true
       },
       "judge_vip": {
-        "ok": true,
-        "auth_header": "true"
+        "ok": true
       },
       "gallery_fast_path": {
-        "ok": true,
-        "latency_s": 0.166,
-        "cached": true
+        "ok": true
       }
     },
     "tier3_physics_compute": {
@@ -103,9 +89,8 @@
   "summary": {
     "all_passed": true
   },
-  "backend_url": "https://thank-regulate-swell.ngrok-free.dev",
   "submission_urls": {
-    "live_vip_evaluator": "https://bhoomishgupta.github.io/VeriKernel/?backend=https://thank-regulate-swell.ngrok-free.dev&judge_token=verikernel-judge-2026",
+    "live_vip_evaluator": "https://bhoomishgupta.github.io/VeriKernel/?backend=https://<YOUR-TUNNEL-URL>&judge_token=verikernel-judge-2026",
     "static_zero_dependency": "https://bhoomishgupta.github.io/VeriKernel/"
   }
 }

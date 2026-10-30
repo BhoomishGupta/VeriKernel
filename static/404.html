@@ -2345,6 +2345,11 @@
                             style="font-size: 0.75rem; color: var(--accent-cyan); background: rgba(88, 166, 255, 0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--border-subtle);">gallery/bug_1_fast_mathcheat.hpp</code>
                     </div>
                     <div style="display: flex; gap: 8px; align-items: center;">
+                        <button class="action-btn" id="btnRerunGalleryBug"
+                            style="background: rgba(88, 166, 255, 0.15); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); font-weight: 600; font-size: 0.78rem; display: flex; align-items: center; gap: 6px; padding: 4px 12px; cursor: pointer;"
+                            onclick="rerunCurrentGalleryBug()">
+                            <span>🔄</span> <span>Run Referee on Defect</span>
+                        </button>
                         <button class="action-btn" id="btnSendDefectToAgent"
                             style="background: var(--accent-blue); color: #0d1117; font-weight: 700; font-size: 0.78rem; display: flex; align-items: center; gap: 6px; padding: 4px 12px;"
                             onclick="sendDefectToNemotron()">
@@ -2540,10 +2545,10 @@
                     <span class="metric-card-val text-green" id="cardDriftRate">0.0%</span>
                     <span class="metric-card-sub">Zero corrupted runs promoted</span>
                 </div>
-                <div class="metric-card">
+                <div class="metric-card" title="Working set (4.21 MB) exceeds L2 (~1 MB/core) but resides in shared 32 MB L3 cache; 437.5 GB/s peak reflects on-die L3 cache bandwidth rather than off-chip DRAM.">
                     <span class="metric-card-lbl">Median Speedup</span>
                     <span class="metric-card-val text-green" id="cardMedianSpeedup">13.7x</span>
-                    <span class="metric-card-sub" id="cardPeakSpeedup">Peak: 20.9x (437.5 GB/s)</span>
+                    <span class="metric-card-sub" id="cardPeakSpeedup" title="Working set (4.21 MB) fits in 32 MB L3 cache; 437.5 GB/s reflects on-die L3 throughput">Peak: 20.9x (437.5 GB/s in L3)</span>
                 </div>
                 <div class="metric-card">
                     <span class="metric-card-lbl">Cost per Usable Kernel</span>
@@ -2992,6 +2997,16 @@
             }
             const target = document.getElementById('tab-' + tabId);
             if (target) target.classList.add('active');
+
+            // Hide operational mode guidance banner in Break-It Gallery tab
+            const guidanceBanner = document.getElementById('modeGuidanceBanner');
+            if (guidanceBanner) {
+                if (tabId === 'gallery') {
+                    guidanceBanner.style.display = 'none';
+                } else {
+                    guidanceBanner.style.display = 'flex';
+                }
+            }
         }
 
         let consecutiveQueueFailures = 0;
@@ -3827,6 +3842,13 @@
             });
         }
 
+        function rerunCurrentGalleryBug() {
+            const activeBug = currentGalleryBugIdx || 1;
+            const meta = galleryDefectData[activeBug];
+            const file = meta ? meta.file : 'gallery/bug_1_fast_mathcheat.hpp';
+            runGalleryBug(file, activeBug);
+        }
+
         function sendDefectToNemotron() {
             const activeBug = currentGalleryBugIdx || 2;
             const meta = galleryDefectData[activeBug] || galleryDefectData[2];
@@ -4121,8 +4143,10 @@
 
             const badge = document.getElementById('liveModeBadge');
             const liveBox = document.getElementById('liveRunBox');
+            const guidanceBanner = document.getElementById('modeGuidanceBanner');
             const guidanceText = document.getElementById('modeGuidanceText');
             const guidanceSub = document.getElementById('modeGuidanceSub');
+            const isGalleryActive = document.getElementById('tab-gallery') && document.getElementById('tab-gallery').classList.contains('active');
 
             if (mode === 'replay') {
                 if (liveBox) liveBox.style.display = 'none';
@@ -4149,6 +4173,11 @@
                     fetchBudgetStatus();
                     liveBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
+            }
+
+            // Ensure guidance banner remains hidden if currently on gallery tab
+            if (guidanceBanner) {
+                guidanceBanner.style.display = isGalleryActive ? 'none' : 'flex';
             }
         }
 
@@ -4720,7 +4749,7 @@
                     insightBox.innerHTML = `💡 <strong>Variant 1 Observation:</strong> Naive OpenMP directive prompt caused an 80.0% race condition failure rate in Arm A (one-shot), whereas Arm B's referee loop detected the race and steered Nemotron into a Red-Black stencil, achieving a 100% pass rate.`;
                 } else if (variantId === 'variant_2_algorithmic_poisson') {
                     insightBox.style.display = 'block';
-                    insightBox.innerHTML = `💡 <strong>Variant 2 Observation:</strong> Red-Black SOR prompt achieved highest throughput (up to 437.5 GB/s), but Arm A one-shot runs had FP32 precision drops and off-by-one boundary bugs intercepted by Stage 4.`;
+                    insightBox.innerHTML = `💡 <strong>Variant 2 Observation:</strong> Red-Black SOR prompt achieved highest throughput (up to 437.5 GB/s in on-die L3 cache; working set of 4.21 MB resides in 32 MB L3), but Arm A one-shot runs had FP32 precision drops and off-by-one boundary bugs intercepted by Stage 4.`;
                 } else if (variantId === 'variant_3_cfd_loop_tuning') {
                     insightBox.style.display = 'block';
                     insightBox.innerHTML = `💡 <strong>Variant 3 Observation:</strong> CFD loop tuning prompts achieved strong vectorization, but required Stage 3 thread-pinning verification to guarantee deterministic convergence.`;

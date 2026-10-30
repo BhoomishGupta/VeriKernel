@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cmath>
 #include <omp.h>
 
 namespace baseline {
@@ -14,30 +15,28 @@ inline void gauss_seidel_poisson_sweep(
     const double h, const std::size_t sweeps = 1) {
     const double h2 = h * h;
     for (std::size_t sweep = 0; sweep < sweeps; ++sweep) {
-        // Red pass: (i + j) even
-        #pragma omp parallel for collapse(2) schedule(static)
+        // Red phase: (i + j) even
+        #pragma omp parallel for
         for (std::size_t i = 1; i < n - 1; ++i) {
-            for (std::size_t j = 1; j < n - 1; ++j) {
-                if (((i + j) & 1) == 0) { // red
-                    const std::size_t c = idx(i, j, n);
-                    psi[c] = 0.25 * (
-                        psi[idx(i + 1, j, n)] + psi[idx(i - 1, j, n)] +
-                        psi[idx(i, j + 1, n)] + psi[idx(i, j - 1, n)] +
-                        h2 * omega[c]);
-                }
+            std::size_t j_start = ((i & 1) == 0) ? 2 : 1;
+            for (std::size_t j = j_start; j < n - 1; j += 2) {
+                const std::size_t c = idx(i, j, n);
+                psi[c] = 0.25 * (
+                    psi[idx(i + 1, j, n)] + psi[idx(i - 1, j, n)] +
+                    psi[idx(i, j + 1, n)] + psi[idx(i, j - 1, n)] +
+                    h2 * omega[c]);
             }
         }
-        // Black pass: (i + j) odd
-        #pragma omp parallel for collapse(2) schedule(static)
+        // Black phase: (i + j) odd
+        #pragma omp parallel for
         for (std::size_t i = 1; i < n - 1; ++i) {
-            for (std::size_t j = 1; j < n - 1; ++j) {
-                if (((i + j) & 1) == 1) { // black
-                    const std::size_t c = idx(i, j, n);
-                    psi[c] = 0.25 * (
-                        psi[idx(i + 1, j, n)] + psi[idx(i - 1, j, n)] +
-                        psi[idx(i, j + 1, n)] + psi[idx(i, j - 1, n)] +
-                        h2 * omega[c]);
-                }
+            std::size_t j_start = ((i & 1) == 0) ? 1 : 2;
+            for (std::size_t j = j_start; j < n - 1; j += 2) {
+                const std::size_t c = idx(i, j, n);
+                psi[c] = 0.25 * (
+                    psi[idx(i + 1, j, n)] + psi[idx(i - 1, j, n)] +
+                    psi[idx(i, j + 1, n)] + psi[idx(i, j - 1, n)] +
+                    h2 * omega[c]);
             }
         }
     }
@@ -56,7 +55,7 @@ inline void vorticity_transport_step(
     const double inv_h2 = 1.0 / (h * h);
     const double inv_re = 1.0 / re;
 
-    #pragma omp parallel for schedule(static)
+    #pragma omp parallel for
     for (std::size_t i = 1; i < n - 1; ++i) {
         #pragma omp simd
         for (std::size_t j = 1; j < n - 1; ++j) {

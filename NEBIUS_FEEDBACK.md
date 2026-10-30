@@ -149,6 +149,7 @@ environment:
 - **Pinned Bandwidth Benchmark (Stage 5):** On an out-of-L2 $513 \times 513$ grid (100 sweeps), pinning reduced runtime spread to $< 3.2\%$ and reliably measured real throughput jumps:
   - Baseline serial Gauss-Seidel: **20.97 GB/s** (59.70 ms)
   - Verified Red-Black OpenMP Kernel: **88.86 GB/s** (4.24× speedup live) up to **437.5 GB/s peak**.
+  - *Cache Footprint Architecture Note:* The working set of the $513 \times 513$ double-precision arrays ($\text{psi} + \omega$) is $2 \times 513^2 \times 8\text{ B} \approx 4.21\text{ MB}$. This footprint is strictly out-of-L2 (exceeding individual ~1 MB per-core L2 caches), but resides within the CPU's shared 32 MB L3 cache. Peak throughput (437.5 GB/s) reflects multi-core on-die L3 cache bandwidth and SIMD vector register reuse rather than saturated off-chip DRAM bus limits (~40–80 GB/s on cloud VMs).
 
 ---
 

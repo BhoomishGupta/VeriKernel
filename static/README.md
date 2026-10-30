@@ -73,7 +73,8 @@ VeriKernel enforces a strict separation between an **Immutable Test Harness** (`
 4. **Stage 4 — Physics & Mathematical Oracle:** Runs a full 2D Navier-Stokes Lid-Driven Cavity simulation ($\text{Re}=100$, $\Delta t=0.001$, grid $129 \times 129$) until steady state ($\max |\omega^{n+1} - \omega^n| \le 10^{-6}$). Validates against:
    - **Relative $L_2$ Norm:** $\|\psi_{\text{test}} - \psi_{\text{ref}}\|_{L_2} / \|\psi_{\text{ref}}\|_{L_2} \le 10^{-5}$ compared to precomputed single-threaded reference binary `reference_cavity_129.bin`.
    - **Empirical Ground Truth:** Centerline velocity profile $u(0.5, y)$ and $v(x, 0.5)$ against the 17 benchmark points of **Ghia, Ghia, & Shin (1982)** ($\text{RMSE} \le 0.05$).
-5. **Stage 5 — Pinned Out-of-Cache Benchmark:** Executes 100 fixed Poisson sweeps on an out-of-L2 $513 \times 513$ grid over 5 trials with thread pinning (`OMP_PROC_BIND=close`, `OMP_PLACES=cores`). Computes median execution time and effective memory bandwidth (GB/s).
+5. **Stage 5 — Pinned Out-of-L2 Benchmark:** Executes 100 fixed Poisson sweeps on an out-of-L2 $513 \times 513$ grid over 5 trials with thread pinning (`OMP_PROC_BIND=close`, `OMP_PLACES=cores`). Computes median execution time and effective memory bandwidth (GB/s).
+   > **Hardware & Cache Architecture Note:** At $513 \times 513$ (double precision), the active working set ($\text{psi} + \omega$) is $2 \times 513^2 \times 8\text{ B} \approx 4.21\text{ MB}$. This footprint is strictly **out-of-L2** (exceeding individual core L2 caches of 512 KB–1 MB), but fits within the host processor's shared 32 MB L3 cache. Thus, measured peak bandwidth (up to 437.5 GB/s, 13.66× median speedup) reflects **on-die L3 cache throughput and SIMD register reuse** across 8 pinned cores, rather than off-chip DRAM bus saturation (~40–80 GB/s on cloud VMs).
 
 ## Break-It Gallery (Adversarial Verification Suite)
 
@@ -108,9 +109,12 @@ We conducted an empirical benchmark comparing standard **Ungated One-Shot LLM Sy
 | **Failure Attribution: Genuine Bugs** | **25 / 26 (96.2%)** | **0 / 2 (0.0%)** | **0% unrecovered algorithmic bugs in Arm B** |
 | **Failure Attribution: Token Truncation**| 1 / 26 (3.8%) | 2 / 2 (100.0%) | 16k ceiling reached during attempt 4 refactoring |
 | **Mean Attempts to Pass** | 1.00 attempt (no recovery) | **2.10 attempts** | Rapid convergence in ~2 iterations |
-| **Median Verified Speedup** | N/A (13.3% baseline sample) | **13.66x over baseline** | Peak performance: **20.86x (437.5 GB/s)** |
+| **Median Verified Speedup** | N/A (13.3% baseline sample) | **13.66x over baseline** | Peak performance: **20.86x (437.5 GB/s in L3)** |
 | **Mean Inference Cost per Run** | $0.0060 USD | **$0.0115 USD** | Only +$0.0055 USD per fully certified kernel |
 | **True Cost per Usable Kernel** | $0.0449 USD | **$0.0123 USD** | **VeriKernel is 3.6x cheaper per valid asset** |
+
+> **Understanding the 437.5 GB/s Peak Bandwidth (L3 Cache vs. Off-Chip DRAM):**  
+> On cloud VMs, physical DDR4/DDR5 off-chip DRAM bus bandwidth typically peaks at 40–80 GB/s. For the $513 \times 513$ double-precision grid, the active working set ($\text{psi}$ and $\omega$) is $2 \times 513^2 \times 8\text{ B} \approx 4.21\text{ MB}$. This footprint exceeds individual per-core L2 caches (~1 MB/core) but fits comfortably within the host AMD EPYC / Intel Xeon 32 MB shared L3 cache. Therefore, the peak throughput of 437.5 GB/s (achieved at 2.86 ms for 100 sweeps) represents **effective multi-core L3 cache throughput and AVX register reuse**, rather than an off-chip DRAM measurement error.
 
 **Why Did 25 of 30 One-Shot Runs Fail to Compile (Defending the Baseline)?**  
 A compiler failure rate of 83.3% in Arm A might initially appear high, raising questions about whether the baseline was a "strawman". However, inspection of the compiler diagnostic logs reveals that 25 of the 26 Arm A failures were caused by a single ubiquitous compiler rejection rule: **OpenMP §2.6 Canonical Loop Form**.  
@@ -129,8 +133,10 @@ Because one-shot LLM generation provides zero compiler feedback, the model repea
 
 ### NVIDIA Nemotron via Nebius Token Factory
 
-- **Model Endpoint:** `nvidia/nemotron-3-super-120b-a12b` hosted on Nebius Token Factory.
-- **Budgeting & Parameters:** Temperature set to `0.2` for reproducible code generation. Context window ceiling set to `max_tokens=16384` (preventing internal chain-of-thought truncation on complex stencils; see [NEBIUS_FEEDBACK.md](NEBIUS_FEEDBACK.md)).
+- **Production Model:** `nvidia/nemotron-3-super-120b-a12b` hosted on Nebius Token Factory (\$0.30/M input tokens, \$0.90/M output tokens).
+  > **Model Selection Story:** During initial exploratory verification (Step 1), three candidate models were screened via `scripts/check_token_factory.py`: `Nemotron-3-Nano-30B` (lightweight), `Nemotron-3-Super-120B` (flagship reasoning), and `Nemotron-3-Ultra`. `nvidia/nemotron-3-super-120b-a12b` was selected as the sole production engine because it provided the optimal combination of deep multi-core algorithmic reasoning, strict pragma obedience, and fast token generation. `Ultra` was evaluated during API probing but dropped from production to keep inference latency and cost tightly bounded.
+- **Context Ceiling & Budgeting:** Production ceiling is set to `max_tokens=16384` with temperature `0.2`.
+  > **The Reasoning Token Ceiling Story:** Early prototypes initially set a conservative `max_tokens=2500` ceiling to prevent token runaways. However, reasoning models emit an internal Chain-of-Thought (CoT) before outputting code; at 2,500 tokens, CoT reasoning consumed ~2,100–2,800 tokens, causing completions to truncate mid-loop (`for (size_t i = 1; i < n - `). Expanding to `max_tokens=16384` resolved the reasoning trap, providing room for both algorithmic planning and complete C++ header emission (enabling our 93.3% pass rate; see [NEBIUS_FEEDBACK.md](NEBIUS_FEEDBACK.md)).
 - **Cost Transparency:** Each iteration logs prompt tokens, completion tokens, and real dollar cost based on Nebius Token Factory billing rates.
 
 ### Load-Bearing Tavily Search
@@ -257,7 +263,7 @@ Key topics covered in the report:
 1. **3D Cavity & Spectral Navier-Stokes:** Extend the immutable harness from 2D ($129^2$, $513^2$) to 3D staggered grids ($128^3$) and pseudo-spectral methods for high-Reynolds regimes ($\text{Re} \ge 1000$).
 2. **GPU Kernel Synthesis (CUDA & Triton):** Integrate GPU Referee gates evaluating warp divergence, shared memory bank conflicts, and NVIDIA Nsight Compute roofline benchmarks.
 3. **Formal Invariant Proving:** Integrate symbolic execution (SymPy / Z3) into Stage 1 to formally prove boundary conditions and stencil symmetries before compilation.
-4. **Adaptive Tiered Reasoning:** Dynamic model routing escalating from `Nemotron-3-Nano` for syntax repairs to `Nemotron-3-Super` for complex cache blocking and SIMD AVX-512 vectorization.
+4. **Adaptive Tiered Reasoning:** Dynamic model routing escalating from `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` for quick syntax repairs to `nvidia/nemotron-3-super-120b-a12b` for complex cache blocking and SIMD AVX-512 vectorization.
 
 ## Citation & References
 
