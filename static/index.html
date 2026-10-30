@@ -2855,7 +2855,10 @@
         }
 
         function getAuthHeaders(customHeaders = {}) {
-            const headers = { ...customHeaders };
+            const headers = {
+                'ngrok-skip-browser-warning': 'true',
+                ...customHeaders
+            };
             if (judgeToken) {
                 headers['X-Judge-Token'] = judgeToken;
             }
@@ -3000,7 +3003,10 @@
                 return;
             }
             try {
-                const res = await fetch(getApiUrl('/api/queue-status'), { signal: AbortSignal.timeout(2000) });
+                const res = await fetch(getApiUrl('/api/queue-status'), {
+                    headers: getAuthHeaders(),
+                    signal: AbortSignal.timeout(2000)
+                });
                 if (res.ok) {
                     consecutiveQueueFailures = 0;
                     const data = await res.json();
@@ -5178,9 +5184,13 @@
             if (statusEl) statusEl.innerHTML = '<span style="color: var(--accent-blue);">Pinging backend VM /api/health...</span>';
             try {
                 const pingUrl = rawToken ? `${rawUrl}/api/budget-status?judge_token=${encodeURIComponent(rawToken)}` : `${rawUrl}/api/health`;
+                const pingHeaders = {
+                    'ngrok-skip-browser-warning': 'true',
+                    ...(rawToken ? { 'X-Judge-Token': rawToken } : {})
+                };
                 const res = await fetch(pingUrl, {
-                    headers: rawToken ? { 'X-Judge-Token': rawToken } : {},
-                    signal: AbortSignal.timeout(3500)
+                    headers: pingHeaders,
+                    signal: AbortSignal.timeout(4500)
                 });
                 if (res.ok) {
                     const data = await res.json();
@@ -5394,7 +5404,7 @@
             // 2. If not found in runData, try querying the live comparison endpoint
             if (!verifiedU) {
                 try {
-                    const res = await fetch(getApiUrl('/api/ghia-comparison'));
+                    const res = await fetch(getApiUrl('/api/ghia-comparison'), { headers: getAuthHeaders() });
                     if (res.ok) {
                         const compData = await res.json();
                         if (compData.y_ghia && compData.u_ghia && compData.u_verified) {

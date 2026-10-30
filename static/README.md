@@ -1,6 +1,6 @@
 # VeriKernel: Physics-Aware AI Code Optimization Referee
 
-[![Live Evaluator](https://img.shields.io/badge/Live_Evaluator-VIP_Judge_Passkey-00ffff?style=for-the-badge&logo=fastapi)](https://bhoomishgupta.github.io/VeriKernel/?backend=https://toys-stylus-battle-atmospheric.trycloudflare.com&judge_token=verikernel-judge-2026)
+[![Live Evaluator](https://img.shields.io/badge/Live_Evaluator-VIP_Judge_Passkey-00ffff?style=for-the-badge&logo=fastapi)](https://bhoomishgupta.github.io/VeriKernel/?backend=https://thank-regulate-swell.ngrok-free.dev&judge_token=verikernel-judge-2026)
 [![Static Fallback Demo](https://img.shields.io/badge/Static_Demo-Zero--Backend_Mirror-brightgreen?style=for-the-badge&logo=githubpages)](https://bhoomishgupta.github.io/VeriKernel/)
 [![N=30 Benchmark](https://img.shields.io/badge/N=30_Benchmark-93.3%25_Verified-blue?style=for-the-badge)](https://bhoomishgupta.github.io/VeriKernel/#tab-evidence)
 [![Engineering Feedback](https://img.shields.io/badge/Nebius_Feedback-Engineering_Report-purple?style=for-the-badge)](NEBIUS_FEEDBACK.md)
@@ -14,7 +14,7 @@
 
 | Evaluation Target | Public Link | Operational Status & Description |
 | :--- | :--- | :--- |
-| **1. Live VIP Ingress** | **[Launch Live Evaluator](https://bhoomishgupta.github.io/VeriKernel/?backend=https://toys-stylus-battle-atmospheric.trycloudflare.com&judge_token=verikernel-judge-2026)** | Connected to multi-core VM backend via encrypted Cloudflare TLS tunnel. Grants unmetered evaluation privileges via passkey `verikernel-judge-2026`. |
+| **1. Live VIP Ingress** | **[Launch Live Evaluator](https://bhoomishgupta.github.io/VeriKernel/?backend=https://thank-regulate-swell.ngrok-free.dev&judge_token=verikernel-judge-2026)** | Connected to multi-core VM backend via persistent ngrok HTTPS tunnel (`thank-regulate-swell.ngrok-free.dev`). Grants evaluation privileges via passkey `verikernel-judge-2026`. |
 | **2. Standalone Static Mirror** | **[Launch Static Demo](https://bhoomishgupta.github.io/VeriKernel/)** | Zero-dependency static edge fallback hosted on GitHub Pages. Preserves historical telemetry, $N=30$ study data, interactive code diffs, and Ghia plots forever (\$0.00 cost). |
 | **3. Technical Feedback Report** | **[View NEBIUS_FEEDBACK.md](NEBIUS_FEEDBACK.md)** | Comprehensive engineering report on Nebius Token Factory inference latency, reasoning token ceilings, thread pinning, and token economics. |
 

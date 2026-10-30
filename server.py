@@ -60,6 +60,7 @@ app.add_middleware(
         "X-RateLimit-Remaining",
         "X-RateLimit-Reset",
         "Content-Disposition",
+        "ngrok-skip-browser-warning",
     ],
     max_age=3600,
 )
@@ -290,9 +291,10 @@ async def add_security_and_pna_headers(request: Request, call_next):
     if request.method == "OPTIONS":
         response = Response(status_code=204)
         origin = request.headers.get("origin", "*")
+        requested_headers = request.headers.get("access-control-request-headers", "*")
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, HEAD"
-        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = requested_headers if requested_headers else "*"
         response.headers["Access-Control-Allow-Credentials"] = "true"
         if request.headers.get("access-control-request-private-network") == "true":
             response.headers["Access-Control-Allow-Private-Network"] = "true"

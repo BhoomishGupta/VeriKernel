@@ -44,7 +44,10 @@ def log_step(status: bool, label: str, detail: str = ""):
 
 
 def test_url(url: str, headers: dict | None = None, timeout: float = 4.0) -> tuple[int, dict | str, dict]:
-    req = urllib.request.Request(url, headers=headers or {"User-Agent": "VeriKernel-PreFlight-Auditor/1.0"})
+    default_headers = {"User-Agent": "VeriKernel-PreFlight-Auditor/1.0", "ngrok-skip-browser-warning": "true"}
+    if headers:
+        default_headers.update(headers)
+    req = urllib.request.Request(url, headers=default_headers)
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         content_type = resp.headers.get("Content-Type", "")
         raw = resp.read()
@@ -187,7 +190,7 @@ def run_preflight_audit(backend_url: str | None, judge_token: str, custom_fronte
             req = urllib.request.Request(
                 f"{target_api}/api/run-referee",
                 data=post_data,
-                headers={"Content-Type": "application/json", "User-Agent": "JudgePreFlight/1.0"},
+                headers={"Content-Type": "application/json", "User-Agent": "JudgePreFlight/1.0", "ngrok-skip-browser-warning": "true"},
             )
             with urllib.request.urlopen(req, timeout=5.0) as resp:
                 elapsed = time.time() - t0
