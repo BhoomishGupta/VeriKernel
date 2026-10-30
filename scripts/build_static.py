@@ -25,6 +25,8 @@ def build_static_bundle():
         ("baseline_kernel.hpp", REPO_ROOT / "baseline_kernel.hpp"),
         ("candidate_kernel.hpp", REPO_ROOT / "candidate_kernel.hpp"),
         ("REFEREE_CERTIFICATE.md", REPO_ROOT / "REFEREE_CERTIFICATE.md"),
+        ("NEBIUS_FEEDBACK.md", REPO_ROOT / "NEBIUS_FEEDBACK.md"),
+        ("README.md", REPO_ROOT / "README.md"),
         ("verikernel_certified_bundle.zip", CACHE_DIR / "verikernel_certified_bundle.zip"),
     ]
 

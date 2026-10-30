@@ -1,6 +1,24 @@
 # VeriKernel: Physics-Aware AI Code Optimization Referee
 
+[![Live Evaluator](https://img.shields.io/badge/Live_Evaluator-VIP_Judge_Passkey-00ffff?style=for-the-badge&logo=fastapi)](https://bhoomishgupta.github.io/VeriKernel/?backend=https://toys-stylus-battle-atmospheric.trycloudflare.com&judge_token=verikernel-judge-2026)
+[![Static Fallback Demo](https://img.shields.io/badge/Static_Demo-Zero--Backend_Mirror-brightgreen?style=for-the-badge&logo=githubpages)](https://bhoomishgupta.github.io/VeriKernel/)
+[![N=30 Benchmark](https://img.shields.io/badge/N=30_Benchmark-93.3%25_Verified-blue?style=for-the-badge)](https://bhoomishgupta.github.io/VeriKernel/#tab-evidence)
+[![Engineering Feedback](https://img.shields.io/badge/Nebius_Feedback-Engineering_Report-purple?style=for-the-badge)](NEBIUS_FEEDBACK.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+
 > *"Faster code is worthless if the physics is wrong."*
+
+---
+
+### 🚀 Official Submission & Live Evaluation Links for Hackathon Judges
+
+| Evaluation Target | Public Link | Operational Status & Description |
+| :--- | :--- | :--- |
+| **1. Live VIP Ingress** | **[Launch Live Evaluator](https://bhoomishgupta.github.io/VeriKernel/?backend=https://toys-stylus-battle-atmospheric.trycloudflare.com&judge_token=verikernel-judge-2026)** | Connected to multi-core VM backend via encrypted Cloudflare TLS tunnel. Grants unmetered evaluation privileges via passkey `verikernel-judge-2026`. |
+| **2. Standalone Static Mirror** | **[Launch Static Demo](https://bhoomishgupta.github.io/VeriKernel/)** | Zero-dependency static edge fallback hosted on GitHub Pages. Preserves historical telemetry, $N=30$ study data, interactive code diffs, and Ghia plots forever (\$0.00 cost). |
+| **3. Technical Feedback Report** | **[View NEBIUS_FEEDBACK.md](NEBIUS_FEEDBACK.md)** | Comprehensive engineering report on Nebius Token Factory inference latency, reasoning token ceilings, thread pinning, and token economics. |
+
+---
 
 VeriKernel is an automated high-performance computing (HPC) verification engine and agentic self-correction harness. It evaluates and repairs AI-generated C++ computational stencils against **multi-threaded determinism**, **numerical conservation invariants**, and published empirical fluid dynamics benchmarks.
 
@@ -173,6 +191,19 @@ Execute all 5 gallery defect kernels to verify that the gates trigger properly:
 ```
 make gallery
 ```
+
+## Nebius Token Factory & NVIDIA Technical Feedback
+
+As part of the Nebius & NVIDIA hackathon deliverables, we have published a dedicated engineering report:
+
+📄 **[Read the Full Engineering Report: NEBIUS_FEEDBACK.md](NEBIUS_FEEDBACK.md)**
+
+Key topics covered in the report:
+1. **The Reasoning Token Ceiling Trap:** Why conservative `max_tokens` ceilings cause internal chain-of-thought truncation, and how expanding to 16,384 tokens unlocked a 93.3% pass rate.
+2. **Cluster Latency & Throughput Profile:** Real-world TTFT and generation speeds across prompt sizes on `api.tokenfactory.nebius.com/v1/`.
+3. **Inference Economics ($N=30$ Study):** Why ungated generation wasted 86.7% of tokens on invalid code (\$0.0449/usable kernel), whereas VeriKernel's Nemotron loop achieved \$0.0123/usable kernel (**3.6× cheaper per usable production asset**).
+4. **Cloud vCPU OpenMP Thread-Pinning:** Overcoming virtualized CPU scheduling jitter using `OMP_PROC_BIND=close` and `OMP_PLACES=cores`.
+5. **Platform UX & Roadmap Requests:** Granular `usage.reasoning_tokens`, bit-exact seed pinning, and console consolidation.
 
 ## Citation & References
 
