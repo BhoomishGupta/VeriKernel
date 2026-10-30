@@ -22,8 +22,10 @@
 
     header {
         Access-Control-Allow-Origin *
-        Access-Control-Allow-Methods "GET, POST, OPTIONS"
-        Access-Control-Allow-Headers "Content-Type, Authorization, X-Forwarded-For, X-Judge-Token"
+        Access-Control-Allow-Methods "GET, POST, OPTIONS, HEAD"
+        Access-Control-Allow-Headers "Content-Type, Authorization, X-Forwarded-For, X-Judge-Token, Access-Control-Request-Private-Network"
+        Access-Control-Expose-Headers "X-Judge-Authorized, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Content-Disposition"
+        Access-Control-Allow-Private-Network true
         X-Content-Type-Options nosniff
         X-Frame-Options SAMEORIGIN
         Referrer-Policy strict-origin-when-cross-origin

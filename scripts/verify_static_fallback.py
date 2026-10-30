@@ -65,6 +65,7 @@ def verify_static_site():
         ("/verikernel_certified_bundle.zip", 200, "Certified ZIP Bundle"),
         ("/cache/latest_agent_run.json", 200, "Latest Self-Correction Telemetry"),
         ("/cache/empirical_study_results.json", 200, "N=30 Empirical Benchmark Dataset"),
+        ("/gallery/bug_1_fast_mathcheat.hpp", 200, "Break-It Defect Kernel #1"),
     ]
 
     print(f"\n[1/3] Testing Static Asset Resolution from {base_url}...")
@@ -101,9 +102,10 @@ def verify_static_site():
         study_data = json.loads(req2.read().decode("utf-8"))
         arm_a = study_data.get("arm_a", [])
         arm_b = study_data.get("arm_b", [])
-        print(f"  ✓ empirical_study_results.json contains Arm A ({len(arm_a)} runs) and Arm B ({len(arm_b)} runs)")
-        if len(arm_a) + len(arm_b) != 30:
-            print(f"  ! Note: Total runs = {len(arm_a) + len(arm_b)} (expected 30)")
+        total_runs = len(arm_a) + len(arm_b)
+        print(f"  ✓ empirical_study_results.json contains Arm A ({len(arm_a)} runs) and Arm B ({len(arm_b)} runs) — Total: {total_runs} runs")
+        if len(arm_a) < 10 or len(arm_b) < 10:
+            errors.append(f"Empirical study dataset has insufficient runs: Arm A={len(arm_a)}, Arm B={len(arm_b)}")
     except Exception as e:
         errors.append(f"JSON validation failure: {e}")
 

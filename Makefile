@@ -159,14 +159,16 @@ docker-build:
 	@echo "==> Building production Docker image (verikernel:latest)..."
 	docker build -t verikernel:latest .
 
-# Run production Docker container with 8 pinned CPU cores and memory limits
+# Run production Docker container with 8 dedicated pinned CPU cores and security limits
 docker-run:
-	@echo "==> Running VeriKernel container on port 8000 (8 CPUs, 2GB RAM, OpenMP Pinned)..."
+	@echo "==> Running VeriKernel container on port 8000 (8 pinned CPU cores, 2GB RAM, OpenMP Pinned)..."
 	docker run -d --name verikernel-backend --rm \
 		-p 8000:8000 \
-		--cpus=8.0 \
+		--cpuset-cpus="0-7" \
 		--memory=2g \
 		--pids-limit=128 \
+		--security-opt no-new-privileges:true \
+		--tmpfs /tmp:rw,size=256m,mode=1777 \
 		--env-file .env \
 		-v $(abspath cache):/app/cache \
 		verikernel:latest

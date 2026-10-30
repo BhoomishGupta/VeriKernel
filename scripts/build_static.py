@@ -72,12 +72,22 @@ def build_static_bundle():
         count = len(list(dest_agent_runs.glob("*.json")))
         print(f"  [Copy] cache/agent_runs/ ({count} runs) -> static/cache/agent_runs/")
 
-    # 3. Create .nojekyll for GitHub Pages
+    # 3. Materialize gallery/ directory inside static/ for defect inspection
+    src_gallery = REPO_ROOT / "gallery"
+    dest_gallery = STATIC_DIR / "gallery"
+    if dest_gallery.is_symlink() or dest_gallery.exists():
+        shutil.rmtree(dest_gallery)
+    if src_gallery.exists():
+        shutil.copytree(src_gallery, dest_gallery)
+        g_count = len(list(dest_gallery.glob("*.hpp")))
+        print(f"  [Copy] gallery/ ({g_count} defect kernels) -> static/gallery/")
+
+    # 4. Create .nojekyll for GitHub Pages
     nojekyll = STATIC_DIR / ".nojekyll"
     nojekyll.write_text("# Disable Jekyll for GitHub Pages\n", encoding="utf-8")
     print("  [Init] static/.nojekyll created")
 
-    # 4. Verify integrity of all required JSON files
+    # 5. Verify integrity of all required JSON files
     critical_json = [
         static_cache / "latest_agent_run.json",
         static_cache / "empirical_study_results.json",

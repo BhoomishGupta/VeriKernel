@@ -50,6 +50,13 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=[
+        "X-Judge-Authorized",
+        "X-RateLimit-Limit",
+        "X-RateLimit-Remaining",
+        "X-RateLimit-Reset",
+        "Content-Disposition",
+    ],
     max_age=3600,
 )
 
@@ -117,6 +124,19 @@ def run_referee_sync(kernel_path: pathlib.Path) -> dict:
             "returncode": proc.returncode,
         }
     return telemetry
+
+
+def create_temp_kernel(code: str) -> pathlib.Path:
+    """Writes candidate C++ code to in-memory tmpfs (/tmp/verikernel_run) or local fallback."""
+    temp_dir = pathlib.Path("/tmp/verikernel_run")
+    try:
+        temp_dir.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        temp_dir = REPO_ROOT / ".cache_run"
+        temp_dir.mkdir(parents=True, exist_ok=True)
+    temp_path = temp_dir / f"candidate_{time.time():.4f}_{os.getpid()}.hpp"
+    temp_path.write_text(code, encoding="utf-8")
+    return temp_path
 
 
 def get_client_ip(request: Request) -> str:
@@ -235,6 +255,28 @@ def check_availability_guards(request: Request, is_llm_run: bool = True) -> dict
     }
 
 
+@app.middleware("http")
+async def add_security_and_pna_headers(request: Request, call_next):
+    """Injects Private Network Access headers and judge authorization headers."""
+    if request.method == "OPTIONS":
+        response = Response(status_code=204)
+        origin = request.headers.get("origin", "*")
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, HEAD"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        if request.headers.get("access-control-request-private-network") == "true":
+            response.headers["Access-Control-Allow-Private-Network"] = "true"
+        return response
+
+    response = await call_next(request)
+    if request.headers.get("access-control-request-private-network") == "true":
+        response.headers["Access-Control-Allow-Private-Network"] = "true"
+    if is_judge_request(request):
+        response.headers["X-Judge-Authorized"] = "true"
+    return response
+
+
 async def execute_referee_task(req: ExecutionRequest) -> AsyncGenerator[str, None]:
     """Manages queue position notifications, lock acquisition, and referee execution."""
     global waiting_queue_count
@@ -247,10 +289,7 @@ async def execute_referee_task(req: ExecutionRequest) -> AsyncGenerator[str, Non
             yield f"data: {json.dumps({'error': f'Gallery target not found: {req.gallery_bug}'})}\n\n"
             return
     elif req.kernel_code:
-        temp_dir = REPO_ROOT / ".cache_run"
-        temp_dir.mkdir(parents=True, exist_ok=True)
-        temp_kernel_path = temp_dir / f"candidate_{asyncio.get_event_loop().time():.4f}.hpp"
-        temp_kernel_path.write_text(req.kernel_code, encoding="utf-8")
+        temp_kernel_path = create_temp_kernel(req.kernel_code)
         kernel_path = temp_kernel_path
     elif req.target == "baseline":
         kernel_path = DEFAULT_KERNEL
@@ -347,10 +386,7 @@ async def run_referee_json_endpoint(req: ExecutionRequest, request: Request):
             gallery_cache[req.gallery_bug] = (mtime, result)
             return {"status": "success", "cached": False, "results": result}
         elif req.kernel_code:
-            temp_dir = REPO_ROOT / ".cache_run"
-            temp_dir.mkdir(parents=True, exist_ok=True)
-            temp_kernel_path = temp_dir / f"candidate_{asyncio.get_event_loop().time():.4f}.hpp"
-            temp_kernel_path.write_text(req.kernel_code, encoding="utf-8")
+            temp_kernel_path = create_temp_kernel(req.kernel_code)
             kernel_path = temp_kernel_path
         elif req.target == "baseline":
             kernel_path = DEFAULT_KERNEL

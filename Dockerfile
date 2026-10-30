@@ -34,6 +34,13 @@ COPY . .
 RUN make all && \
     (test -f reference_cavity_129.bin || make ref)
 
+# Create dedicated unprivileged user for defense-in-depth container sandboxing
+RUN useradd -m -u 1000 verikernel && \
+    mkdir -p /app/build /app/cache /tmp/verikernel_run && \
+    chown -R verikernel:verikernel /app /opt/venv /tmp/verikernel_run
+
+USER verikernel
+
 # Multi-threaded OpenMP Pinning & Performance Configuration
 ENV OMP_PROC_BIND=close
 ENV OMP_PLACES=cores

@@ -2888,9 +2888,14 @@
                     } else {
                         badge.innerText = `🟢 Host Backend Connected${judgeIndicator}`;
                     }
+                } else if (window.location.protocol === 'https:' && backendBaseUrl && backendBaseUrl.startsWith('http:')) {
+                    badge.className = 'badge warning';
+                    badge.innerText = '⚠️ Mixed Content Blocked (HTTP VM)';
+                    badge.title = 'Page is on HTTPS but VM backend is insecure HTTP. Click to configure HTTPS Cloudflare Tunnel or Caddy.';
                 } else {
                     badge.className = 'badge warning';
                     badge.innerText = '⚡ Static Demo Mode (Cached)';
+                    badge.title = 'Operating on static edge telemetry bundle with zero backend dependencies.';
                 }
             }
         }
@@ -4158,12 +4163,20 @@
                 const spendEl = document.getElementById('budgetSpend');
                 if (spendEl) {
                     const spendVal = typeof b.daily_spend_current_usd === 'number' ? b.daily_spend_current_usd.toFixed(4) : (b.daily_spend_current_usd || '0.0000');
-                    spendEl.innerText = `$${spendVal} USD`;
+                    if (b.daily_spend_remaining_usd <= 0.0) {
+                        spendEl.innerHTML = `<span style="color: var(--warn-amber); font-weight:600;">$${spendVal} USD</span> <span style="font-size:0.68rem; color:var(--warn-amber);">(Cap Reached)</span>`;
+                    } else {
+                        spendEl.innerText = `$${spendVal} USD`;
+                    }
                 }
                 const runsEl = document.getElementById('budgetRuns');
                 if (runsEl) {
-                    const runsVal = b.daily_runs_remaining != null ? b.daily_runs_remaining : (b.daily_runs_limit || 30);
-                    runsEl.innerText = `${runsVal}`;
+                    if (b.is_judge) {
+                        runsEl.innerHTML = `<span style="color: var(--accent-cyan); font-weight:600;">Unmetered</span> <span style="font-size:0.68rem; color:var(--text-secondary);">(VIP Judge)</span>`;
+                    } else {
+                        const runsVal = b.daily_runs_remaining != null ? b.daily_runs_remaining : (b.daily_runs_limit || 30);
+                        runsEl.innerText = `${runsVal}`;
+                    }
                 }
                 const modelEl = document.getElementById('budgetModel');
                 if (modelEl) modelEl.innerText = b.model_id ? 'Nemotron-3-Super' : 'Nemotron-3';
@@ -5144,7 +5157,7 @@
             // Mixed Content warning check
             if (window.location.protocol === 'https:' && rawUrl.startsWith('http:')) {
                 if (statusEl) {
-                    statusEl.innerHTML = `<span style="color: var(--fail-red);">⚠️ Mixed Content Warning: This page is loaded over HTTPS. Modern browsers block requests to insecure HTTP backends (<code>${rawUrl}</code>). Please use HTTPS (Cloudflare Tunnel or Caddy) for your VM backend.</span>`;
+                    statusEl.innerHTML = `<span style="color: var(--fail-red);">⚠️ <strong>Mixed Content Blocked:</strong> This dashboard is served over HTTPS. Modern browsers strictly block unencrypted HTTP requests (<code>${rawUrl}</code>).<br><br>💡 <strong>Fix:</strong> Launch an encrypted tunnel on your VM using:<br><code style="background:var(--bg-elevated); padding:2px 6px; border-radius:4px;">make tunnel</code> (Cloudflare Tunnel) or configure Caddy TLS, then paste the resulting <code>https://...</code> URL here.</span>`;
                 }
                 return;
             }
