@@ -118,8 +118,9 @@ class ExecutionRequest(BaseModel):
 
 
 def run_referee_sync(kernel_path: pathlib.Path, workload: str | None = None) -> dict:
-    """Execute referee.py locally in a synchronous subprocess and return parsed JSON output."""
-    cmd = [sys.executable, str(REFEREE_PATH), "--kernel", str(kernel_path), "--json", "--local"]
+    """Execute referee.py in a synchronous subprocess and return parsed JSON output.
+    Leverages containerized build (gcc:13) when Docker is available, with automatic native fallback."""
+    cmd = [sys.executable, str(REFEREE_PATH), "--kernel", str(kernel_path), "--json"]
     if workload:
         cmd.extend(["--workload", workload])
     proc = subprocess.run(

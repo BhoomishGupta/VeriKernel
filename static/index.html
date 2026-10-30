@@ -4221,7 +4221,7 @@
                 const runsEl = document.getElementById('budgetRuns');
                 if (runsEl) {
                     if (b.is_judge) {
-                        runsEl.innerHTML = `<span style="color: var(--accent-cyan); font-weight:600;">Unmetered</span> <span style="font-size:0.68rem; color:var(--text-secondary);">(VIP Judge)</span>`;
+                        runsEl.innerHTML = `<span style="color: var(--accent-cyan); font-weight:600;">Active VIP</span> <span style="font-size:0.68rem; color:var(--text-secondary);">($5/day cap)</span>`;
                     } else {
                         const runsVal = b.daily_runs_remaining != null ? b.daily_runs_remaining : (b.daily_runs_limit || 30);
                         runsEl.innerText = `${runsVal}`;
@@ -5839,20 +5839,20 @@
             <div style="margin-bottom: 14px;">
                 <label
                     style="display: block; font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 6px;">
-                    Remote Backend VM URL (HTTPS or Cloudflare Tunnel, leave empty for Static Fallback):
+                    Remote Backend VM URL (HTTPS or Ingress Tunnel, leave empty for Static Fallback):
                 </label>
                 <input id="backendUrlInput" type="text"
-                    placeholder="e.g. https://api.verikernel.nip.io or https://xyz.trycloudflare.com"
+                    placeholder="e.g. https://thank-regulate-swell.ngrok-free.dev or https://api.verikernel.nip.io"
                     style="width: 100%; background: var(--bg-base); border: 1px solid var(--border-subtle); color: var(--text-primary); padding: 8px 12px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.85rem;" />
                 <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
-                    Note: For HTTPS-hosted deployments (GitHub Pages/Netlify), use an HTTPS backend URL (Cloudflare
+                    Note: For HTTPS-hosted deployments (GitHub Pages/Netlify), use an HTTPS backend URL (ngrok, Cloudflare
                     Tunnel or Caddy) to prevent Mixed Content security blocking.
                 </div>
             </div>
             <div style="margin-bottom: 14px;">
                 <label
                     style="display: block; font-size: 0.76rem; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 6px;">
-                    Judge VIP Passkey (Optional — unlocks unmetered judge evaluation):
+                    Judge VIP Passkey (Optional — prioritizes evaluation with $5.00/day safety cap):
                 </label>
                 <input id="judgeTokenInput" type="password" placeholder="e.g. verikernel-judge-2026"
                     style="width: 100%; background: var(--bg-base); border: 1px solid var(--border-subtle); color: var(--text-primary); padding: 8px 12px; border-radius: 6px; font-family: var(--font-mono); font-size: 0.85rem;" />

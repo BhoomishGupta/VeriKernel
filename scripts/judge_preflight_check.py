@@ -341,7 +341,7 @@ def run_preflight_audit(backend_url: str | None, judge_token: str, custom_fronte
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="VeriKernel Step 9 3-Tier Pre-Flight Audit & Judge Link Generator")
-    parser.add_argument("--url", default=None, help="Backend VM base URL to audit (e.g. http://localhost:8000 or https://xyz.trycloudflare.com)")
+    parser.add_argument("--url", default=None, help="Backend VM base URL to audit (e.g. http://localhost:8000 or https://thank-regulate-swell.ngrok-free.dev)")
     parser.add_argument("--token", default="verikernel-judge-2026", help="Judge VIP authentication secret token")
     parser.add_argument("--frontend", default=None, help="Custom frontend base URL (overrides auto-detected GitHub Pages URL)")
     args = parser.parse_args()

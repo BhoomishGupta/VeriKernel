@@ -14,8 +14,8 @@
 
 | Evaluation Target | Public Link | Operational Status & Description |
 | :--- | :--- | :--- |
-| **1. Live VIP Ingress** | **[Launch Live Evaluator](https://bhoomishgupta.github.io/VeriKernel/?backend=https://thank-regulate-swell.ngrok-free.dev&judge_token=verikernel-judge-2026)** | Connected to multi-core VM backend via persistent ngrok HTTPS tunnel (`thank-regulate-swell.ngrok-free.dev`). Grants evaluation privileges via passkey `verikernel-judge-2026`. |
-| **2. Standalone Static Mirror** | **[Launch Static Demo](https://bhoomishgupta.github.io/VeriKernel/)** | Zero-dependency static edge fallback hosted on GitHub Pages. Preserves historical telemetry, $N=30$ study data, interactive code diffs, and Ghia plots forever (\$0.00 cost). |
+| **1. Live VIP Ingress (Multi-Core VM)** | **[Launch Live Evaluator](https://bhoomishgupta.github.io/VeriKernel/?backend=https://thank-regulate-swell.ngrok-free.dev&judge_token=verikernel-judge-2026)** | Connected to 8-core VM backend via persistent ngrok HTTPS tunnel (`thank-regulate-swell.ngrok-free.dev`). Grants live generation & compilation privileges via passkey `verikernel-judge-2026` (protected by a \$5.00/day safety cap & 20 calls/hr rate limit). |
+| **2. Standalone Static Mirror (Permanent Fallback)** | **[Launch Static Demo](https://bhoomishgupta.github.io/VeriKernel/)** | **Guaranteed 100% Available Zero-Backend Edge Mirror** hosted on GitHub Pages. Preserves all historical telemetry, complete $N=30$ study data, interactive Monaco code diffs, and Ghia plots with zero risk of tunnel downtime (\$0.00 cost). |
 | **3. Technical Feedback Report** | **[View NEBIUS_FEEDBACK.md](NEBIUS_FEEDBACK.md)** | Comprehensive engineering report on Nebius Token Factory inference latency, reasoning token ceilings, thread pinning, and token economics. |
 
 ---
@@ -25,6 +25,8 @@ VeriKernel is an automated high-performance computing (HPC) verification engine 
 Standard AI code generation models (such as deep reasoning systems) frequently optimize parallel loops by introducing data races or aggressive floating-point flags (`-ffast-math`) that report 5×–13× speedups while silently corrupting physics simulations. VeriKernel provides a strict, immutable referee sandbox that intercepts silent corruption and uses execution-grounded failure diagnostics to guide LLMs toward mathematically valid parallel algorithms (such as Red-Black Gauss-Seidel with AVX vectorization).
 
 ## Architecture Overview
+
+> **Single Unified Production Model:** Both the empirical evaluation benchmark ($N=30$) and the live evaluator are powered exclusively by NVIDIA's **`nvidia/nemotron-3-super-120b-a12b`** via Nebius Token Factory (\$0.30/M input, \$0.90/M output tokens). (Nano and Ultra variants were screened during initial exploratory API probing).
 
 VeriKernel enforces a strict separation between an **Immutable Test Harness** (`harness_cavity.cpp`) and a **Mutable Computational Kernel** (`candidate_kernel.hpp`):
 
@@ -72,7 +74,8 @@ VeriKernel enforces a strict separation between an **Immutable Test Harness** (`
 3. **Stage 3 — Differential Multi-Thread Determinism Gate:** Executes a 30-time-step sweep across thread counts $T \in \{1, 2, 4, 8\}$ with 3 repeated runs each on a $65 \times 65$ grid. If max cross-thread difference exceeds $10^{-11}$, the kernel is rejected for race conditions (`RACE_NON_DETERMINISTIC`) without the memory bloat of ThreadSanitizer.
 4. **Stage 4 — Physics & Mathematical Oracle:** Runs a full 2D Navier-Stokes Lid-Driven Cavity simulation ($\text{Re}=100$, $\Delta t=0.001$, grid $129 \times 129$) until steady state ($\max |\omega^{n+1} - \omega^n| \le 10^{-6}$). Validates against:
    - **Relative $L_2$ Norm:** $\|\psi_{\text{test}} - \psi_{\text{ref}}\|_{L_2} / \|\psi_{\text{ref}}\|_{L_2} \le 10^{-5}$ compared to precomputed single-threaded reference binary `reference_cavity_129.bin`.
-   - **Empirical Ground Truth:** Centerline velocity profile $u(0.5, y)$ and $v(x, 0.5)$ against the 17 benchmark points of **Ghia, Ghia, & Shin (1982)** ($\text{RMSE} \le 0.05$).
+   - **Empirical Ground Truth:** Centerline velocity profile $u(0.5, y)$ and $v(x, 0.5)$ against the 17 benchmark points of **Ghia, Ghia, & Shin (1982)** ($\text{RMSE} \le 0.05$).  
+     *(Note on threshold selection: The $\le 0.05$ (5%) tolerance accommodates discretization differences between modern finite-difference schemes and Ghia's published 1982 tables. In practice, all verified Arm B kernels converged to $\text{RMSE} = 0.0020$, which is $25\times$ tighter than the pass threshold, whereas adversarial defect kernels collapse to $\text{RMSE} \approx 0.3872$).*
 5. **Stage 5 — Pinned Out-of-L2 Benchmark:** Executes 100 fixed Poisson sweeps on an out-of-L2 $513 \times 513$ grid over 5 trials with thread pinning (`OMP_PROC_BIND=close`, `OMP_PLACES=cores`). Computes median execution time and effective memory bandwidth (GB/s).
    > **Hardware & Cache Architecture Note:** At $513 \times 513$ (double precision), the active working set ($\text{psi} + \omega$) is $2 \times 513^2 \times 8\text{ B} \approx 4.21\text{ MB}$. This footprint is strictly **out-of-L2** (exceeding individual core L2 caches of 512 KB–1 MB), but fits within the host processor's shared 32 MB L3 cache. Thus, measured peak bandwidth (up to 437.5 GB/s, 13.66× median speedup) reflects **on-die L3 cache throughput and SIMD register reuse** across 8 pinned cores, rather than off-chip DRAM bus saturation (~40–80 GB/s on cloud VMs).
 
@@ -91,7 +94,7 @@ To prove that the referee deterministically isolates bugs without requiring live
 
 ## Empirical Evaluation Study (N=30)
 
-We conducted an empirical benchmark comparing standard **Ungated One-Shot LLM Synthesis (Arm A)** against **Referee-Gated Iterative Self-Correction (Arm B)** across **3 distinct HPC prompting formulations $\times$ 10 trials each ($N=30$ total runs per arm)**:
+We conducted an empirical benchmark comparing standard **Ungated One-Shot LLM Synthesis (Arm A)** against **Referee-Gated Iterative Self-Correction (Arm B)** across **3 distinct HPC prompting formulations $\times$ 10 stochastic trials per formulation ($N=30$ total runs per arm)**:
 1. **Direct Pragma Optimization:** Prompt requesting OpenMP parallelization for the inner Poisson Gauss-Seidel loop.
 2. **Algorithmic & Parity Restructuring:** Prompt requesting race-free checkerboard/red-black schemes to eliminate loop dependencies.
 3. **Hardware & Bandwidth Optimization:** Prompt requesting memory bandwidth optimization with OpenMP SIMD directives on out-of-L2 grids.
@@ -129,12 +132,25 @@ Because one-shot LLM generation provides zero compiler feedback, the model repea
 
 **The Case for Stage 4 Physics Gating:** In Arm A Run 14, the model generated code that compiled cleanly and achieved a median throughput of 234.54 GB/s (11.18× speedup). Without VeriKernel, this kernel would have passed standard performance benchmarks. VeriKernel's Stage 4 caught a 99.0% relative $L_2$ error and Ghia RMSE of 0.3884, halting an unphysical kernel from reaching production.
 
+**Deconstructing the +80.0% Reliability Gain (Layered Defense):**  
+A skeptical evaluator might ask: *Did the 13.3% → 93.3% jump come from physics gating or simply compiler retries?*  
+The empirical answer is that end-to-end reliability requires a **layered hierarchy of defense gates**:
+1. **Stage 2 (Compiler Feedback Loop):** In Arm A, 25 of 26 failures were OpenMP §2.6 canonical loop syntax errors (`i + 1 < n`). Arm B's multi-turn compiler diagnostic feedback eliminated 100% of these syntax blockers, demonstrating that compiler-in-the-loop reflection is a non-negotiable prerequisite for LLM code generation.
+2. **Stage 3 (Determinism Gate):** Intercepts naive `#pragma omp parallel for` pragmas applied over serial Gauss-Seidel loops that compile cleanly but exhibit non-deterministic thread race drift ($\Delta = 3.87 \times 10^{-5} > 10^{-11}$).
+3. **Stage 4 (Physics Oracle):** Intercepts stealth corruption where kernels compile cleanly and report fast execution, but produce mathematically invalid physics (e.g., Arm A Run 14, which achieved an 11.18× speedup with a 99.0% relative $L_2$ error and Ghia RMSE of 0.3884).
+4. **Tavily Augmentation:** When Stage 3 or Stage 4 flags an algorithmic defect, Tavily injects the canonical Red-Black checkerboard stencil recipe, guiding Nemotron to restructure the loop dependency rather than guessing broken pragmas.
+
+**Nature of Measured Speedup (Algorithmic Decoupling + Hardware Parallelism):**  
+The baseline solver uses standard lexicographical Gauss-Seidel, which has inherent loop-carried dependencies ($i-1, j$ and $i, j-1$) that preclude thread-safe parallelization. VeriKernel's measured **13.66× median speedup** over the baseline reflects two coupled improvements:
+1. **Algorithmic Transformation:** Decomposing the domain into alternating Red and Black checkerboard subsets eliminates cross-cell dependencies within each phase.
+2. **Hardware Parallelism & Vectorization:** The decoupled grid enables multi-threaded OpenMP scheduling across 8 pinned CPU cores with AVX SIMD register saturation.
+
 ## Model Inference & Load-Bearing Tavily Integration
 
 ### NVIDIA Nemotron via Nebius Token Factory
 
 - **Production Model:** `nvidia/nemotron-3-super-120b-a12b` hosted on Nebius Token Factory (\$0.30/M input tokens, \$0.90/M output tokens).
-  > **Model Selection Story:** During initial exploratory verification (Step 1), three candidate models were screened via `scripts/check_token_factory.py`: `Nemotron-3-Nano-30B` (lightweight), `Nemotron-3-Super-120B` (flagship reasoning), and `Nemotron-3-Ultra`. `nvidia/nemotron-3-super-120b-a12b` was selected as the sole production engine because it provided the optimal combination of deep multi-core algorithmic reasoning, strict pragma obedience, and fast token generation. `Ultra` was evaluated during API probing but dropped from production to keep inference latency and cost tightly bounded.
+  > **Model Selection Story:** During initial exploratory model screening, three candidate models were screened via `scripts/check_token_factory.py`: `Nemotron-3-Nano-30B` (lightweight), `Nemotron-3-Super-120B` (flagship reasoning), and `Nemotron-3-Ultra`. `nvidia/nemotron-3-super-120b-a12b` was selected as the sole production engine because it provided the optimal combination of deep multi-core algorithmic reasoning, strict pragma obedience, and fast token generation. `Ultra` was evaluated during API probing but dropped from production to keep inference latency and cost tightly bounded.
 - **Context Ceiling & Budgeting:** Production ceiling is set to `max_tokens=16384` with temperature `0.2`.
   > **The Reasoning Token Ceiling Story:** Early prototypes initially set a conservative `max_tokens=2500` ceiling to prevent token runaways. However, reasoning models emit an internal Chain-of-Thought (CoT) before outputting code; at 2,500 tokens, CoT reasoning consumed ~2,100–2,800 tokens, causing completions to truncate mid-loop (`for (size_t i = 1; i < n - `). Expanding to `max_tokens=16384` resolved the reasoning trap, providing room for both algorithmic planning and complete C++ header emission (enabling our 93.3% pass rate; see [NEBIUS_FEEDBACK.md](NEBIUS_FEEDBACK.md)).
 - **Cost Transparency:** Each iteration logs prompt tokens, completion tokens, and real dollar cost based on Nebius Token Factory billing rates.
@@ -204,7 +220,7 @@ make test
 [Stage 5] BENCH_PASS: Throughput: 21.04 GB/s (Median latency: 59.57 ms)
 ```
 
-### 4. Run One-Command Verification & Benchmark Suite (Step 10)
+### 4. Run One-Command Verification & Benchmark Suite
 
 Run the master verification suite that executes the baseline cavity solver (5 stages), the 2D wave multi-grid convergence order ($p \ge 1.90$), all 6 adversarial Break-It Gallery defect kernels, and the Stage 5 pinned memory bandwidth benchmark:
 

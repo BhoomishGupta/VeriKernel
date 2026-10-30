@@ -109,8 +109,9 @@ def extract_cpp_code(response_text: str) -> str:
 
 
 def run_referee(kernel_path: pathlib.Path) -> tuple[bool, list[dict[str, Any]]]:
-    """Executes referee.py against the candidate kernel and returns structured telemetry."""
-    cmd = [sys.executable, str(REFEREE_PATH), "--kernel", str(kernel_path), "--json", "--local"]
+    """Executes referee.py against the candidate kernel and returns structured telemetry.
+    Leverages containerized build (gcc:13) when Docker is available, with automatic native fallback."""
+    cmd = [sys.executable, str(REFEREE_PATH), "--kernel", str(kernel_path), "--json"]
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, cwd=REPO_ROOT, timeout=60.0)
         telemetry = json.loads(proc.stdout)

@@ -69,10 +69,10 @@ test-local: $(CAVITY_REF_DATA)
 	@echo "==> Running VeriKernel Referee locally against $(CAVITY_BASELINE)..."
 	$(PYTHON) referee.py --kernel $(CAVITY_BASELINE) --local
 
-# Step 10: Master one-command benchmark & verification execution
+# Master one-command benchmark & verification execution
 bench: all $(CAVITY_REF_DATA) $(CAVITY_BASELINE_ALIAS)
 	@echo "======================================================================"
-	@echo "   VeriKernel Master Benchmark & Reproducibility Suite (Step 10)     "
+	@echo "   VeriKernel Master Benchmark & Reproducibility Suite                "
 	@echo "======================================================================"
 	@echo "\n==> [1/4] Verifying Baseline Cavity Stencil (5-Stage Sandboxed Referee)..."
 	$(PYTHON) referee.py --kernel $(CAVITY_BASELINE)
@@ -86,7 +86,7 @@ bench: all $(CAVITY_REF_DATA) $(CAVITY_BASELINE_ALIAS)
 	@echo "✓ ALL VERIKERNEL BENCHMARKS & VERIFICATION CHECKS COMPLETED SUCCESSFULLY."
 	@echo "======================================================================"
 
-# Step 10: Docker one-command benchmark & verification execution
+# Docker one-command benchmark & verification execution
 docker-bench:
 	@echo "==> Running master benchmark suite inside isolated Docker container..."
 	docker run --rm --cpuset-cpus="0-7" --memory=2g verikernel:latest make bench
