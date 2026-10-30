@@ -260,8 +260,18 @@ def run_arm_b_trial(prompt_text: str, baseline_code: str) -> dict[str, Any]:
             f"Ensure the entire file is wrapped inside `namespace baseline {{ ... }}`. "
             f"Keep reasoning concise and output ONLY the complete, corrected C++ code inside ```cpp ... ```."
         )
-        messages.append({"role": "assistant", "content": raw_resp})
-        messages.append({"role": "user", "content": retry_prompt})
+        # Prune context window to prevent the 16,384-token reasoning ceiling exhaustion
+        clean_assistant_turn = f"// Candidate Implementation (Attempt {attempt}):\n```cpp\n{cand_code}\n```"
+        if len(messages) > 3:
+            messages = [
+                messages[0],
+                messages[1],
+                {"role": "assistant", "content": clean_assistant_turn},
+                {"role": "user", "content": retry_prompt},
+            ]
+        else:
+            messages.append({"role": "assistant", "content": clean_assistant_turn})
+            messages.append({"role": "user", "content": retry_prompt})
 
     metrics = extract_metrics(final_telemetry)
     return {

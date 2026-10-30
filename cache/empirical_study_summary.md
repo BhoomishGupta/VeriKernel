@@ -1,6 +1,6 @@
 ### VeriKernel Empirical Verification Study (N=30 Benchmark)
 **Model:** `nvidia/nemotron-3-super-120b-a12b` via Nebius Token Factory  
-**Workload:** 2D Navier-Stokes Lid-Driven Cavity (Re = 100, 129<sup>2</sup> steady-state & 513<sup>2</sup> pinned benchmark)
+**Workload:** 2D Navier-Stokes Lid-Driven Cavity ($\text{Re} = 100$, $129 \times 129$ steady-state & $513 \times 513$ pinned benchmark)
 
 | Evaluation Metric | Arm A: One-Shot Ungated (Standard LLM) | Arm B: Referee-Gated + Tavily Loop (VeriKernel) | Impact / Significance |
 | :--- | :--- | :--- | :--- |

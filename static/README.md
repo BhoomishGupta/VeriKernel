@@ -69,11 +69,11 @@ VeriKernel enforces a strict separation between an **Immutable Test Harness** (`
 
 1. **Stage 1 — Static Allow-List Linter:** Regex and AST inspect the candidate header. It strictly permits `<cmath>`, `<omp.h>`, `<immintrin.h>`, `<algorithm>`, `<cstddef>`, and `<cstdint>`. Forbids raw file I/O (`<fstream>`), containers (`<vector>`), system process calls (`fork`, `system`), and illegal precision pragmas (`#pragma GCC optimize("fast-math")`).
 2. **Stage 2 — Sandboxed Compilation:** Compiles the harness with the candidate kernel using `-O3 -march=native -fopenmp -Wall -std=c++17` inside an isolated container (`gcc:13`) or native hardened environment with a 20-second timeout.
-3. **Stage 3 — Differential Multi-Thread Determinism Gate:** Executes a 30-time-step sweep across thread counts T∈{1,2,4,8} with 3 repeated runs each on a 65×65 grid. If max cross-thread difference exceeds 10−11, the kernel is rejected for race conditions (`RACE_NON_DETERMINISTIC`) without the memory bloat of ThreadSanitizer.
-4. **Stage 4 — Physics & Mathematical Oracle:** Runs a full 2D Navier-Stokes Lid-Driven Cavity simulation (Re=100, Δt=0.001, grid 129×129) until steady state (max∣ωn+1−ωn∣≤10−6). Validates against:
-   - **Relative**L2​**Norm:** ∥ψtest​−ψref​∥L2​​/∥ψref​∥L2​​≤10−5 compared to precomputed single-threaded reference binary `reference_cavity_129.bin`.
-   - **Empirical Ground Truth:** Centerline velocity profile u(0.5,y) and v(x,0.5) against the 17 benchmark points of **Ghia, Ghia, & Shin (1982)** (RMSE≤0.05).
-5. **Stage 5 — Pinned Out-of-Cache Benchmark:** Executes 100 fixed Poisson sweeps on an out-of-L2 513×513 grid over 5 trials with thread pinning (`OMP_PROC_BIND=close`, `OMP_PLACES=cores`). Computes median execution time and effective memory bandwidth (GB/s).
+3. **Stage 3 — Differential Multi-Thread Determinism Gate:** Executes a 30-time-step sweep across thread counts $T \in \{1, 2, 4, 8\}$ with 3 repeated runs each on a $65 \times 65$ grid. If max cross-thread difference exceeds $10^{-11}$, the kernel is rejected for race conditions (`RACE_NON_DETERMINISTIC`) without the memory bloat of ThreadSanitizer.
+4. **Stage 4 — Physics & Mathematical Oracle:** Runs a full 2D Navier-Stokes Lid-Driven Cavity simulation ($\text{Re}=100$, $\Delta t=0.001$, grid $129 \times 129$) until steady state ($\max |\omega^{n+1} - \omega^n| \le 10^{-6}$). Validates against:
+   - **Relative $L_2$ Norm:** $\|\psi_{\text{test}} - \psi_{\text{ref}}\|_{L_2} / \|\psi_{\text{ref}}\|_{L_2} \le 10^{-5}$ compared to precomputed single-threaded reference binary `reference_cavity_129.bin`.
+   - **Empirical Ground Truth:** Centerline velocity profile $u(0.5, y)$ and $v(x, 0.5)$ against the 17 benchmark points of **Ghia, Ghia, & Shin (1982)** ($\text{RMSE} \le 0.05$).
+5. **Stage 5 — Pinned Out-of-Cache Benchmark:** Executes 100 fixed Poisson sweeps on an out-of-L2 $513 \times 513$ grid over 5 trials with thread pinning (`OMP_PROC_BIND=close`, `OMP_PLACES=cores`). Computes median execution time and effective memory bandwidth (GB/s).
 
 ## Break-It Gallery (Adversarial Verification Suite)
 
@@ -82,18 +82,23 @@ To prove that the referee deterministically isolates bugs without requiring live
 | Kernel File | Injected Defect | Caught By Gate | Real-World Failure Mode |
 | --- | --- | --- | --- |
 | `bug_1_fast_mathcheat.hpp` | `#pragma GCC optimize("fast-math")` compiler pragma | **Stage 1: Linter** | Violates IEEE-754 precision; static regex halts execution before compilation. |
-| `bug_2_naive_omp_race.hpp` | Naive `#pragma omp parallel for` over lexicographical Gauss-Seidel | **Stage 3: Determinism** | Run-to-run drift Δ=3.87×10−5>10−11. Appears 5.7× faster, but produces non-deterministic physics. |
-| `bug_3_boundary_off_by_one.hpp` | Boundary loop indexing terminates at n−2 instead of n−1 | **Stage 4: Physics** | Momentum transfer severed from lid; Ghia RMSE collapses to 0.3872 (>0.05). |
-| `bug_4_fp32_downgrade.hpp` | Inner Poisson relaxation converted from `double` to `float` | **Stage 4: Physics** | Numerical precision limits cause residual to stall above 10−6; hits 15,000-step timeout. |
-| `bug_5_wrong_redblack_index.hpp` | Checkerboard parity checked via 1D index `(i * (n-1) + j) % 2` | **Stage 4: Physics** | Bypasses alternating color update; achieves fake 13.3× speedup (279 GB/s) with 99% relative error. |
-| `bug_6_wave_naive_startup.hpp` | Naive 1st-order Taylor startup for 2D acoustic wave equation | **Stage 4: Physics (Wave)** | Truncation error degrades observed multi-grid convergence order from $p \approx 2.00$ to $p = 1.008$ (<1.90). |
+| `bug_2_naive_omp_race.hpp` | Naive `#pragma omp parallel for` over lexicographical Gauss-Seidel | **Stage 3: Determinism** | Run-to-run drift $\Delta = 3.87 \times 10^{-5} > 10^{-11}$. Appears 5.7× faster, but produces non-deterministic physics. |
+| `bug_3_boundary_off_by_one.hpp` | Boundary loop indexing terminates at $n - 2$ instead of $n - 1$ | **Stage 4: Physics** | Momentum transfer severed from lid; Ghia RMSE collapses to $0.3872 > 0.05$. |
+| `bug_4_fp32_downgrade.hpp` | Inner Poisson relaxation converted from `double` to `float` | **Stage 4: Physics** | Numerical precision limits cause residual to stall above $10^{-6}$; hits 15,000-step timeout. |
+| `bug_5_wrong_redblack_index.hpp` | Checkerboard parity checked via 1D index `(i * (n-1) + j) % 2` | **Stage 4: Physics** | Bypasses alternating color update; achieves fake 13.3× speedup (279 GB/s) with 99.0% relative error. |
+| `bug_6_wave_naive_startup.hpp` | Naive 1st-order Taylor startup for 2D acoustic wave equation | **Stage 4: Physics (Wave)** | Truncation error degrades observed multi-grid convergence order from $p \approx 2.00$ to $p = 1.008 < 1.90$. |
 
 ## Empirical Evaluation Study (N=30)
 
-We conducted an empirical benchmark comparing standard **Ungated One-Shot LLM Synthesis** against **Referee-Gated Iterative Self-Correction** across 3 distinct HPC prompting prompts (10 trials each, N=30 total):
+We conducted an empirical benchmark comparing standard **Ungated One-Shot LLM Synthesis (Arm A)** against **Referee-Gated Iterative Self-Correction (Arm B)** across **3 distinct HPC prompting formulations $\times$ 10 trials each ($N=30$ total runs per arm)**:
+1. **Direct Pragma Optimization:** Prompt requesting OpenMP parallelization for the inner Poisson Gauss-Seidel loop.
+2. **Algorithmic & Parity Restructuring:** Prompt requesting race-free checkerboard/red-black schemes to eliminate loop dependencies.
+3. **Hardware & Bandwidth Optimization:** Prompt requesting memory bandwidth optimization with OpenMP SIMD directives on out-of-L2 grids.
+
+> **Identical Experimental Settings:** Both Arm A and Arm B used identical system prompts, identical seed user prompts, identical model weights (`nvidia/nemotron-3-super-120b-a12b`), identical sampling temperature ($T=0.2$), and identical context ceilings (`max_tokens=16384`).
 
 **Model:** `nvidia/nemotron-3-super-120b-a12b` via Nebius Token Factory  
-**Workload:** 2D Navier-Stokes Lid-Driven Cavity (Re = 100, 129<sup>2</sup> steady-state & 513<sup>2</sup> pinned benchmark)
+**Workload:** 2D Navier-Stokes Lid-Driven Cavity ($\text{Re} = 100$, $129 \times 129$ steady-state & $513 \times 513$ pinned benchmark)
 
 | Evaluation Metric | Arm A: One-Shot Ungated (Standard LLM) | Arm B: Referee-Gated + Tavily Loop (VeriKernel) | Impact / Significance |
 | :--- | :--- | :--- | :--- |
@@ -107,7 +112,16 @@ We conducted an empirical benchmark comparing standard **Ungated One-Shot LLM Sy
 | **Mean Inference Cost per Run** | $0.0060 USD | **$0.0115 USD** | Only +$0.0055 USD per fully certified kernel |
 | **True Cost per Usable Kernel** | $0.0449 USD | **$0.0123 USD** | **VeriKernel is 3.6x cheaper per valid asset** |
 
-**Defect Attribution:** Of the 26 failed runs in Arm A, 96.2% (25 runs) were genuine algorithmic and syntax defects where the model voluntarily stopped generating tokens (e.g., Run 11 used 2,062 tokens, Run 21 used 1,472 tokens against the 16,384 ceiling). The model was not token-starved; it simply generated invalid OpenMP loop predicates (i + 1 < n) and undeclared loop variables. In contrast, Arm B had 0.0% genuine code defects—its only 2 unverified runs occurred when multi-turn refactoring reached the 16,384 token ceiling on Attempt 4.
+**Why Did 25 of 30 One-Shot Runs Fail to Compile (Defending the Baseline)?**  
+A compiler failure rate of 83.3% in Arm A might initially appear high, raising questions about whether the baseline was a "strawman". However, inspection of the compiler diagnostic logs reveals that 25 of the 26 Arm A failures were caused by a single ubiquitous compiler rejection rule: **OpenMP §2.6 Canonical Loop Form**.  
+Nemotron-3-Super repeatedly generated loop headers of the form:
+```cpp
+for (std::size_t i = 1; i + 1 < n; ++i)
+```
+While `i + 1 < n` is valid ISO C++, OpenMP specifications require loop controlling predicates inside `#pragma omp parallel for` to strictly adhere to canonical form: `var < lb` or `var < ub`. Both GCC and Clang reject compound predicates with `error: invalid controlling predicate`.  
+Because one-shot LLM generation provides zero compiler feedback, the model repeated this pattern across all 3 prompt styles. In VeriKernel (Arm B), Stage 2 intercepted this exact GCC error and returned the line number and error message in the Attempt 2 prompt. Nemotron immediately corrected the predicate to `for (std::size_t i = 1; i < n - 1; ++i)`. This confirms that compiler-in-the-loop gating is not a strawman, but a hard requirement for synthesizing valid OpenMP HPC code.
+
+**Defect Attribution:** Of the 26 failed runs in Arm A, 96.2% (25 runs) were genuine algorithmic and syntax defects where the model voluntarily stopped generating tokens (e.g., Run 11 used 2,062 tokens, Run 21 used 1,472 tokens against the 16,384 ceiling). The model was not token-starved; it simply lacked compiler feedback. In contrast, Arm B had 0.0% genuine code defects—its only 2 unverified runs occurred when multi-turn refactoring reached the 16,384 token ceiling on Attempt 4.
 
 **The Case for Stage 4 Physics Gating:** In Arm A Run 14, the model generated code that compiled cleanly and achieved a median throughput of 234.54 GB/s (11.18× speedup). Without VeriKernel, this kernel would have passed standard performance benchmarks. VeriKernel's Stage 4 caught a 99.0% relative $L_2$ error and Ghia RMSE of 0.3884, halting an unphysical kernel from reaching production.
 
@@ -115,8 +129,8 @@ We conducted an empirical benchmark comparing standard **Ungated One-Shot LLM Sy
 
 ### NVIDIA Nemotron via Nebius Token Factory
 
-- **Model Endpoint:** `nvidia/nemotron-3-super` / `nvidia/nemotron-3-ultra` hosted on Nebius Token Factory.
-- **Budgeting & Parameters:** Temperature set to `0.2` for deterministic code generation. Context capped at `max_tokens=2500` to prevent token runaways on inner loops.
+- **Model Endpoint:** `nvidia/nemotron-3-super-120b-a12b` hosted on Nebius Token Factory.
+- **Budgeting & Parameters:** Temperature set to `0.2` for reproducible code generation. Context window ceiling set to `max_tokens=16384` (preventing internal chain-of-thought truncation on complex stencils; see [NEBIUS_FEEDBACK.md](NEBIUS_FEEDBACK.md)).
 - **Cost Transparency:** Each iteration logs prompt tokens, completion tokens, and real dollar cost based on Nebius Token Factory billing rates.
 
 ### Load-Bearing Tavily Search
@@ -130,6 +144,12 @@ Rather than using search as decorative context before code generation, Tavily is
    "Gauss-Seidel OpenMP data race red-black ordering C++ stencil"
    ```
 3. Top search results and documentation snippets are injected directly into the retry prompt alongside the harness's quantitative telemetry, steering the model toward valid mathematical structures.
+
+### Tavily Search Ablation & Qualitative Diagnostic Analysis
+
+- **Ablation Limitation Note:** In this $N=30$ study, Arm B evaluates the unified VeriKernel agent loop coupling compiler/runtime/physics referee telemetry with targeted Tavily retrieval. We formally acknowledge as an experimental limitation that an isolated three-arm ablation (Arm C: Referee-Gated retry *without* Tavily web search) was not evaluated in this initial batch. An isolated Arm C trial is planned as an upcoming empirical extension.
+- **Qualitative Load-Bearing Telemetry:** When naive parallelization of lexicographical Gauss-Seidel is flagged by Stage 3 (Determinism Gate: `RACE_NON_DETERMINISTIC`, thread drift $\Delta = 3.87 \times 10^{-5} > 10^{-11}$), LLMs operating solely on prompt instructions routinely attempt naive pragma variants (`#pragma omp parallel for schedule(guided, 8)` or reduction clauses), which repeatedly fail determinism. 
+- **Retrieval-Driven Transition:** VeriKernel's recovery orchestrator triggers Tavily specifically on this failure code with the diagnostic query: `"Gauss-Seidel OpenMP data race red-black ordering C++ stencil"`. Tavily injects the canonical two-phase Red-Black checkerboard pattern (`(i + j) % 2 == 0` for Red, `(i + j) % 2 == 1` for Black) into Attempt 2. This steers Nemotron to replace the serial dependency chain with a mathematically exact two-pass barrier, reducing cross-thread divergence from $\Delta = 3.87 \times 10^{-5}$ to bit-exact $\Delta = 0.00 \times 10^{00}$ and enabling Stage 3 to pass.
 
 ## Quickstart & Reproducibility
 
@@ -212,10 +232,12 @@ Inference evaluated on `nvidia/nemotron-3-super-120b-a12b` via Nebius Token Fact
 | :--- | :--- | :--- | :--- |
 | **Verification Pass Rate** | 13.3% (4 / 30 kernels) | **93.3% (28 / 30 kernels)** | **+80.0% reliability gain** |
 | **Mean Cost per Invocation** | \$0.0060 USD | \$0.0115 USD | +\$0.0055 USD per session |
-| **Wasted Spend on Invalid Code** | 86.7% (\$0.1560 total) | **6.7% (\$0.0230 total)** | Eliminates compute & token waste |
+| **Unrecovered Session Spend** | 86.7% (\$0.1560 total) | **6.7% (\$0.0230 total)** | Only 2/30 sessions unrecovered |
 | **Effective Cost per Usable Kernel** | **\$0.0449 USD** | **\$0.0123 USD** | **3.6× cheaper per production asset** |
 
-> **Economic Insight:** One-shot generation appears cheap on paper (\$0.0060/call) but wastes 86.7% of budget producing syntactically malformed or mathematically non-deterministic code. VeriKernel's automated self-correction loop amortizes multi-turn costs across a 93.3% pass rate, delivering certified high-performance code at more than one-third of the effective cost.
+> **Economic Insight & Accounting Details:** One-shot generation appears cheap on paper (\$0.0060/call) but wastes 86.7% of budget producing syntactically malformed or mathematically non-deterministic code. VeriKernel's automated self-correction loop amortizes multi-turn costs across a 93.3% pass rate, delivering certified high-performance code at more than one-third of the effective cost.
+>
+> *Note on Cost Accounting:* "Unrecovered Session Spend" strictly measures runs that reached the 4-attempt ceiling without passing verification (26/30 in Arm A vs. only 2/30 in Arm B). Intermediate retry attempts within successful Arm B sessions (averaging 2.10 attempts per passed run) are fully accounted for in the bottom-line **Effective Cost per Usable Kernel** (\$0.3450 total spend / 28 verified kernels = **\$0.0123 USD**), proving that VeriKernel remains **3.6× cheaper per usable production asset** even after paying for all retry tokens.
 
 ## Nebius Token Factory & NVIDIA Technical Feedback
 

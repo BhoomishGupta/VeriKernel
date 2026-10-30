@@ -76,3 +76,5 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+.cache_run/
+/tmp/verikernel_run/

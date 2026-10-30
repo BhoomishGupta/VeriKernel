@@ -25,7 +25,7 @@ WAVE_TARGET     := $(BUILD_DIR)/harness_wave
 WAVE_SRC        := harness_wave.cpp
 WAVE_BASELINE   := wave_baseline.hpp
 
-.PHONY: all clean clean-all test test-local bench bench-bandwidth check verify-all ref gallery gallery-local wave test-wave bench-wave help static test-guards test-static preflight tunnel docker-build docker-run docker-stop
+.PHONY: all clean clean-all test test-local bench bench-bandwidth docker-bench check verify-all ref gallery gallery-local wave test-wave bench-wave help static test-guards test-static preflight tunnel docker-build docker-run docker-stop
 
 # Default target compiles both computational harnesses
 all: $(CAVITY_TARGET) $(WAVE_TARGET) $(CAVITY_BASELINE_ALIAS)
@@ -85,6 +85,11 @@ bench: all $(CAVITY_REF_DATA) $(CAVITY_BASELINE_ALIAS)
 	@echo "\n======================================================================"
 	@echo "✓ ALL VERIKERNEL BENCHMARKS & VERIFICATION CHECKS COMPLETED SUCCESSFULLY."
 	@echo "======================================================================"
+
+# Step 10: Docker one-command benchmark & verification execution
+docker-bench:
+	@echo "==> Running master benchmark suite inside isolated Docker container..."
+	docker run --rm --cpuset-cpus="0-7" --memory=2g verikernel:latest make bench
 
 # Isolated Stage 5 Pinned Benchmark runner (513x513 out-of-L2 grid)
 bench-bandwidth: $(CAVITY_TARGET)
@@ -163,7 +168,7 @@ bench-wave: $(WAVE_TARGET)
 # Clean build artifacts and temporary files
 clean:
 	@echo "> Cleaning build artifacts..."
-	@rm -rf $(BUILD_DIR) test test_bad_lint.hpp test_race.hpp test_bad_physics.hpp __pycache__ .pytest_cache
+	@rm -rf $(BUILD_DIR) .cache_run /tmp/verikernel_run test test_bad_lint.hpp test_race.hpp test_bad_physics.hpp __pycache__ .pytest_cache
 	@echo "> Clean complete."
 
 # Clean all artifacts including generated ground-truth binaries
@@ -233,6 +238,7 @@ docker-stop:
 help:
 	@echo "VeriKernel Build, Test & Deployment Commands:"
 	@echo "  make bench        - Master one-command benchmark & verification suite (Baseline + Wave + Gallery + Stage 5)"
+	@echo "  make docker-bench - Master one-command benchmark execution inside isolated Docker container"
 	@echo "  make check        - Alias for make bench (one-command verification suite)"
 	@echo "  make bench-bandwidth - Runs Stage 5 pinned memory bandwidth benchmark for Cavity (513x513)"
 	@echo "  make app          - Launches the VeriKernel FastAPI execution server and lab dashboard"

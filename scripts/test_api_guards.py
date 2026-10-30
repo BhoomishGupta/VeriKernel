@@ -213,7 +213,38 @@ class TestVeriKernelApiGuards(unittest.TestCase):
         resp2 = self.client.get("/api/budget-status", headers={"X-Judge-Token": "verikernel-judge-2026"})
         self.assertEqual(resp2.status_code, 200)
         self.assertTrue(resp2.json()["is_judge"])
-        self.assertEqual(resp2.json()["ip_calls_remaining"], 999)
+        self.assertEqual(resp2.json()["ip_calls_remaining"], server.JUDGE_HOURLY_LIMIT)
+
+    @patch("server.run_referee_sync")
+    def test_judge_rate_limit_enforced(self, mock_referee):
+        """Judge VIP passkey has a protective rate limit (20 calls/hr) preventing bot abuse."""
+        mock_referee.return_value = [{"stage": "Stage 1", "ok": True, "status_tag": "PASS"}]
+        test_ip = "192.0.2.88"
+        server.judge_call_history[test_ip] = []
+
+        # Reach the limit
+        for _ in range(server.JUDGE_HOURLY_LIMIT):
+            resp = self.client.post(
+                "/api/run-referee",
+                json={"target": "baseline", "force_live": True},
+                headers={
+                    "X-Forwarded-For": test_ip,
+                    "X-Judge-Token": "verikernel-judge-2026",
+                },
+            )
+            self.assertEqual(resp.status_code, 200)
+
+        # Next call should be rate limited
+        resp_blocked = self.client.post(
+            "/api/run-referee",
+            json={"target": "baseline", "force_live": True},
+            headers={
+                "X-Forwarded-For": test_ip,
+                "X-Judge-Token": "verikernel-judge-2026",
+            },
+        )
+        self.assertEqual(resp_blocked.status_code, 429)
+        self.assertIn("Judge VIP rate limit reached", resp_blocked.json()["detail"])
 
 
 if __name__ == "__main__":

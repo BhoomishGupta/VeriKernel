@@ -15,6 +15,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import uuid
 from dataclasses import asdict, dataclass
 
 
@@ -116,25 +117,31 @@ def stage1_static_lint(kernel_path: pathlib.Path) -> StageResult:
 
 
 def check_docker_available() -> bool:
-    """Check if docker daemon is running AND gcc:13 image is cached."""
-    daemon_ok = (
-        subprocess.run(
-            ["docker", "info"], check=False, text=True, capture_output=True
-        ).returncode
-        == 0
-    )
-    if not daemon_ok:
+    """Check if docker CLI exists, daemon is running, and gcc:13 image is cached."""
+    import shutil
+    if not shutil.which("docker"):
         return False
-    image_ok = (
-        subprocess.run(
-            ["docker", "image", "inspect", "gcc:13"],
-            check=False,
-            text=True,
-            capture_output=True,
-        ).returncode
-        == 0
-    )
-    return image_ok
+    try:
+        daemon_ok = (
+            subprocess.run(
+                ["docker", "info"], check=False, text=True, capture_output=True
+            ).returncode
+            == 0
+        )
+        if not daemon_ok:
+            return False
+        image_ok = (
+            subprocess.run(
+                ["docker", "image", "inspect", "gcc:13"],
+                check=False,
+                text=True,
+                capture_output=True,
+            ).returncode
+            == 0
+        )
+        return image_ok
+    except (FileNotFoundError, OSError):
+        return False
 
 
 def stage2_compile(
@@ -384,11 +391,17 @@ def main() -> int:
     if workload == "wave":
         kernel_path = (args.kernel or DEFAULT_KERNEL_WAVE).resolve()
         harness_path = (args.harness or DEFAULT_HARNESS_WAVE).resolve()
-        binary_path = (args.binary or DEFAULT_BINARY_WAVE).resolve()
     else:
         kernel_path = (args.kernel or DEFAULT_KERNEL_CAVITY).resolve()
         harness_path = (args.harness or DEFAULT_HARNESS_CAVITY).resolve()
-        binary_path = (args.binary or DEFAULT_BINARY_CAVITY).resolve()
+
+    # Isolate compilation binaries per process to prevent ETXTBSY / concurrency collisions
+    is_ephemeral_binary = args.binary is None
+    if is_ephemeral_binary:
+        unique_token = f"{os.getpid()}_{uuid.uuid4().hex[:8]}"
+        binary_path = (REPO_ROOT / "build" / f"eval_{workload}_{unique_token}").resolve()
+    else:
+        binary_path = args.binary.resolve()
 
     if not kernel_path.exists():
         print(f"Kernel file not found: {kernel_path}", file=sys.stderr)
@@ -400,7 +413,7 @@ def main() -> int:
     # Auto-generate baseline reference if missing (Cavity only)
     if workload == "cavity" and not REFERENCE_BINARY.exists():
         print(f"Generating missing reference binary at {REFERENCE_BINARY}...", file=sys.stderr)
-        ref_binary_path = REPO_ROOT / "build" / "harness_baseline_ref"
+        ref_binary_path = REPO_ROOT / "build" / f"harness_baseline_ref_{os.getpid()}"
         stage2_compile(harness_path, DEFAULT_KERNEL_CAVITY, ref_binary_path, force_local=args.local)
         run_command([str(ref_binary_path), "--generate-ref"], timeout=120.0)
         if ref_binary_path.exists():
@@ -416,24 +429,31 @@ def main() -> int:
     if not stages[-1].ok:
         return finalize(stages, args.json)
 
-    # Stage 2: Compilation
-    stages.append(stage2_compile(harness_path, kernel_path, binary_path, force_local=args.local))
-    if not stages[-1].ok:
-        return finalize(stages, args.json)
-
-    # Stages 3, 4, 5 Execution
-    mode = "--bench" if workload == "wave" else "--all"
     try:
-        telemetry = run_harness_json(binary_path, mode=mode)
-    except Exception as exc:
-        stages.append(StageResult("Execution", False, "RUNTIME_ERROR", str(exc)))
+        # Stage 2: Compilation
+        stages.append(stage2_compile(harness_path, kernel_path, binary_path, force_local=args.local))
+        if not stages[-1].ok:
+            return finalize(stages, args.json)
+
+        # Stages 3, 4, 5 Execution
+        mode = "--bench" if workload == "wave" else "--all"
+        try:
+            telemetry = run_harness_json(binary_path, mode=mode)
+        except Exception as exc:
+            stages.append(StageResult("Execution", False, "RUNTIME_ERROR", str(exc)))
+            return finalize(stages, args.json)
+
+        stages.append(stage3_determinism(telemetry, workload=workload))
+        stages.append(stage4_physics(telemetry, workload=workload))
+        stages.append(stage5_timing(telemetry, workload=workload))
+
         return finalize(stages, args.json)
-
-    stages.append(stage3_determinism(telemetry, workload=workload))
-    stages.append(stage4_physics(telemetry, workload=workload))
-    stages.append(stage5_timing(telemetry, workload=workload))
-
-    return finalize(stages, args.json)
+    finally:
+        if is_ephemeral_binary and binary_path.exists():
+            try:
+                binary_path.unlink()
+            except OSError:
+                pass
 
 
 def finalize(stages: list[StageResult], print_json: bool) -> int:

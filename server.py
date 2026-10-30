@@ -12,7 +12,9 @@ import pathlib
 import struct
 import subprocess
 import sys
+import threading
 import time
+import uuid
 import zipfile
 from typing import Any, AsyncGenerator
 
@@ -35,12 +37,14 @@ ESTIMATED_RUN_SECONDS = 4
 
 # Availability Protection & Guardrail Defaults
 IP_HOURLY_LIMIT = int(os.environ.get("IP_HOURLY_LIMIT", "5"))
+JUDGE_HOURLY_LIMIT = int(os.environ.get("JUDGE_HOURLY_LIMIT", "20"))
 DAILY_RUNS_LIMIT = int(os.environ.get("DAILY_RUNS_LIMIT", "30"))
 DAILY_SPEND_LIMIT_USD = float(os.environ.get("DAILY_SPEND_LIMIT_USD", "5.00"))
 JUDGE_SECRET_TOKEN = os.environ.get("JUDGE_SECRET_TOKEN", "verikernel-judge-2026")
 
 # IP call history: maps client IP -> list of timestamps
 ip_call_history: dict[str, list[float]] = {}
+judge_call_history: dict[str, list[float]] = {}
 
 app = FastAPI(title="VeriKernel Execution API", version="1.0.0")
 
@@ -64,24 +68,28 @@ app.add_middleware(
 execution_lock = asyncio.Lock()
 waiting_queue_count = 0
 gallery_cache: dict[str, tuple[float, Any]] = {}
+active_agent_stop_event: threading.Event | None = None
 
 
 @app.on_event("startup")
 async def warmup_gallery():
     """Background warmup of the Break-It Gallery to ensure sub-2-second referee responses."""
     subprocess.run(["pkill", "-9", "-f", "harness_cavity"], check=False)
+    subprocess.run(["pkill", "-9", "-f", "harness_wave"], check=False)
     async def _warm():
         gallery_dir = REPO_ROOT / "gallery"
         if gallery_dir.exists():
-            for f in sorted(gallery_dir.glob("*.hpp")):
-                rel_path = f"gallery/{f.name}"
-                if rel_path not in gallery_cache:
-                    try:
-                        mtime = f.stat().st_mtime
-                        res = await asyncio.to_thread(run_referee_sync, f)
-                        gallery_cache[rel_path] = (mtime, res)
-                    except Exception:
-                        pass
+            async with execution_lock:
+                for f in sorted(gallery_dir.glob("*.hpp")):
+                    rel_path = f"gallery/{f.name}"
+                    if rel_path not in gallery_cache:
+                        try:
+                            mtime = f.stat().st_mtime
+                            workload = "wave" if "wave" in f.name.lower() else "cavity"
+                            res = await asyncio.to_thread(run_referee_sync, f, workload)
+                            gallery_cache[rel_path] = (mtime, res)
+                        except Exception:
+                            pass
     asyncio.create_task(_warm())
 
 
@@ -102,11 +110,17 @@ class ExecutionRequest(BaseModel):
         default=False,
         description="Force fresh local C++ compilation and execution, bypassing in-memory gallery cache.",
     )
+    workload: str | None = Field(
+        default=None,
+        description="Target computational workload: 'cavity' or 'wave'. Auto-detected if omitted.",
+    )
 
 
-def run_referee_sync(kernel_path: pathlib.Path) -> dict:
+def run_referee_sync(kernel_path: pathlib.Path, workload: str | None = None) -> dict:
     """Execute referee.py locally in a synchronous subprocess and return parsed JSON output."""
     cmd = [sys.executable, str(REFEREE_PATH), "--kernel", str(kernel_path), "--json", "--local"]
+    if workload:
+        cmd.extend(["--workload", workload])
     proc = subprocess.run(
         cmd,
         capture_output=True,
@@ -127,14 +141,10 @@ def run_referee_sync(kernel_path: pathlib.Path) -> dict:
 
 
 def create_temp_kernel(code: str) -> pathlib.Path:
-    """Writes candidate C++ code to in-memory tmpfs (/tmp/verikernel_run) or local fallback."""
-    temp_dir = pathlib.Path("/tmp/verikernel_run")
-    try:
-        temp_dir.mkdir(parents=True, exist_ok=True)
-    except Exception:
-        temp_dir = REPO_ROOT / ".cache_run"
-        temp_dir.mkdir(parents=True, exist_ok=True)
-    temp_path = temp_dir / f"candidate_{time.time():.4f}_{os.getpid()}.hpp"
+    """Writes candidate C++ code to in-workspace .cache_run to ensure container mounts succeed."""
+    temp_dir = REPO_ROOT / ".cache_run"
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    temp_path = temp_dir / f"candidate_{time.time():.4f}_{os.getpid()}_{uuid.uuid4().hex[:6]}.hpp"
     temp_path.write_text(code, encoding="utf-8")
     return temp_path
 
@@ -241,8 +251,27 @@ def check_availability_guards(request: Request, is_llm_run: bool = True) -> dict
         remaining_ip = max(0, IP_HOURLY_LIMIT - len(history))
         reset_secs = int(max(0, (history[0] + 3600.0 - now)))
     else:
-        remaining_ip = 999
-        reset_secs = 0
+        # Protective rate limit for Judge VIP key (20 calls/hr per IP) to prevent public key scraper abuse
+        j_history = [t for t in judge_call_history.get(client_ip, []) if t > (now - 3600.0)]
+        judge_call_history[client_ip] = j_history
+
+        if len(j_history) >= JUDGE_HOURLY_LIMIT:
+            oldest = j_history[0]
+            reset_minutes = max(1, int(math.ceil((oldest + 3600.0 - now) / 60.0)))
+            raise HTTPException(
+                status_code=429,
+                detail=(
+                    f"Judge VIP rate limit reached: {JUDGE_HOURLY_LIMIT} live calls per hour per IP. "
+                    f"Your quota resets in ~{reset_minutes} minute(s). "
+                    "This protective limit prevents automated bot scrapers from abusing the public judge passkey."
+                ),
+            )
+
+        j_history.append(now)
+        judge_call_history[client_ip] = j_history
+
+        remaining_ip = max(0, JUDGE_HOURLY_LIMIT - len(j_history))
+        reset_secs = int(max(0, (j_history[0] + 3600.0 - now)))
 
     return {
         "client_ip": client_ip,
@@ -319,7 +348,16 @@ async def execute_referee_task(req: ExecutionRequest) -> AsyncGenerator[str, Non
 
         # 2. Lock acquired: Execute benchmark safely
         yield f"data: {json.dumps({'status': 'running', 'message': 'Executing verification pipeline...'})}\n\n"
-        telemetry = await asyncio.to_thread(run_referee_sync, kernel_path)
+        resolved_workload = req.workload
+        if not resolved_workload:
+            if req.gallery_bug and "wave" in req.gallery_bug.lower():
+                resolved_workload = "wave"
+            elif "wave" in str(kernel_path).lower():
+                resolved_workload = "wave"
+            else:
+                resolved_workload = "cavity"
+
+        telemetry = await asyncio.to_thread(run_referee_sync, kernel_path, resolved_workload)
         yield f"data: {json.dumps({'status': 'completed', 'data': telemetry})}\n\n"
 
     except Exception as exc:
@@ -345,10 +383,17 @@ async def run_referee_stream_endpoint(req: ExecutionRequest, request: Request):
             "X-RateLimit-Reset": str(quota["ip_reset_seconds"]),
         }
 
+    sse_headers = {
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",
+        **quota_headers,
+    }
+
     return StreamingResponse(
         execute_referee_task(req),
         media_type="text/event-stream",
-        headers=quota_headers,
+        headers=sse_headers,
     )
 
 
@@ -375,14 +420,18 @@ async def run_referee_json_endpoint(req: ExecutionRequest, request: Request):
 
     try:
         temp_kernel_path: pathlib.Path | None = None
+        resolved_workload = req.workload
+
         if req.gallery_bug:
             kernel_path = REPO_ROOT / req.gallery_bug
             if not kernel_path.exists():
                 return {"status": "error", "error": f"Gallery bug not found: {req.gallery_bug}"}
+            if not resolved_workload:
+                resolved_workload = "wave" if "wave" in req.gallery_bug.lower() else "cavity"
             mtime = kernel_path.stat().st_mtime
             if not req.force_live and req.gallery_bug in gallery_cache and gallery_cache[req.gallery_bug][0] == mtime:
                 return {"status": "success", "cached": True, "results": gallery_cache[req.gallery_bug][1]}
-            result = await asyncio.to_thread(run_referee_sync, kernel_path)
+            result = await asyncio.to_thread(run_referee_sync, kernel_path, resolved_workload)
             gallery_cache[req.gallery_bug] = (mtime, result)
             return {"status": "success", "cached": False, "results": result}
         elif req.kernel_code:
@@ -393,7 +442,10 @@ async def run_referee_json_endpoint(req: ExecutionRequest, request: Request):
         else:
             kernel_path = CANDIDATE_KERNEL if CANDIDATE_KERNEL.exists() else DEFAULT_KERNEL
 
-        result = await asyncio.to_thread(run_referee_sync, kernel_path)
+        if not resolved_workload:
+            resolved_workload = "wave" if "wave" in str(kernel_path).lower() else "cavity"
+
+        result = await asyncio.to_thread(run_referee_sync, kernel_path, resolved_workload)
         return {"status": "success", "results": result}
     finally:
         if lock_acquired:
@@ -810,7 +862,14 @@ async def get_budget_status(request: Request):
     history = [t for t in ip_call_history.get(client_ip, []) if t > (now - 3600.0)]
     ip_call_history[client_ip] = history
     ip_used = len(history)
-    ip_remaining = 999 if is_judge else max(0, IP_HOURLY_LIMIT - ip_used)
+    j_history = [t for t in judge_call_history.get(client_ip, []) if t > (now - 3600.0)]
+    judge_call_history[client_ip] = j_history
+    ip_remaining = (
+        max(0, JUDGE_HOURLY_LIMIT - len(j_history))
+        if is_judge
+        else max(0, IP_HOURLY_LIMIT - ip_used)
+    )
+    effective_hourly_limit = JUDGE_HOURLY_LIMIT if is_judge else IP_HOURLY_LIMIT
 
     daily_runs, daily_spend = get_daily_metrics()
     daily_spend_remaining = round(max(0.0, DAILY_SPEND_LIMIT_USD - daily_spend), 5)
@@ -832,8 +891,8 @@ async def get_budget_status(request: Request):
         "daily_runs_limit": DAILY_RUNS_LIMIT,
         "daily_runs_completed": daily_runs,
         "daily_runs_remaining": daily_runs_remaining,
-        "ip_hourly_limit": IP_HOURLY_LIMIT,
-        "ip_calls_used": ip_used,
+        "ip_hourly_limit": effective_hourly_limit,
+        "ip_calls_used": len(j_history) if is_judge else ip_used,
         "ip_calls_remaining": ip_remaining,
         "client_ip": client_ip,
         "is_judge": is_judge,
@@ -848,8 +907,10 @@ async def get_budget_status(request: Request):
 
 async def stream_agent_run(mode: str = "self_correction") -> AsyncGenerator[str, None]:
     """Manages queue, locks, and live streaming of autonomous agent optimization."""
-    global waiting_queue_count
+    global waiting_queue_count, active_agent_stop_event
     lock_acquired = False
+    current_stop_event = threading.Event()
+    active_agent_stop_event = current_stop_event
 
     if execution_lock.locked():
         waiting_queue_count += 1
@@ -875,7 +936,11 @@ async def stream_agent_run(mode: str = "self_correction") -> AsyncGenerator[str,
 
         def worker():
             try:
-                res = run_agent_optimization(mode=mode, progress_callback=progress_cb)
+                res = run_agent_optimization(
+                    mode=mode,
+                    progress_callback=progress_cb,
+                    stop_event=current_stop_event,
+                )
                 loop.call_soon_threadsafe(event_queue.put_nowait, {"type": "__WORKER_DONE__", "result": res})
             except Exception as e:
                 loop.call_soon_threadsafe(event_queue.put_nowait, {"type": "__WORKER_ERROR__", "error": str(e)})
@@ -902,6 +967,9 @@ async def stream_agent_run(mode: str = "self_correction") -> AsyncGenerator[str,
         yield f"data: {json.dumps({'type': 'error', 'message': str(exc)})}\n\n"
 
     finally:
+        current_stop_event.set()
+        if active_agent_stop_event is current_stop_event:
+            active_agent_stop_event = None
         if 'worker_task' in locals() and not worker_task.done():
             worker_task.cancel()
         if lock_acquired:
@@ -912,15 +980,19 @@ async def stream_agent_run(mode: str = "self_correction") -> AsyncGenerator[str,
 async def run_agent_live_endpoint(request: Request, mode: str = "self_correction"):
     """Server-Sent Events endpoint streaming live agent self-correction progress."""
     quota = check_availability_guards(request, is_llm_run=True)
+    sse_headers = {
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",
+        "X-RateLimit-Limit": str(IP_HOURLY_LIMIT),
+        "X-RateLimit-Remaining": str(quota["ip_remaining"]),
+        "X-RateLimit-Reset": str(quota["ip_reset_seconds"]),
+        "X-Judge-Authorized": "true" if quota.get("is_judge") else "false",
+    }
     return StreamingResponse(
         stream_agent_run(mode=mode),
         media_type="text/event-stream",
-        headers={
-            "X-RateLimit-Limit": str(IP_HOURLY_LIMIT),
-            "X-RateLimit-Remaining": str(quota["ip_remaining"]),
-            "X-RateLimit-Reset": str(quota["ip_reset_seconds"]),
-            "X-Judge-Authorized": "true" if quota.get("is_judge") else "false",
-        },
+        headers=sse_headers,
     )
 
 
@@ -946,8 +1018,12 @@ async def run_agent_live_sync_endpoint(request: Request, mode: str = "self_corre
 @app.post("/api/cancel-live-run")
 async def cancel_live_run():
     """Emergency reset endpoint if execution lock is held or user cancels."""
-    global waiting_queue_count
+    global waiting_queue_count, active_agent_stop_event
+    if active_agent_stop_event:
+        active_agent_stop_event.set()
+        active_agent_stop_event = None
     subprocess.run(["pkill", "-9", "-f", "harness_cavity"], check=False)
+    subprocess.run(["pkill", "-9", "-f", "harness_wave"], check=False)
     if execution_lock.locked():
         try:
             execution_lock.release()

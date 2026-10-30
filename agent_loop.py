@@ -176,9 +176,15 @@ def generate_certificate(telemetry: list[dict[str, Any]], total_cost: float, tot
     print(f"\n[Certificate] Generated official certification at: {CERT_PATH}")
 
 
-def call_llm_with_retry(messages: list[dict[str, str]], retries: int = 3) -> Any:
+def call_llm_with_retry(
+    messages: list[dict[str, str]],
+    retries: int = 3,
+    stop_event=None,
+) -> Any:
     """Executes chat completion with retry backoff for transient network issues."""
     for attempt_idx in range(1, retries + 1):
+        if stop_event and stop_event.is_set():
+            raise RuntimeError("Operation cancelled by user")
         try:
             return client.chat.completions.create(
                 model=MODEL_ID,
@@ -187,10 +193,15 @@ def call_llm_with_retry(messages: list[dict[str, str]], retries: int = 3) -> Any
                 temperature=0.2,
             )
         except Exception as exc:
+            if stop_event and stop_event.is_set():
+                raise RuntimeError("Operation cancelled by user")
             if attempt_idx < retries:
                 wait_sec = attempt_idx * 2
                 print(f"    [Network Glitch] {exc}. Retrying in {wait_sec}s ({attempt_idx}/{retries})...")
-                time.sleep(wait_sec)
+                if stop_event and stop_event.wait(timeout=wait_sec):
+                    raise RuntimeError("Operation cancelled by user")
+                elif not stop_event:
+                    time.sleep(wait_sec)
             else:
                 raise exc
 
@@ -200,10 +211,11 @@ def call_llm_with_heartbeat(
     attempt: int,
     progress_callback=None,
     retries: int = 3,
+    stop_event=None,
 ) -> Any:
     """Executes LLM completion while dispatching real-time heartbeats to progress_callback."""
     import threading
-    stop_event = threading.Event()
+    internal_stop_event = threading.Event()
 
     def heartbeat_worker():
         t0 = time.time()
@@ -216,7 +228,9 @@ def call_llm_with_heartbeat(
             "Emitting finalized C++ header tokens from Nebius Token Factory...",
         ]
         phase_idx = 0
-        while not stop_event.wait(timeout=2.0):
+        while not internal_stop_event.wait(timeout=2.0):
+            if stop_event and stop_event.is_set():
+                break
             elapsed = int(time.time() - t0)
             desc = phases[min(phase_idx, len(phases) - 1)]
             phase_idx += 1
@@ -233,13 +247,17 @@ def call_llm_with_heartbeat(
     hb = threading.Thread(target=heartbeat_worker, daemon=True)
     hb.start()
     try:
-        return call_llm_with_retry(messages, retries=retries)
+        return call_llm_with_retry(messages, retries=retries, stop_event=stop_event)
     finally:
-        stop_event.set()
+        internal_stop_event.set()
         hb.join(timeout=1.0)
 
 
-def run_agent_optimization(mode: str = "self_correction", progress_callback=None) -> dict:
+def run_agent_optimization(
+    mode: str = "self_correction",
+    progress_callback=None,
+    stop_event=None,
+) -> dict:
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
     baseline_code = BASELINE_PATH.read_text(encoding="utf-8")
 
@@ -269,6 +287,16 @@ def run_agent_optimization(mode: str = "self_correction", progress_callback=None
     ]
 
     for attempt in range(1, MAX_ATTEMPTS + 1):
+        if stop_event and stop_event.is_set():
+            print(f"\n[Agent] Stop event triggered. Terminating loop before Attempt {attempt}.")
+            if progress_callback:
+                progress_callback({
+                    "type": "cancelled",
+                    "attempt": attempt,
+                    "message": "Optimization cancelled by client.",
+                })
+            break
+
         print(f"\n>>> [Attempt {attempt}/{MAX_ATTEMPTS}] Querying Nemotron via Nebius Token Factory...")
         if progress_callback:
             progress_callback({
@@ -280,7 +308,13 @@ def run_agent_optimization(mode: str = "self_correction", progress_callback=None
         t0 = time.time()
 
         try:
-            res = call_llm_with_heartbeat(messages, attempt, progress_callback=progress_callback, retries=3)
+            res = call_llm_with_heartbeat(
+                messages,
+                attempt,
+                progress_callback=progress_callback,
+                retries=3,
+                stop_event=stop_event,
+            )
         except Exception as exc:
             print(f"[API Error] Failed to query Nebius Token Factory after retries: {exc}")
             if progress_callback:
@@ -289,6 +323,10 @@ def run_agent_optimization(mode: str = "self_correction", progress_callback=None
                     "attempt": attempt,
                     "message": f"Nebius API error: {exc}",
                 })
+            break
+
+        if stop_event and stop_event.is_set():
+            print("[Agent] Stop event detected after inference. Aborting.")
             break
 
         dt = time.time() - t0
@@ -431,8 +469,18 @@ def run_agent_optimization(mode: str = "self_correction", progress_callback=None
             f"Keep reasoning concise and output ONLY the complete, corrected C++ code inside ```cpp ... ```."
         )
 
-        messages.append({"role": "assistant", "content": raw_response})
-        messages.append({"role": "user", "content": retry_prompt})
+        # Prune context window to prevent the 16,384-token reasoning ceiling exhaustion
+        clean_assistant_turn = f"// Candidate Implementation (Attempt {attempt}):\n```cpp\n{candidate_code}\n```"
+        if len(messages) > 3:
+            messages = [
+                messages[0],
+                messages[1],
+                {"role": "assistant", "content": clean_assistant_turn},
+                {"role": "user", "content": retry_prompt},
+            ]
+        else:
+            messages.append({"role": "assistant", "content": clean_assistant_turn})
+            messages.append({"role": "user", "content": retry_prompt})
 
     # Packaging run telemetry
     timestamp = time.strftime("%Y%m%d_%H%M%S")
